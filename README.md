@@ -28,10 +28,31 @@ cd frontend
 ```bash
 npm install
 ```
-`
+
 3. Start the development server:
 ```bash
 npm run dev
 ```
 
 The frontend will be available at `http://localhost:5173`
+
+### Code Quality
+1. Run ESLint to fix code issues:
+```bash
+npm run lint
+```
+
+2. Format code with Prettier:
+```bash
+npm run prettier
+```
+
+3. Run both formatting and linting:
+```bash
+npm run format
+```
+
+The format command will run Prettier first to format your code, then ESLint to fix any remaining issues.
+
+
+
