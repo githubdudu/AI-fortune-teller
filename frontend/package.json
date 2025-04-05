@@ -9,8 +9,10 @@
     "lint": "eslint --fix 'src/**/*.{js,jsx}'",
     "preview": "vite preview",
     "prettier": "prettier --write 'src/**/*.{js,jsx}'",
+    "prettier:check": "prettier --check 'src/**/*.{js,jsx}'",
     "format": "npm run prettier && npm run lint",
-    "prepare": "cd .. && husky frontend/.husky"
+    "prepare": "cd .. && husky frontend/.husky",
+    "test": "npm run prettier:check && npm run lint"
   },
   "dependencies": {
     "react": "^19.0.0",
@@ -29,7 +31,14 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "vite": "^6.2.0"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }
