@@ -3,12 +3,13 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import react from 'eslint-plugin-react'
+import importPlugin from 'eslint-plugin-import';
 
 export default [
   { ignores: ['dist'] },
   {
     files: ['**/*.{js,jsx}'],
-    languageOptions: {
+    languageOptions: {  
       ecmaVersion: 2020,
       globals: globals.browser,
       parserOptions: {
@@ -21,6 +22,7 @@ export default [
       'react': react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'import': importPlugin,
     },
     settings: {
       react: {
@@ -32,11 +34,13 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      ...importPlugin.configs.recommended.rules,
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
+      'import/namespace': 'off',
     },
   },
 ]
