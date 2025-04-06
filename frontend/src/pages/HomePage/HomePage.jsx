@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { produce } from 'immer';
 import ArcanaVerseLogo from '../../components/ArcanaVerseLogo';
 import { AppContext } from '../../context/AppContextProvider';
+import GestaltButton from '../../components/GestaltButton';
 
 function HomePage() {
   const { count, setCount } = useContext(AppContext);
@@ -22,7 +23,10 @@ function HomePage() {
         >
           👍 {count}
         </button>
-        <p className="text-2xl text-blue-500 font-bold">Let&apos;s rock !</p>
+        <p className="m-8 text-2xl text-blue-500 font-bold">
+          Let&apos;s rock !
+        </p>
+        <GestaltButton />
       </div>
     </>
   );

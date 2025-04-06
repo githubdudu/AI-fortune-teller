@@ -3,6 +3,7 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 
+@import 'gestalt/dist/gestalt.css';
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
