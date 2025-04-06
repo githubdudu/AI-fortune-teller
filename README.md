@@ -127,7 +127,7 @@ group-project-42/
     └── vite.config.js            # Vite configuration
 ```
 
-### Structure Guidelines
+### Code style
 
 1. **Component Organization**:
    - Reused components put under `components` folder
@@ -159,10 +159,20 @@ group-project-42/
    - Avoid large monolithic components
    - Extract reusable logic into custom hooks
 
+## Node Library
+### Library installed
+1. React Router
+2. Tailwind CSS
+3. Immer 
+4. Gestalt
+5. Two hooks libraries have been installed: react-use and @tanstack/react-query 
 
-
-
-
-
-
+### Coding style
+1. For React and React Router, related eslint rules has been enabled. 
+2. Proptypes related eslint rules have been enabled. That means you must define proptypes for each components.  Learn more about proptypes, please visit: https://legacy.reactjs.org/docs/typechecking-with-proptypes.html. I realized that `proptypes` has been deprecated, we could have a discussion about this requirement.
+4. Use Tailwind CSS for styling. Avoid using CSS files unless absolutely necessary. If you do use CSS files, please ensure they are scoped to the component and do not affect global styles.
+5. Tailwind CSS has predefined CSS reseting properties which are introduced by `@import "tailwindcss/preflight.css";`, we could ban this if necessary.
+6. Use Immer. Immer simplifies handling immutable data structures​. We shall discuss about whether to make this mandatory or just recommended.
+7. Gestalt components have been introduced. Use these components first.  For these Gestalt components, eslint rules are not required. We can discuss about this later.
+8. Two hooks libraries have been installed, feel free to use these or your own custom hooks. For these two libraries, eslint rules are not required. We can discuss about this later.
 
