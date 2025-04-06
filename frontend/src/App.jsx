@@ -1,25 +1,16 @@
-import { useState } from 'react';
-import arcanaVerseLogo from './assets/arcanaVerse.png';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import { AppContextProvider } from './context/AppContextProvider';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a href="#" target="_blank">
-          <img src={arcanaVerseLogo} className="logo" alt="ArcanaVerse logo" />
-        </a>
-      </div>
-      <h1>ArcanaVerse</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          👍 {count}
-        </button>
-        <p>Let&apos;s rock !</p>
-      </div>
-    </>
+    <AppContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+    </AppContextProvider>
   );
 }
 
