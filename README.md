@@ -166,6 +166,7 @@ group-project-42/
 3. Immer 
 4. Gestalt
 5. Two hooks libraries have been installed: react-use and @tanstack/react-query 
+6. Axios
 
 ### Coding style
 1. For React and React Router, related eslint rules has been enabled. 
@@ -173,6 +174,7 @@ group-project-42/
 4. Use Tailwind CSS for styling. Avoid using CSS files unless absolutely necessary. If you do use CSS files, please ensure they are scoped to the component and do not affect global styles.
 5. Tailwind CSS has predefined CSS reseting properties which are introduced by `@import "tailwindcss/preflight.css";`, we could ban this if necessary.
 6. Use Immer. Immer simplifies handling immutable data structures​. We shall discuss about whether to make this mandatory or just recommended.
-7. Gestalt components have been introduced. Use these components first.  For these Gestalt components, eslint rules are not required. We can discuss about this later.
-8. Two hooks libraries have been installed, feel free to use these or your own custom hooks. For these two libraries, eslint rules are not required. We can discuss about this later.
+7. Gestalt components have been introduced. Use these components first.  For these Gestalt components, eslint rules are not required. We can discuss about whether adding eslint rules for Gestalt later.
+8. Two hooks libraries have been installed, feel free to use these or your own custom hooks. For these two libraries, eslint rules are not required. We can discuss about whether adding eslint rules later. `React-use` is a collection of essential hooks for React. It provides a wide range of hooks for common tasks, such as managing state, handling side effects, and working with the DOM. `@tanstack/react-query` is a powerful library for managing server state in React applications. It simplifies data fetching, caching, and synchronization with the server.
+9. Axios is already introduced in one of the labs by Andrew. You could use the useGet hooks Andrew provided which implemented via Axios.
 
