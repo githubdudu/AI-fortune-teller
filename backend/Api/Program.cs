@@ -229,6 +229,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
+    DbInitialiser.InitialiseData(db); // Database initialisation
 }
 
 app.Run(); 

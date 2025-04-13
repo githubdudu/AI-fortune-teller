@@ -11,11 +11,13 @@ namespace Api.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Theme> Themes { get; set; }
+        public DbSet<Card> Cards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -25,4 +27,4 @@ namespace Api.Data
             });
         }
     }
-} 
+}
