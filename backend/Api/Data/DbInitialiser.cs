@@ -1,22 +1,23 @@
-using ArcanaVerse.data;
+using Microsoft.EntityFrameworkCore;
+using Api.Models.Domain;
 
-namespace ArcanaVerse.seed
+namespace Api.Data
 {
     public static class DbInitializer
     {
-        public static void Seed(AppDbContext context)
+        public static void InitialiseData(AppDbContext context)
         {
             if (!context.Themes.Any())
             {
                 context.Themes.AddRange(
-                    new Theme { Id = "001", Name = "general", ImageSource = "icons/general.png", Description = "Ask about your overall life direction or what’s coming next." },
-                    new Theme { Id = "002", Name = "love", ImageSource = "icons/love.png", Description = "Understand your love life, romantic interests, and emotional connections." },
-                    new Theme { Id = "003", Name = "finance", ImageSource = "icons/finance.png", Description = "Gain insight into your financial future and money matters." },
-                    new Theme { Id = "004", Name = "career", ImageSource = "icons/career.png", Description = "Uncover guidance on job prospects, promotions, or studies." },
-                    new Theme { Id = "005", Name = "relationships", ImageSource = "icons/relationships.png", Description = "Understand connections with friends, family, or coworkers." },
-                    new Theme { Id = "006", Name = "health", ImageSource = "icons/health.png", Description = "Reflect on your physical and emotional well-being." },
-                    new Theme { Id = "007", Name = "decisions", ImageSource = "icons/decisions.png", Description = "Seek clarity when facing difficult choices or uncertain paths." },
-                    new Theme { Id = "008", Name = "travel", ImageSource = "icons/travel.png", Description = "Explore outcomes related to moving, traveling, or new environments." }
+                    new Theme { Name = "general", ImageSource = "icons/general.png", Description = "Ask about your overall life direction or what’s coming next." },
+                    new Theme { Name = "love", ImageSource = "icons/love.png", Description = "Understand your love life, romantic interests, and emotional connections." },
+                    new Theme { Name = "finance", ImageSource = "icons/finance.png", Description = "Gain insight into your financial future and money matters." },
+                    new Theme { Name = "career", ImageSource = "icons/career.png", Description = "Uncover guidance on job prospects, promotions, or studies." },
+                    new Theme { Name = "relationships", ImageSource = "icons/relationships.png", Description = "Understand connections with friends, family, or coworkers." },
+                    new Theme { Name = "health", ImageSource = "icons/health.png", Description = "Reflect on your physical and emotional well-being." },
+                    new Theme { Name = "decisions", ImageSource = "icons/decisions.png", Description = "Seek clarity when facing difficult choices or uncertain paths." },
+                    new Theme { Name = "travel", ImageSource = "icons/travel.png", Description = "Explore outcomes related to moving, traveling, or new environments." }
                 );
             }
 

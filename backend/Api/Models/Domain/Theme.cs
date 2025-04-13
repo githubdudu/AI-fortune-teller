@@ -1,9 +1,12 @@
+using System;
+
+namespace Api.Models.Domain
 public class Theme
 {
     public int Id { get; set; }
-    public string Name { get; set; }  // general, love, finance, career, relationships, health, decisions, travel
-    public string ImageSource { get; set; }  // PNG
-    public string Description { get; set; }
+    public required string Name { get; set; }  // general, love, finance, career, relationships, health, decisions, travel
+    public required string ImageSource { get; set; }  // PNG
+    public required string Description { get; set; }
     // Theme description text:
     // general: Ask about your overall life direction or what’s coming next.
     // love: Understand your love life, romantic interests, and emotional connections.
