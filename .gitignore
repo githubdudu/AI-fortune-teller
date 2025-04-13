@@ -1,2 +1,75 @@
+# macOS
 .DS_Store
+
+# Node.js
 node_modules
+
+# .NET Core
+*.swp
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.dll.config
+*.cache
+*.csproj.user
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.ntvs*
+*.njsproj
+*.sln.iml
+.idea/
+*.vsix
+
+# NuGet packages
+*.nupkg
+*.pfx
+*.snk
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Local development settings
+appsettings.Development.json
+appsettings.local.json
+*.local.json
+local.settings.json
+
+# User-specific files
+*.rsuser
+*_i.c
+*_p.c
+*_h.h
+*.meta
+
+# Rider
+.idea/
+*.sln.iml
+
+# Logs
+logs/
+*.log
+npm-debug.log*

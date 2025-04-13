@@ -1,0 +1,117 @@
+using Api.Models.Domain;
+using Api.Models.DTOs;
+using Api.Models.Requests;
+using Api.Repositories.Interfaces;
+using Api.Services.Interfaces;
+
+namespace Api.Services.Implementations
+{
+    public class UserService : IUserService
+    {
+        private readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        {
+            var users = await _userRepository.GetAllAsync();
+            return users.Select(MapUserToDto);
+        }
+
+        public async Task<UserDto?> GetUserByIdAsync(Guid id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            return user != null ? MapUserToDto(user) : null;
+        }
+
+        public async Task<UserDto?> GetUserByEmailAsync(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+            return user != null ? MapUserToDto(user) : null;
+        }
+
+        public async Task<UserDto?> GetUserByUsernameAsync(string username)
+        {
+            var user = await _userRepository.GetByUsernameAsync(username);
+            return user != null ? MapUserToDto(user) : null;
+        }
+
+        public async Task<UserDto> CreateUserAsync(CreateUserRequest request)
+        {
+            // Business validation could be added here
+            // For example, check if username or email already exists
+
+            var existingUserByEmail = await _userRepository.GetByEmailAsync(request.Email);
+            if (existingUserByEmail != null)
+                throw new InvalidOperationException($"A user with email {request.Email} already exists.");
+
+            var existingUserByUsername = await _userRepository.GetByUsernameAsync(request.Username);
+            if (existingUserByUsername != null)
+                throw new InvalidOperationException($"A user with username {request.Username} already exists.");
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = request.Username,
+                Email = request.Email,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
+
+            return MapUserToDto(user);
+        }
+
+        public async Task UpdateUserAsync(Guid id, CreateUserRequest request)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {id} not found.");
+
+            // Check if another user already has the requested username
+            var existingUserWithUsername = await _userRepository.GetByUsernameAsync(request.Username);
+            if (existingUserWithUsername != null && existingUserWithUsername.Id != id)
+                throw new InvalidOperationException($"Username {request.Username} is already taken.");
+
+            // Check if another user already has the requested email
+            var existingUserWithEmail = await _userRepository.GetByEmailAsync(request.Email);
+            if (existingUserWithEmail != null && existingUserWithEmail.Id != id)
+                throw new InvalidOperationException($"Email {request.Email} is already registered.");
+
+            // Update the user
+            user.Username = request.Username;
+            user.Email = request.Email;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            await _userRepository.SaveChangesAsync();
+        }
+
+        public async Task<bool> DeleteUserAsync(Guid id)
+        {
+            var exists = await _userRepository.ExistsAsync(id);
+            if (!exists)
+                return false;
+
+            await _userRepository.DeleteAsync(id);
+            await _userRepository.SaveChangesAsync();
+            return true;
+        }
+
+        private static UserDto MapUserToDto(User user)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            };
+        }
+    }
+} 
