@@ -30,6 +30,11 @@ export default [
       react: {
         version: 'detect',
       },
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      }
     },
     rules: {
       ...js.configs.recommended.rules,
