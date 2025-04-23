@@ -4,6 +4,8 @@ import ArcanaVerseLogo from '../../components/ArcanaVerseLogo';
 import { AppContext } from '../../context/AppContextProvider';
 import GestaltButton from '../../components/GestaltButton';
 
+import ThemeView from '../../components/ThemeView';
+
 function HomePage() {
   const { count, setCount } = useContext(AppContext);
 
@@ -15,6 +17,7 @@ function HomePage() {
   return (
     <>
       <ArcanaVerseLogo />
+      <ThemeView />
       <h1 className="text-5xl leading-tight">ArcanaVerse</h1>
       <div className="p-8">
         <button
