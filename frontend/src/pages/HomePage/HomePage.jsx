@@ -3,6 +3,7 @@ import { produce } from 'immer';
 import ArcanaVerseLogo from '../../components/ArcanaVerseLogo';
 import { AppContext } from '../../context/AppContextProvider';
 import GestaltButton from '../../components/GestaltButton';
+import UserQuestionInput from '../../components/UserQuestionInput';
 
 function HomePage() {
   const { count, setCount } = useContext(AppContext);
@@ -25,6 +26,7 @@ function HomePage() {
           Let&apos;s rock !
         </p>
         <GestaltButton />
+        <UserQuestionInput />
       </div>
     </>
   );
