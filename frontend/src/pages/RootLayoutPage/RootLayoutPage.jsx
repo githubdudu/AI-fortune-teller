@@ -16,9 +16,6 @@ function RootLayoutPage() {
       </Box>
       <Flex alignItems="center" justifyContent="start" direction="column">
         <Outlet />
-        <Outlet />
-        <Outlet />
-        <Outlet />
       </Flex>
     </Flex>
   );
