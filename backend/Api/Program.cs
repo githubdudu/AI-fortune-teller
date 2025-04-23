@@ -1,20 +1,20 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Api.Data;
-using Microsoft.AspNetCore.Authorization;
+using Api.Infrastructure;
 using Api.Middleware;
 using Api.Repositories;
 using Api.Repositories.Interfaces;
-using Api.Services.Interfaces;
 using Api.Services.Implementations;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Api.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,9 +49,9 @@ builder.Services.AddVersionedApiExplorer(options =>
 // Register Swagger configuration options (must be done BEFORE AddSwaggerGen)
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>>(serviceProvider =>
 {
-    var apiVersionDescriptionProvider = serviceProvider
-        .GetRequiredService<IApiVersionDescriptionProvider>();
-    
+    var apiVersionDescriptionProvider =
+        serviceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
+
     return new ConfigureSwaggerOptions(apiVersionDescriptionProvider);
 });
 
@@ -60,7 +60,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     // Add servers to ensure proper URL resolution - only use HTTP in development
     c.AddServer(new OpenApiServer { Url = "http://localhost:5000" });
-    
+
     // Only add HTTPS server in production
     if (!builder.Environment.IsDevelopment())
     {
@@ -68,28 +68,33 @@ builder.Services.AddSwaggerGen(c =>
     }
 
     // Configure JWT authentication in Swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    c.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
+            Description = "JWT Authorization header using the Bearer scheme",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
         }
-    });
+    );
+    c.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                Array.Empty<string>()
+            },
+        }
+    );
 
     // Apply the versioning configuration to Swagger
     c.OperationFilter<SwaggerDefaultValues>();
@@ -97,7 +102,8 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure SQL Server with Entity Framework Core
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb"));
+    options.UseInMemoryDatabase("InMemoryDb")
+);
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
@@ -107,64 +113,70 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure JWT Authentication
-builder.Services.AddAuthentication(options => 
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    // Don't authenticate requests to Swagger endpoints
-    options.Events = new JwtBearerEvents
+builder
+    .Services.AddAuthentication(options =>
     {
-        OnMessageReceived = context =>
-        {
-            if (context.Request.Path.StartsWithSegments("/swagger"))
-            {
-                context.Token = null;
-                return Task.CompletedTask;
-            }
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            // Skip challenge for Swagger requests
-            if (context.Request.Path.StartsWithSegments("/swagger"))
-            {
-                context.HandleResponse();
-                return Task.CompletedTask;
-            }
-            return Task.CompletedTask;
-        }
-    };
-    
-    // Enable Swagger token passing
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false; // Allow testing without HTTPS
-    
-    options.TokenValidationParameters = new TokenValidationParameters
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "your-issuer",
-        ValidAudience = builder.Configuration["JwtSettings:Audience"] ?? "your-audience",
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"] ?? "your-secret-key-here-must-be-at-least-32-chars"))
-    };
-});
+        // Don't authenticate requests to Swagger endpoints
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Path.StartsWithSegments("/swagger"))
+                {
+                    context.Token = null;
+                    return Task.CompletedTask;
+                }
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                // Skip challenge for Swagger requests
+                if (context.Request.Path.StartsWithSegments("/swagger"))
+                {
+                    context.HandleResponse();
+                    return Task.CompletedTask;
+                }
+                return Task.CompletedTask;
+            },
+        };
+
+        // Enable Swagger token passing
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false; // Allow testing without HTTPS
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "your-issuer",
+            ValidAudience = builder.Configuration["JwtSettings:Audience"] ?? "your-audience",
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["JwtSettings:Secret"]
+                        ?? "your-secret-key-here-must-be-at-least-32-chars"
+                )
+            ),
+        };
+    });
 
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
 });
 
 var app = builder.Build();
@@ -173,24 +185,25 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     // Make Swagger available only in development environment
-    app.UseSwagger(c => 
+    app.UseSwagger(c =>
     {
         c.SerializeAsV2 = false;
     });
-    
-    app.UseSwaggerUI(options => 
+
+    app.UseSwaggerUI(options =>
     {
         // Get API version provider from service provider
         var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-        
+
         // Build a swagger endpoint for each API version
         foreach (var description in provider.ApiVersionDescriptions)
         {
             options.SwaggerEndpoint(
-                $"/swagger/{description.GroupName}/swagger.json", 
-                $"API {description.GroupName.ToUpperInvariant()}");
+                $"/swagger/{description.GroupName}/swagger.json",
+                $"API {description.GroupName.ToUpperInvariant()}"
+            );
         }
-        
+
         // Configure Swagger UI options
         options.RoutePrefix = "swagger";
         options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List);
@@ -229,7 +242,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
-    DbInitialiser.InitialiseData(db); // Database initialisation
+    DbInitialiser.InitialiseData(db); // Changed from DbInitialiser to DbInitializer
 }
 
-app.Run(); 
+app.Run();
