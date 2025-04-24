@@ -1,0 +1,19 @@
+.container{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px 51px;
+gap: 55px;
+
+width: 948px;
+height: 297px;
+}
+
+/* name of the class could change accordingly, not sure what it's for. May have to delete later. */
+.innerContainer{
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+}
