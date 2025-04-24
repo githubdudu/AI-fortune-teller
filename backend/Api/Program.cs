@@ -242,7 +242,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
-    DbInitialiser.InitialiseData(db); // Changed from DbInitialiser to DbInitializer
+    DbInitializer.InitializeData(db); // Changed from DbInitialiser to DbInitializer
 }
 
 app.Run();

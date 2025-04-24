@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Data
 {
-    public static class DbInitialiser
+    public static class DbInitializer
     {
-        public static void InitialiseData(ApplicationDbContext context)
+        public static void InitializeData(ApplicationDbContext context)
         {
             if (!context.Themes.Any())
             {
