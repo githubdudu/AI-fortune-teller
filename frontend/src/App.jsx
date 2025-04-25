@@ -5,6 +5,7 @@ import AboutPage from './pages/AboutPage';
 import ImageGenerationPage from './pages/ImageGenerationPage';
 import RootLayoutPage from './pages/RootLayoutPage';
 import UserInputPage from './pages/UserInputPage';
+import LoadingPage from './pages/LoadingPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           </Route>
           {/* Remove this at the end */}
           <Route path="/image-generation" element={<ImageGenerationPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
         </Routes>
       </BrowserRouter>
     </AppContextProvider>
