@@ -33,6 +33,10 @@ body {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
+    background-image: url('/assets/Background_Cloud.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-color: #ffffff;
   }
 
