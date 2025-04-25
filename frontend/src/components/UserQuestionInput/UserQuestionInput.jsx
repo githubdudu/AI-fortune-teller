@@ -1,17 +1,55 @@
 import { useNavigate } from 'react-router-dom';
-import { Flex, Box, Button, Text, TextArea } from 'gestalt';
-import { useState } from 'react';
+import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
+import { useEffect, useRef, useState } from 'react';
 
 function UserQuestionInput() {
+  const textAreaRef = useRef(null);
+
   const [input, setInput] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [textAreaHeight, setTextAreaHeight] = useState(0);
 
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  useEffect(() => {
+    textAreaRef.current.style.height = 'auto';
+    textAreaRef.current.style.height = textAreaRef.current.scrollHeight + 'px';
+    setTextAreaHeight(textAreaRef.current.scrollHeight);
+  }, [input]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        handleDismiss();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
+
   const handleSubmit = () => {
+    const trimmedInput = input.trim();
+    const wordCount = trimmedInput.split(/\s+/).length;
+
+    // Validation for empty input submit, or question with less than 4 words
+    // TODO: Come up with a logic for validating non sense words combination...
+    if (trimmedInput.length < 10 || wordCount < 4) {
+      setErrorMessage('Please enter a more complete and meaningful question.');
+      setInput('');
+      return;
+    }
+
     // TODO: Post API call to come here
 
     // TODO: change route accordingly
     navigate('/user-info-input');
+  };
+
+  const handleDismiss = () => {
+    setErrorMessage('');
   };
 
   return (
@@ -51,10 +89,11 @@ function UserQuestionInput() {
             id="text-area-user-prompt"
             placeholder="Select a category or type a question"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleChange}
             rows={1}
+            ref={textAreaRef}
             maxLength={280}
-            className="w-full border-1 border-gray-300 rounded-lg py-3 pl-4 pr-32 text-lg text-[#261060] placeholder-[#261060] resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            className={`w-full border-1 border-gray-300 rounded-lg py-3 pl-4 pr-32 text-lg text-[#261060] placeholder-[#261060] resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -65,7 +104,9 @@ function UserQuestionInput() {
           />
           <button
             onClick={handleSubmit}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-0 mr-2 bg-transparent border-none cursor-pointer text-[#261060] hover:text-[#261060] flex items-center justify-center"
+            className={`absolute ${
+              textAreaHeight <= 56 ? 'top-1/2 -translate-y-1/2' : 'bottom-2'
+            } right-3 p-0 mr-2 bg-transparent border-none cursor-pointer text-[#261060] hover:text-[#261060] flex items-center justify-center`}
             type="button"
           >
             <svg
@@ -82,6 +123,16 @@ function UserQuestionInput() {
             </svg>
           </button>
         </div>
+        {errorMessage && (
+          <div className="flex justify-center mt-2">
+            <Toast
+              text={errorMessage}
+              dismissButton={{
+                onDismiss: handleDismiss,
+              }}
+            />
+          </div>
+        )}
       </div>
     </>
   );
