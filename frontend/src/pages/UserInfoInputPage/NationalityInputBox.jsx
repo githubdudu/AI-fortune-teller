@@ -4,12 +4,18 @@ import PropTypes from 'prop-types';
 
 import { COUNTRY_OPTIONS } from '../../constants/nationality';
 
-function NationalityInputBox({ inputValue, setInputValue }) {
+function NationalityInputBox({
+  inputValue,
+  setInputValue,
+  errorMessage = '',
+  setErrorMessage = () => {},
+}) {
   const [selected, setSelected] = useState();
   const [suggestedOptions, setSuggestedOptions] = useState(COUNTRY_OPTIONS);
 
   const handleOnChange = ({ value }) => {
     setSelected();
+    setErrorMessage();
     if (value) {
       setInputValue(value);
       const filteredOptions = COUNTRY_OPTIONS.filter((item) =>
@@ -23,6 +29,7 @@ function NationalityInputBox({ inputValue, setInputValue }) {
   };
 
   const handleSelect = ({ item }) => {
+    setErrorMessage();
     setInputValue(item.label);
     setSuggestedOptions(COUNTRY_OPTIONS);
     setSelected(item);
@@ -37,17 +44,20 @@ function NationalityInputBox({ inputValue, setInputValue }) {
       onBlur={() => {
         if (!selected) setInputValue('');
         setSuggestedOptions(COUNTRY_OPTIONS);
+        setErrorMessage();
       }}
       onChange={handleOnChange}
       onClear={() => {
         setInputValue('');
         setSelected();
+        setErrorMessage();
         setSuggestedOptions(COUNTRY_OPTIONS);
       }}
       onSelect={handleSelect}
       options={suggestedOptions}
       placeholder="Nationality"
       selectedOption={selected}
+      errorMessage={errorMessage}
       size="lg"
     />
   );
@@ -56,6 +66,8 @@ function NationalityInputBox({ inputValue, setInputValue }) {
 NationalityInputBox.propTypes = {
   inputValue: PropTypes.string.isRequired,
   setInputValue: PropTypes.func.isRequired,
+  errorMessage: PropTypes.string,
+  setErrorMessage: PropTypes.func,
 };
 
 export default NationalityInputBox;

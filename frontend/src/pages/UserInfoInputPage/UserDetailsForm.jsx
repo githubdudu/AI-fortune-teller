@@ -8,6 +8,7 @@ function UserDetailsForm() {
   const [FNErrorMessage, setFNErrorMessage] = useState('');
   const [LNErrorMessage, setLNErrorMessage] = useState('');
   const [DOBErrorMessage, setDOBErrorMessage] = useState('');
+  const [nationalityErrorMessage, setNationalityErrorMessage] = useState('');
   const [POBErrorMessage, setPOBErrorMessage] = useState('');
 
   const [FNValue, setFNValue] = useState('');
@@ -37,6 +38,12 @@ function UserDetailsForm() {
       setDOBErrorMessage('');
     }
 
+    if (!nationalityValue) {
+      setNationalityErrorMessage('This field is required');
+    } else {
+      setNationalityErrorMessage('');
+    }
+
     if (!POBValue) {
       setPOBErrorMessage('This field is required');
     } else {
@@ -47,7 +54,7 @@ function UserDetailsForm() {
       FNValue,
       LNValue,
       DOBValue,
-      NationalityValue: nationalityValue,
+      nationalityValue,
       POBValue,
     });
   }
@@ -141,6 +148,8 @@ function UserDetailsForm() {
               <NationalityInputBox
                 inputValue={nationalityValue}
                 setInputValue={setNationalityValue}
+                errorMessage={nationalityErrorMessage}
+                setErrorMessage={setNationalityErrorMessage}
               />
             </div>
           </div>
