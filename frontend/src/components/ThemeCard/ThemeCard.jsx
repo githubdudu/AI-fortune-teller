@@ -14,7 +14,7 @@ function ThemeCard({ theme }) {
     // Post API to come;
 
     // Change route name accordingly.
-    navigate(`/userInfoInput`);
+    navigate(`/user-info-input`);
   };
 
   return (
@@ -30,8 +30,7 @@ function ThemeCard({ theme }) {
           e.target.onerror = null;
           e.target.src = themeCardPlaceholder;
         }}
-        // TODO: Style to be changed accordingly
-        className="h-24 mx-auto my-6 transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"
+        className="h-60 border-1 border-gray-300 mx-auto rounded-md shadow-md transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"
         alt="Theme card"
       />
     </div>
