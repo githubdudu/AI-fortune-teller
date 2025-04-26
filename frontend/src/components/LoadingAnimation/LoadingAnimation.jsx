@@ -1,19 +1,6 @@
 import { motion } from 'framer-motion';
 import './LoadingAnimation.css';
 
-/* const rotatingContainer = {
-  initial: { rotate: 0 },
-  animate: {
-    rotate: 360,
-    transition: {
-      repeat: Infinity,
-      repeatType: "loop",
-      duration: 2,
-      ease: "linear"
-    }
-  }
-}; */
-
 const loadingText = {
   initial: { opacity: 0.3 },
   animate: {
