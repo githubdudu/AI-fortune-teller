@@ -10,17 +10,11 @@ function RootLayoutPage() {
       justifyContent="start"
       direction="column"
       height="100vh"
-      width={1920}
     >
       <Box marginBottom={10}>
         <ArcanaVerseLogo />
       </Box>
-      <Flex
-        alignItems="center"
-        justifyContent="start"
-        direction="column"
-        width={1920}
-      >
+      <Flex alignItems="center" justifyContent="start" direction="column">
         <Outlet />
       </Flex>
     </Flex>
