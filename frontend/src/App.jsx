@@ -16,10 +16,10 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="user-input" element={<UserInputPage />} />
+            <Route path="/loading" element={<LoadingPage />} />
           </Route>
           {/* Remove this at the end */}
           <Route path="/image-generation" element={<ImageGenerationPage />} />
-          <Route path="/loading" element={<LoadingPage />} />
         </Routes>
       </BrowserRouter>
     </AppContextProvider>
