@@ -1,8 +1,10 @@
 import { Button, Fieldset, TextField, ComboBox } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState } from 'react';
+import { useSessionStorage } from 'react-use';
 
 import NationalityInputBox from './NationalityInputBox';
+import { useNavigate } from 'react-router-dom';
 
 function UserDetailsForm() {
   const [FNErrorMessage, setFNErrorMessage] = useState('');
@@ -11,11 +13,16 @@ function UserDetailsForm() {
   const [nationalityErrorMessage, setNationalityErrorMessage] = useState('');
   const [POBErrorMessage, setPOBErrorMessage] = useState('');
 
-  const [FNValue, setFNValue] = useState('');
-  const [LNValue, setLNValue] = useState('');
-  const [DOBValue, setDOBValue] = useState('');
-  const [nationalityValue, setNationalityValue] = useState('');
-  const [POBValue, setPOBValue] = useState('');
+  const [FNValue, setFNValue] = useSessionStorage('firstName', '');
+  const [LNValue, setLNValue] = useSessionStorage('lastName', '');
+  const [DOBValue, setDOBValue] = useSessionStorage('dateOfBirth', '');
+  const [nationalityValue, setNationalityValue] = useSessionStorage(
+    'nationality',
+    '',
+  );
+  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', '');
+
+  const navigate = useNavigate();
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -57,6 +64,8 @@ function UserDetailsForm() {
       nationalityValue,
       POBValue,
     });
+
+    navigate('/selection');
   }
 
   function handleNameChange(event) {
@@ -140,6 +149,7 @@ function UserDetailsForm() {
                   setDOBValue(event.value);
                   setDOBErrorMessage('');
                 }}
+                maxDate={new Date()}
                 errorMessage={DOBErrorMessage}
                 value={DOBValue}
               />
