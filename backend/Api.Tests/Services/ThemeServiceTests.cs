@@ -31,7 +31,7 @@ namespace Api.Tests.Services
 
             var result = await _themeService.GetAllThemesAsync();
 
-            Assert.Equal(3, result.Count());
+            Assert.Equal(2, result.Count());
             Assert.Equal(themes[0].Name, result.First().Name);
             Assert.Equal(themes[1].Name, result.Last().Name);
         }
