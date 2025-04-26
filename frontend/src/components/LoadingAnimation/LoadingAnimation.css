@@ -16,24 +16,6 @@
   will-change: transform;
 }
 
-/* .circle-container {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  margin: 0 auto;
-}
-
-.dot {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #4f46e5;
-  border-radius: 50%;
-  left: 50%;
-  top: 0%;
-  transform-origin: center 20px; 
-} */
-
 .loading-text {
   margin-top: 30px;
   font-size: 16px;

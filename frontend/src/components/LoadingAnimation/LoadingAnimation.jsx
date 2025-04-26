@@ -29,19 +29,6 @@ const loadingText = {
 function LoadingAnimation() {
   return (
     <div className="loading-wrapper">
-      {/* another loading animation */}
-      {/* <motion.div
-        className="circle-container"
-        variants={rotatingContainer}
-        initial="initial"
-        animate="animate"
-      >
-         <div className="dot" style={{ transform: "rotate(0deg) translateY(-20px)" }} />
-        <div className="dot" style={{ transform: "rotate(45deg) translateY(-20px)" }} />
-        <div className="dot" style={{ transform: "rotate(90deg) translateY(-20px)" }} />
-        <div className="dot" style={{ transform: "rotate(135deg) translateY(-20px)" }} />
-        <div className="dot" style={{ transform: "rotate(180deg) translateY(-20px)" }} />
-      </motion.div> */}
       <motion.div
         className="spinner"
         animate={{ rotate: 360 }}
