@@ -6,6 +6,7 @@ import ImageGenerationPage from './pages/ImageGenerationPage';
 import RootLayoutPage from './pages/RootLayoutPage';
 import UserInputPage from './pages/UserInputPage';
 import LoadingPage from './pages/LoadingPage';
+import CardSelectionPage from './pages/CardSelectionPage/CardSelectionPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="user-input" element={<UserInputPage />} />
             <Route path="/loading" element={<LoadingPage />} />
+            <Route path="selection" element={<CardSelectionPage />} />
           </Route>
           {/* Remove this at the end */}
           <Route path="/image-generation" element={<ImageGenerationPage />} />
