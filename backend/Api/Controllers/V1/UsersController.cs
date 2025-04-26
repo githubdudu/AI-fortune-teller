@@ -44,7 +44,15 @@ namespace Api.Controllers.V1
             try
             {
                 var user = await _userService.CreateUserAsync(request);
-                return CreatedAtAction(nameof(GetUser), new { id = user.Id, version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "1.0" }, user);
+                return CreatedAtAction(
+                    nameof(GetUser),
+                    new
+                    {
+                        id = user.Id,
+                        version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "1.0",
+                    },
+                    user
+                );
             }
             catch (InvalidOperationException ex)
             {
@@ -82,4 +90,4 @@ namespace Api.Controllers.V1
             return NoContent();
         }
     }
-} 
+}

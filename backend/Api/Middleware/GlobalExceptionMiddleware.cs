@@ -13,7 +13,8 @@ namespace Api.Middleware
         public GlobalExceptionMiddleware(
             RequestDelegate next,
             ILogger<GlobalExceptionMiddleware> logger,
-            IWebHostEnvironment env)
+            IWebHostEnvironment env
+        )
         {
             _next = next;
             _logger = logger;
@@ -39,17 +40,17 @@ namespace Api.Middleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             var response = _env.IsDevelopment()
-                ? new 
+                ? new
                 {
                     StatusCode = context.Response.StatusCode,
                     Message = exception.Message,
-                    Detail = exception.StackTrace
+                    Detail = exception.StackTrace,
                 }
-                : new 
+                : new
                 {
                     StatusCode = context.Response.StatusCode,
                     Message = "An internal server error occurred.",
-                    Detail = (string?)null
+                    Detail = (string?)null,
                 };
 
             var json = JsonSerializer.Serialize(response);
@@ -60,9 +61,11 @@ namespace Api.Middleware
     // Extension method for middleware registration
     public static class GlobalExceptionMiddlewareExtensions
     {
-        public static IApplicationBuilder UseGlobalExceptionMiddleware(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseGlobalExceptionMiddleware(
+            this IApplicationBuilder builder
+        )
         {
             return builder.UseMiddleware<GlobalExceptionMiddleware>();
         }
     }
-} 
+}

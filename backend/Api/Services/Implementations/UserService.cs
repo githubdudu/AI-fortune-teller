@@ -46,18 +46,22 @@ namespace Api.Services.Implementations
 
             var existingUserByEmail = await _userRepository.GetByEmailAsync(request.Email);
             if (existingUserByEmail != null)
-                throw new InvalidOperationException($"A user with email {request.Email} already exists.");
+                throw new InvalidOperationException(
+                    $"A user with email {request.Email} already exists."
+                );
 
             var existingUserByUsername = await _userRepository.GetByUsernameAsync(request.Username);
             if (existingUserByUsername != null)
-                throw new InvalidOperationException($"A user with username {request.Username} already exists.");
+                throw new InvalidOperationException(
+                    $"A user with username {request.Username} already exists."
+                );
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Username = request.Username,
                 Email = request.Email,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
 
             await _userRepository.AddAsync(user);
@@ -73,14 +77,20 @@ namespace Api.Services.Implementations
                 throw new KeyNotFoundException($"User with ID {id} not found.");
 
             // Check if another user already has the requested username
-            var existingUserWithUsername = await _userRepository.GetByUsernameAsync(request.Username);
+            var existingUserWithUsername = await _userRepository.GetByUsernameAsync(
+                request.Username
+            );
             if (existingUserWithUsername != null && existingUserWithUsername.Id != id)
-                throw new InvalidOperationException($"Username {request.Username} is already taken.");
+                throw new InvalidOperationException(
+                    $"Username {request.Username} is already taken."
+                );
 
             // Check if another user already has the requested email
             var existingUserWithEmail = await _userRepository.GetByEmailAsync(request.Email);
             if (existingUserWithEmail != null && existingUserWithEmail.Id != id)
-                throw new InvalidOperationException($"Email {request.Email} is already registered.");
+                throw new InvalidOperationException(
+                    $"Email {request.Email} is already registered."
+                );
 
             // Update the user
             user.Username = request.Username;
@@ -110,8 +120,8 @@ namespace Api.Services.Implementations
                 Username = user.Username,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt,
-                UpdatedAt = user.UpdatedAt
+                UpdatedAt = user.UpdatedAt,
             };
         }
     }
-} 
+}

@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
@@ -14,4 +14,4 @@ namespace Api.Controllers
             return Ok("200 OK");
         }
     }
-} 
+}

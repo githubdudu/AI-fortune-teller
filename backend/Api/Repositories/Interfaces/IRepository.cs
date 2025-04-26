@@ -2,7 +2,8 @@ using System.Linq.Expressions;
 
 namespace Api.Repositories.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T>
+        where T : class
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
@@ -13,4 +14,4 @@ namespace Api.Repositories.Interfaces
         Task<bool> ExistsAsync(Guid id);
         Task<int> SaveChangesAsync();
     }
-} 
+}
