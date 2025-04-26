@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.71.10",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "gestalt": "^176.1.0",
     "immer": "^10.1.1",
     "prop-types": "^15.8.1",

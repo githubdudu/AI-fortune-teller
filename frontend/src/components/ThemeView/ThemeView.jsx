@@ -1,9 +1,12 @@
 import { Flex } from 'gestalt';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
+import { API_CONFIG } from '../../constants/config';
 
-// TODO: this dummy themes should be replaced with AppContext's theme
-const themes = [
+// Hardcoded themes as fallback
+const hardcodedThemes = [
   {
     id: 1,
     name: 'general',
@@ -51,7 +54,7 @@ const themes = [
     name: 'decisions',
     image: 'icons/decisions.png',
     description:
-      'Gain clarity and confidence when facing life’s turning points, and uncover what truly aligns with your path.',
+      'Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.',
   },
   {
     id: 8,
@@ -63,6 +66,45 @@ const themes = [
 ];
 
 function ThemeView() {
+  const [themes, setThemes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      if (!API_CONFIG.USE_API_THEMES) {
+        setThemes(hardcodedThemes);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const apiUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.THEMES}`;
+        const response = await axios.get(apiUrl);
+
+        // Map API response to format compatible with the component
+        const apiThemes = response.data.map((theme) => ({
+          id: theme.id,
+          name: theme.name,
+          image: theme.imageSource,
+          description: theme.description,
+        }));
+        setThemes(apiThemes);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching themes:', err);
+        setError(
+          'Failed to load themes from API. Using hardcoded themes instead.',
+        );
+        setThemes(hardcodedThemes);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchThemes();
+  }, []);
+
   return (
     <>
       <Flex
@@ -71,6 +113,10 @@ function ThemeView() {
         direction="column"
         gap={6}
       >
+        {/* Display loading state or error message */}
+        {loading && <p>Loading themes...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+
         {/* TODO: Add buttons (right & left) and animation to scroll through the theme cards, and prevent Theme cards overflowing & getting squashed */}
         <Flex
           alignItems="center"
