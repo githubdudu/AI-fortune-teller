@@ -14,13 +14,15 @@
 
 
 .tarot-card {
-  width: 14vw;
-  height: 21vw;
-  perspective: 1000px;
+  width: 13rem;
+  height: 19.5rem;
   cursor: pointer;
 }
 
-
+.tarot-card.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 
 .tarot-card-inner {
   position: relative;
@@ -37,11 +39,16 @@
   animation: glow 2s infinite alternate;
 }
 
+
+.tarot-card.disabled .tarot-card-inner:hover {
+  position: relative;
+  animation: none;
+  box-shadow: none;
+}
+
 .tarot-card.flipped .tarot-card-inner {
   transform: rotateY(180deg);
 }
-
-
 
 .tarot-card-front,
 .tarot-card-back {
@@ -64,5 +71,18 @@
   transform: rotateY(180deg);
   border-radius: 10px;
   background-color: rgb(147, 169, 231);
+}
 
+
+.tarot-card.disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  z-index: 10;
+  pointer-events: none;
 }
