@@ -23,6 +23,14 @@ namespace Api.Data
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).IsRequired();
             });
+
+            modelBuilder.Entity<Theme>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(30);
+                entity.Property(e => e.ImageSource).IsRequired();
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(300);
+            });
         }
     }
 }
