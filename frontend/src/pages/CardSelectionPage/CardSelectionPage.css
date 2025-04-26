@@ -93,7 +93,6 @@
   position: absolute;
   inset: -5px;
   border-radius: 15px;
-  background: linear-gradient(45deg, #ffd7ec, #9198e5, #66cdff);
   animation: rotate 2s linear infinite;
   z-index: -1;
 }

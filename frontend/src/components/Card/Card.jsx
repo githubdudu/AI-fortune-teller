@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import './Card.css';
 import PropTypes from 'prop-types';
 
-const TarotCard = ({ frontImage, backImage, disabled, onCardFlip }) => {
+const TarotCard = ({
+  frontImage,
+  backImage,
+  disabled,
+  onCardFlip,
+  description,
+  name,
+}) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleCardClick = () => {
@@ -27,6 +34,12 @@ const TarotCard = ({ frontImage, backImage, disabled, onCardFlip }) => {
         </div>
         <div className="tarot-card-back">
           <img src={backImage} alt="Tarot Card Back" />
+          {description && (
+            <div className="tarot-card-description">
+              <h3>{name}</h3>
+              <p>{description}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -38,6 +51,8 @@ TarotCard.propTypes = {
   backImage: PropTypes.string,
   disabled: PropTypes.bool,
   onCardFlip: PropTypes.func,
+  description: PropTypes.string,
+  name: PropTypes.string,
 };
 
 TarotCard.defaultProps = {
@@ -45,6 +60,8 @@ TarotCard.defaultProps = {
   backImage: null,
   disabled: false,
   onCardFlip: null,
+  description: '',
+  name: '',
 };
 
 export default TarotCard;

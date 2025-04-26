@@ -20,7 +20,12 @@ export default function CardSelectionPage() {
   const fetchCards = () => {
     setIsLoading(true);
     axios
-      .get('http://localhost:5000/api/v1/cards/random')
+      .get('http://localhost:5000/api/v1/cards/random?limit=5', {
+        headers: {
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+        },
+      })
       .then((response) => {
         setCards(response.data || []);
         setIsLoading(false);
@@ -112,6 +117,8 @@ export default function CardSelectionPage() {
               backImage={card.imageSource || '/defaultBackCard.png'}
               disabled={isCardDisabled(card.id)}
               onCardFlip={(flipped) => handleCardFlip(card.id, flipped)}
+              name={card.name}
+              description={card.description}
             />
             {selectedCards.includes(card.id) && (
               <div className="card-number">
