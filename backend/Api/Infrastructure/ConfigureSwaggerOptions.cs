@@ -17,7 +17,8 @@ namespace Api.Infrastructure
         /// Initializes a new instance of the <see cref="ConfigureSwaggerOptions"/> class.
         /// </summary>
         /// <param name="provider">The <see cref="IApiVersionDescriptionProvider">provider</see> used to generate Swagger documents.</param>
-        public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) => _provider = provider;
+        public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) =>
+            _provider = provider;
 
         /// <inheritdoc />
         public void Configure(SwaggerGenOptions options)
@@ -31,9 +32,12 @@ namespace Api.Infrastructure
                     {
                         Title = $"API {description.ApiVersion}",
                         Version = description.ApiVersion.ToString(),
-                        Description = description.IsDeprecated ? "This API version has been deprecated." : string.Empty
-                    });
+                        Description = description.IsDeprecated
+                            ? "This API version has been deprecated."
+                            : string.Empty,
+                    }
+                );
             }
         }
     }
-} 
+}

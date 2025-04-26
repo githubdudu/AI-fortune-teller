@@ -1,14 +1,12 @@
-using Microsoft.EntityFrameworkCore;
 using Api.Models.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Data
 {
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Theme> Themes { get; set; }

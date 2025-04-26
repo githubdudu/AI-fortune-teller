@@ -14,4 +14,4 @@ namespace Api.Services.Interfaces
         Task UpdateUserAsync(Guid id, CreateUserRequest request);
         Task<bool> DeleteUserAsync(Guid id);
     }
-} 
+}

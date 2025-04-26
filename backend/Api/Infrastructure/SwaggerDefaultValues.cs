@@ -36,16 +36,18 @@ namespace Api.Infrastructure
             // Remove parameters that are marked as obsolete
             foreach (var parameter in context.ApiDescription.ParameterDescriptions)
             {
-                var description = apiDescription.ParameterDescriptions
-                    .First(p => p.Name == parameter.Name);
+                var description = apiDescription.ParameterDescriptions.First(p =>
+                    p.Name == parameter.Name
+                );
 
                 if (parameter.IsRequired)
                 {
                     if (operation.Parameters != null)
                     {
-                        var openApiParameter = operation.Parameters
-                            .FirstOrDefault(p => p.Name == parameter.Name);
-                        
+                        var openApiParameter = operation.Parameters.FirstOrDefault(p =>
+                            p.Name == parameter.Name
+                        );
+
                         if (openApiParameter != null)
                         {
                             openApiParameter.Required = true;
@@ -59,9 +61,10 @@ namespace Api.Infrastructure
                 {
                     if (operation.Parameters != null)
                     {
-                        var openApiParam = operation.Parameters
-                            .FirstOrDefault(p => p.Name == parameter.Name);
-                        
+                        var openApiParam = operation.Parameters.FirstOrDefault(p =>
+                            p.Name == parameter.Name
+                        );
+
                         if (openApiParam != null)
                         {
                             if (openApiParam.Description == null)
@@ -74,4 +77,4 @@ namespace Api.Infrastructure
             }
         }
     }
-} 
+}

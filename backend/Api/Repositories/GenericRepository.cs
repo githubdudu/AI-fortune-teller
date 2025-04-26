@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Repositories
 {
-    public class GenericRepository<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IRepository<T>
+        where T : class
     {
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -64,4 +65,4 @@ namespace Api.Repositories
             return await _context.SaveChangesAsync();
         }
     }
-} 
+}

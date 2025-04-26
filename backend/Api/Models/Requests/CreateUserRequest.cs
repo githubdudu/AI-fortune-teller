@@ -13,4 +13,4 @@ namespace Api.Models.Requests
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
     }
-} 
+}
