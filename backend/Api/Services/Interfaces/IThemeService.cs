@@ -7,6 +7,6 @@ namespace Api.Services.Interfaces
     public interface IThemeService
     {
         Task<IEnumerable<ThemeDto>> GetAllThemesAsync();
-        Task<ThemeDto?> GetThemeByIdAsync(int id);
+        Task<ThemeDto?> GetThemeByIdAsync(Guid id);
     }
 }

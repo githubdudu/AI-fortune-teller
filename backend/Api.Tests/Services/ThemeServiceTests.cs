@@ -23,8 +23,8 @@ namespace Api.Tests.Services
         {
             var themes = new List<Theme>
             {
-                new Theme { Id = 1, Name = "general", ImageSource = "icons/general.png", Description = "Embrace your optimism and strive for fulfilment, but stay open to new experiences along your journey." },
-                new Theme { Id = 2, Name = "love", ImageSource = "icons/love.png", Description = "Open your heart to deep emotional connections, and reflect on current feelings or new romantic beginnings." },
+                new Theme { Id = Guid.NewGuid(), Name = "general", ImageSource = "icons/general.png", Description = "Embrace your optimism and strive for fulfilment, but stay open to new experiences along your journey." },
+                new Theme { Id = Guid.NewGuid(), Name = "love", ImageSource = "icons/love.png", Description = "Open your heart to deep emotional connections, and reflect on current feelings or new romantic beginnings." },
             };
 
             _mockThemeRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(themes);
@@ -39,7 +39,7 @@ namespace Api.Tests.Services
         [Fact]
         public async Task GetThemeByIdAsync_WithExistingId_ReturnsTheme()
         {
-            var themeId = 1;
+            var themeId = Guid.NewGuid();
             var theme = new Theme { Id = themeId, Name = "general", ImageSource = "icons/general.png", Description = "Embrace your optimism and strive for fulfilment, but stay open to new experiences along your journey." };
 
             _mockThemeRepository.Setup(repo => repo.GetByIdAsync(themeId)).ReturnsAsync(theme);
@@ -55,7 +55,7 @@ namespace Api.Tests.Services
         [Fact]
         public async Task GetThemeByIdAsync_WithNonExistingId_ReturnsNull()
         {
-            var themeId = 1;
+            var themeId = Guid.NewGuid();
 
             _mockThemeRepository.Setup(repo => repo.GetByIdAsync(themeId)).ReturnsAsync((Theme)null);
 

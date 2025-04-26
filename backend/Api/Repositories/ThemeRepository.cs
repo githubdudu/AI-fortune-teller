@@ -11,9 +11,14 @@ namespace Api.Repositories
         {
         }
 
-        public async Task<Theme?> GetByIdAsync(int id)
+        public async Task<IEnumerable<Theme>> GetAllThemesAsync()
         {
-            return await _dbSet.FirstOrDefaultAsync(t => t.Id == id);
+            return await _context.Themes.ToListAsync();
+        }
+
+        public async Task<Theme?> GetThemeByIdAsync(Guid id)
+        {
+            return await _context.Themes.FindAsync(id);
         }
     }
 }
