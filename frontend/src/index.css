@@ -4,6 +4,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 @import 'gestalt/dist/gestalt.css';
+@import 'gestalt-datepicker/dist/gestalt-datepicker.css';
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
