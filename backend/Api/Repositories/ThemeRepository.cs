@@ -16,7 +16,7 @@ namespace Api.Repositories
             return await _context.Themes.ToListAsync();
         }
 
-        public async Task<Theme?> GetThemeByIdAsync(Guid id)
+        public override async Task<Theme?> GetByIdAsync(Guid id)
         {
             return await _context.Themes.FindAsync(id);
         }

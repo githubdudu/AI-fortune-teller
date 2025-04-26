@@ -24,7 +24,7 @@ namespace Api.Controllers.V1
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<ThemeDto>>> GetTheme(Guid id)
+        public async Task<ActionResult<ThemeDto>> GetTheme(Guid id)
         {
             var theme = await _themeService.GetThemeByIdAsync(id);
             if (theme == null)
