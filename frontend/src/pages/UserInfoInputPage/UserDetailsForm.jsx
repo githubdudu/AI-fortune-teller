@@ -96,6 +96,16 @@ function UserDetailsForm() {
     }
   }
 
+  function handleDateChange({ value }) {
+    if (!value || !(value instanceof Date)) {
+      setDOBErrorMessage('Invalid date');
+      return;
+    }
+    //  iso 8601 format
+    setDOBValue(value.toISOString());
+    setDOBErrorMessage('');
+  }
+
   function handlePlaceOfBirthChange(event) {
     const { value } = event;
     if (value.length > 200) {
@@ -149,10 +159,7 @@ function UserDetailsForm() {
               <DatePicker
                 id="DOB"
                 placeholder="Date of Birth"
-                onChange={(event) => {
-                  setDOBValue(event.value);
-                  setDOBErrorMessage('');
-                }}
+                onChange={handleDateChange}
                 maxDate={new Date()}
                 errorMessage={DOBErrorMessage}
                 value={DOBValue}
