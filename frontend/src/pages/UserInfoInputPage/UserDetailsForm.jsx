@@ -65,7 +65,11 @@ function UserDetailsForm() {
       POBValue,
     });
 
-    navigate('/selection');
+    if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {
+      return;
+    } else {
+      navigate('/selection');
+    }
   }
 
   function handleNameChange(event) {
