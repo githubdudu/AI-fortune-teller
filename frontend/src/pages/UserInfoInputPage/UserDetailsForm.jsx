@@ -25,9 +25,9 @@ function UserDetailsForm() {
   const [genderValue, setGenderValue] = useSessionStorage('gender', '');
   const [nationalityValue, setNationalityValue] = useSessionStorage(
     'nationality',
-    '',
+    null,
   );
-  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', '');
+  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', null);
 
   const navigate = useNavigate();
 
@@ -72,6 +72,7 @@ function UserDetailsForm() {
       nationalityValue,
       nationalityID: nationalityValue?.value,
       POBValue,
+      POBID: POBValue?.value,
     });
 
     if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {
@@ -117,16 +118,6 @@ function UserDetailsForm() {
 
   function handleGenderChange({ value }) {
     setGenderValue(value);
-  }
-
-  function handlePlaceOfBirthChange(event) {
-    const { value } = event;
-    if (value.length > 200) {
-      setPOBErrorMessage('Place of Birth should not exceed 200 characters');
-      return;
-    }
-    setPOBErrorMessage('');
-    setPOBValue(value);
   }
 
   return (
@@ -214,18 +205,15 @@ function UserDetailsForm() {
               />
             </div>
             <div className="flex-1">
-              <TextField
-                id="placeOfBirth"
-                name="placeOfBirth"
-                label="The Place or City of Birth"
-                placeholder="e.g. New York, Tokyo, Auckland"
-                size="lg"
-                onChange={handlePlaceOfBirthChange}
-                onBlur={() => {
-                  setPOBErrorMessage('');
-                }}
+              <NationalityInputBox
+                id="residency"
+                name="residency"
+                label="The Country You Are Residing In"
+                placeholder="Please type and select"
+                selected={POBValue}
+                setSelected={setPOBValue}
                 errorMessage={POBErrorMessage}
-                value={POBValue}
+                setErrorMessage={setPOBErrorMessage}
               />
             </div>
           </div>
