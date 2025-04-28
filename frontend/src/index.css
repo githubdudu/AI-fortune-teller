@@ -60,3 +60,9 @@ body {
     color: #747bff;
   }
 }
+
+/* Hack to fix height inconsistent of Gestalt input box */
+
+select#gender {
+  height: 52px;
+}
