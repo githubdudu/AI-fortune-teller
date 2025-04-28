@@ -55,7 +55,8 @@ function NationalityInputBox({
       }}
       onSelect={handleSelect}
       options={suggestedOptions}
-      placeholder="Nationality"
+      label="The Country You Are Born In"
+      placeholder="Please type and select"
       selectedOption={selected}
       errorMessage={errorMessage}
       size="lg"

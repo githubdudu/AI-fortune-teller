@@ -1,4 +1,4 @@
-import { Button, Fieldset, TextField, ComboBox } from 'gestalt';
+import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState } from 'react';
 import { useSessionStorage } from 'react-use';
@@ -16,6 +16,7 @@ function UserDetailsForm() {
   const [FNValue, setFNValue] = useSessionStorage('firstName', '');
   const [LNValue, setLNValue] = useSessionStorage('lastName', '');
   const [DOBValue, setDOBValue] = useSessionStorage('dateOfBirth', '');
+  const [genderValue, setGenderValue] = useSessionStorage('gender', '');
   const [nationalityValue, setNationalityValue] = useSessionStorage(
     'nationality',
     '',
@@ -61,6 +62,7 @@ function UserDetailsForm() {
       FNValue,
       LNValue,
       DOBValue,
+      genderValue,
       nationalityValue,
       POBValue,
     });
@@ -106,6 +108,10 @@ function UserDetailsForm() {
     setDOBErrorMessage('');
   }
 
+  function handleGenderChange({ value }) {
+    setGenderValue(value);
+  }
+
   function handlePlaceOfBirthChange(event) {
     const { value } = event;
     if (value.length > 200) {
@@ -127,8 +133,9 @@ function UserDetailsForm() {
             <div className="w-full ">
               <TextField
                 id="firstName"
+                label="First Name"
+                placeholder="Please enter your first name"
                 name="firstName"
-                placeholder="First Name"
                 size="lg"
                 onChange={handleNameChange}
                 onBlur={() => {
@@ -142,7 +149,8 @@ function UserDetailsForm() {
               <TextField
                 id="lastName"
                 name="lastName"
-                placeholder="Last Name"
+                label="Last Name"
+                placeholder="Please enter your last name"
                 size="lg"
                 onChange={handleNameChange}
                 onBlur={() => {
@@ -155,17 +163,45 @@ function UserDetailsForm() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <DatePicker
-                id="DOB"
-                placeholder="Date of Birth"
-                onChange={handleDateChange}
-                maxDate={new Date()}
-                errorMessage={DOBErrorMessage}
-                value={DOBValue}
-              />
+            <div className="flex-1 flex gap-4">
+              <div className="flex-2">
+                {/* A date picker for the date of birth */}
+                <DatePicker
+                  id="DOB"
+                  label="Date of Birth"
+                  placeholder="DD/MM/YYYY"
+                  onChange={handleDateChange}
+                  maxDate={new Date()}
+                  errorMessage={DOBErrorMessage}
+                  value={DOBValue}
+                />
+              </div>
+              <div className="flex-1">
+                {/* A gender option box */}
+
+                <SelectList
+                  id="gender"
+                  label="Gender"
+                  placeholder="Please select"
+                  size="lg"
+                  onChange={handleGenderChange}
+                  value={genderValue}
+                >
+                  {[
+                    { label: 'Female', value: 0 },
+                    { label: 'Male', value: 1 },
+                    { label: 'Other', value: 2 },
+                  ].map(({ label, value }) => (
+                    <SelectList.Option
+                      key={value}
+                      value={value}
+                      label={label}
+                    />
+                  ))}
+                </SelectList>
+              </div>
             </div>
-            <div className="flex-2">
+            <div className="flex-1">
               <NationalityInputBox
                 inputValue={nationalityValue}
                 setInputValue={setNationalityValue}
@@ -179,7 +215,8 @@ function UserDetailsForm() {
             <TextField
               id="placeOfBirth"
               name="placeOfBirth"
-              placeholder="Place of Birth"
+              label="The Place or City of Birth"
+              placeholder="e.g. New York, Tokyo, Auckland"
               size="lg"
               onChange={handlePlaceOfBirthChange}
               onBlur={() => {
