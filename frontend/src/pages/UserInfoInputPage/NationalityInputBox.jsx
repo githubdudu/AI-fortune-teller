@@ -10,6 +10,10 @@ const COUNTRY_OPTIONS = COUNTRY_LIST.map((item) => ({
 }));
 
 function NationalityInputBox({
+  id,
+  name,
+  label,
+  placeholder,
   selected,
   setSelected,
   errorMessage = '',
@@ -43,7 +47,8 @@ function NationalityInputBox({
   return (
     <ComboBox
       accessibilityClearButtonLabel="Clear the current value"
-      id="nationality"
+      id={id}
+      name={name}
       inputValue={inputValue}
       noResultText="No results"
       onBlur={() => {
@@ -60,8 +65,8 @@ function NationalityInputBox({
       }}
       onSelect={handleSelect}
       options={suggestedOptions}
-      label="The Country You Are Born In"
-      placeholder="Please type and select"
+      label={label}
+      placeholder={placeholder}
       selectedOption={selected}
       errorMessage={errorMessage}
       size="lg"
@@ -70,6 +75,10 @@ function NationalityInputBox({
 }
 
 NationalityInputBox.propTypes = {
+  id: PropTypes.string,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
   selected: PropTypes.shape({
     value: PropTypes.number,
     label: PropTypes.string,

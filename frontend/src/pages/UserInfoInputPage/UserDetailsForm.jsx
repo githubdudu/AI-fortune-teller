@@ -203,6 +203,10 @@ function UserDetailsForm() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <NationalityInputBox
+                id="nationality"
+                name="nationality"
+                label="The Country You Are Born In"
+                placeholder="Please type and select"
                 selected={nationalityValue}
                 setSelected={setNationalityValue}
                 errorMessage={nationalityErrorMessage}
