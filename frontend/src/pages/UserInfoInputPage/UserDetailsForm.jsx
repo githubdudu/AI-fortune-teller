@@ -7,6 +7,12 @@ import NationalityInputBox from './NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
 
 function UserDetailsForm() {
+  const GENDER_OPTIONS = [
+    { label: 'Female', value: 0 },
+    { label: 'Male', value: 1 },
+    { label: 'Other', value: 2 },
+  ];
+
   const [FNErrorMessage, setFNErrorMessage] = useState('');
   const [LNErrorMessage, setLNErrorMessage] = useState('');
   const [DOBErrorMessage, setDOBErrorMessage] = useState('');
@@ -62,8 +68,9 @@ function UserDetailsForm() {
       FNValue,
       LNValue,
       DOBValue,
-      genderValue,
+      genderID: genderValue,
       nationalityValue,
+      nationalityID: nationalityValue?.value,
       POBValue,
     });
 
@@ -125,7 +132,7 @@ function UserDetailsForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-[788px] w-[calc(100vw-4.5rem)]"
+      className="min-w-[600px] max-w-[788px] w-[calc(100vw-4.5rem)]"
     >
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
@@ -162,69 +169,61 @@ function UserDetailsForm() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 flex gap-4">
-              <div className="flex-2">
-                {/* A date picker for the date of birth */}
-                <DatePicker
-                  id="DOB"
-                  label="Date of Birth"
-                  placeholder="DD/MM/YYYY"
-                  onChange={handleDateChange}
-                  maxDate={new Date()}
-                  errorMessage={DOBErrorMessage}
-                  value={DOBValue}
-                />
-              </div>
-              <div className="flex-1">
-                {/* A gender option box */}
-
-                <SelectList
-                  id="gender"
-                  label="Gender"
-                  placeholder="Please select"
-                  size="lg"
-                  onChange={handleGenderChange}
-                  value={genderValue}
-                >
-                  {[
-                    { label: 'Female', value: 0 },
-                    { label: 'Male', value: 1 },
-                    { label: 'Other', value: 2 },
-                  ].map(({ label, value }) => (
-                    <SelectList.Option
-                      key={value}
-                      value={value}
-                      label={label}
-                    />
-                  ))}
-                </SelectList>
-              </div>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              {/* A date picker for the date of birth */}
+              <DatePicker
+                id="DOB"
+                label="Date of Birth"
+                placeholder="DD/MM/YYYY"
+                onChange={handleDateChange}
+                maxDate={new Date()}
+                errorMessage={DOBErrorMessage}
+                value={DOBValue}
+              />
             </div>
             <div className="flex-1">
+              {/* A gender option box */}
+
+              <SelectList
+                id="gender"
+                label="Gender"
+                placeholder="Please select"
+                size="lg"
+                onChange={handleGenderChange}
+                value={genderValue}
+              >
+                {GENDER_OPTIONS.map(({ label, value }) => (
+                  <SelectList.Option key={value} value={value} label={label} />
+                ))}
+              </SelectList>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
               <NationalityInputBox
-                inputValue={nationalityValue}
-                setInputValue={setNationalityValue}
+                selected={nationalityValue}
+                setSelected={setNationalityValue}
                 errorMessage={nationalityErrorMessage}
                 setErrorMessage={setNationalityErrorMessage}
               />
             </div>
-          </div>
-
-          <div>
-            <TextField
-              id="placeOfBirth"
-              name="placeOfBirth"
-              label="The Place or City of Birth"
-              placeholder="e.g. New York, Tokyo, Auckland"
-              size="lg"
-              onChange={handlePlaceOfBirthChange}
-              onBlur={() => {
-                setPOBErrorMessage('');
-              }}
-              errorMessage={POBErrorMessage}
-              value={POBValue}
-            />
+            <div className="flex-1">
+              <TextField
+                id="placeOfBirth"
+                name="placeOfBirth"
+                label="The Place or City of Birth"
+                placeholder="e.g. New York, Tokyo, Auckland"
+                size="lg"
+                onChange={handlePlaceOfBirthChange}
+                onBlur={() => {
+                  setPOBErrorMessage('');
+                }}
+                errorMessage={POBErrorMessage}
+                value={POBValue}
+              />
+            </div>
           </div>
           <Button text="Proceed" type="submit" size="lg" color="red" />
         </div>

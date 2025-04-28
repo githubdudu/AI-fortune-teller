@@ -2,15 +2,20 @@ import { useState } from 'react';
 import { ComboBox } from 'gestalt';
 import PropTypes from 'prop-types';
 
-import { COUNTRY_OPTIONS } from '../../constants/nationality';
+import { COUNTRY_LIST } from '../../constants/nationality';
+
+const COUNTRY_OPTIONS = COUNTRY_LIST.map((item) => ({
+  value: item.id,
+  label: item.label,
+}));
 
 function NationalityInputBox({
-  inputValue,
-  setInputValue,
+  selected,
+  setSelected,
   errorMessage = '',
   setErrorMessage = () => {},
 }) {
-  const [selected, setSelected] = useState();
+  const [inputValue, setInputValue] = useState();
   const [suggestedOptions, setSuggestedOptions] = useState(COUNTRY_OPTIONS);
 
   const handleOnChange = ({ value }) => {
@@ -65,8 +70,11 @@ function NationalityInputBox({
 }
 
 NationalityInputBox.propTypes = {
-  inputValue: PropTypes.string.isRequired,
-  setInputValue: PropTypes.func.isRequired,
+  selected: PropTypes.shape({
+    value: PropTypes.number,
+    label: PropTypes.string,
+  }).isRequired,
+  setSelected: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   setErrorMessage: PropTypes.func,
 };
