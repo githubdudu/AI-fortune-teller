@@ -69,6 +69,7 @@ function ThemeView() {
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedTheme, setSelectedTheme] = useState([]);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -125,11 +126,12 @@ function ThemeView() {
           gap={6}
         >
           {themes.map((theme) => (
-            <ThemeCard key={theme.id} theme={theme} />
+            <div key={theme.id} onMouseEnter={() => setSelectedTheme(theme)}>
+              <ThemeCard key={theme.id} theme={theme} />
+            </div>
           ))}
         </Flex>
-        {/* Show description only if a card is clicked */}
-        <ThemeDescription />
+        {selectedTheme && <ThemeDescription theme={selectedTheme} />}
       </Flex>
     </>
   );
