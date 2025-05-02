@@ -14,9 +14,11 @@ function UserInputPage() {
         <UserQuestionInput />
       </div>
       <Box marginBottom={2} />
-      <h2> - or - </h2>
+      <h2 className="text-[#261060] text-2xl font-bold text-center mb-7">
+        - or -
+      </h2>
       <Box marginBottom={2} />
-      <h2 className="text-[#261060] text-3xl font-bold text-center mb-7">
+      <h2 className="text-[#261060] text-4xl font-bold text-center mb-7">
         Select a theme to let fate speak first.
       </h2>
       <div className="w-250">

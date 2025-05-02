@@ -62,7 +62,7 @@ function UserQuestionInput() {
         <div className="relative mb-1">
           <textarea
             id="text-area-user-prompt"
-            placeholder="Type a question"
+            placeholder="Type a question you'd like to seek from the cards"
             value={input}
             onChange={handleChange}
             rows={1}
