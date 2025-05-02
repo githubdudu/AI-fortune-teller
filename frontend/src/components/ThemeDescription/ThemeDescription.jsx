@@ -1,41 +1,11 @@
 import { BannerUpsell, Box } from 'gestalt';
 
-function ThemeDescription() {
+function ThemeDescription({theme}) {
   // This value is a dummy placeholder.
   const value =
     'Embrace your optimism and strive for fulfilment, but stay open to new experiences along your journey.';
   return (
     <>
-      {/* Gestalt */}
-      {/* <Box
-        alignItems="center"
-        display="flex"
-        height="100%"
-        justifyContent="center"
-        padding={8}
-      >
-        <BannerUpsell
-          message={value}
-          primaryAction={{
-            accessibilityLabel: 'Audio',
-            label: 'Audio',
-            onClick: () => {
-              print('This is the Audio button');
-            },
-            role: 'button',
-          }}
-          secondaryAction={{
-            accessibilityLabel: 'Share',
-            label: 'Share',
-            onClick: () => {
-              print('This is the Share button');
-            },
-            role: 'button',
-          }}
-        />
-      </Box> */}
-
-      {/* Tailwind CSS */}
       <div
         className="w-2xl overflow-hidden shadow-md"
         style={{ backgroundColor: '#FFFBEF' }}
