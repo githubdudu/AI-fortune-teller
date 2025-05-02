@@ -66,10 +66,17 @@ const hardcodedThemes = [
 ];
 
 function ThemeView() {
+  const defaultTheme = {
+    id: 0,
+    name: 'Explore the themes',
+    image: null,
+    description: 'Hover over any theme card for its explanation.',
+  };
+
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedTheme, setSelectedTheme] = useState([]);
+  const [selectedTheme, setSelectedTheme] = useState(defaultTheme);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -131,7 +138,7 @@ function ThemeView() {
             </div>
           ))}
         </Flex>
-        {selectedTheme && <ThemeDescription theme={selectedTheme} />}
+        <ThemeDescription theme={selectedTheme} />
       </Flex>
     </>
   );
