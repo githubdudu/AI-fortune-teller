@@ -2,15 +2,24 @@ import { useState } from 'react';
 import { ComboBox } from 'gestalt';
 import PropTypes from 'prop-types';
 
-import { COUNTRY_OPTIONS } from '../../constants/nationality';
+import { COUNTRY_LIST } from '../../constants/nationality';
+
+const COUNTRY_OPTIONS = COUNTRY_LIST.map((item) => ({
+  value: item.id,
+  label: item.label,
+}));
 
 function NationalityInputBox({
-  inputValue,
-  setInputValue,
+  id,
+  name,
+  label,
+  placeholder,
+  selected,
+  setSelected,
   errorMessage = '',
   setErrorMessage = () => {},
 }) {
-  const [selected, setSelected] = useState();
+  const [inputValue, setInputValue] = useState();
   const [suggestedOptions, setSuggestedOptions] = useState(COUNTRY_OPTIONS);
 
   const handleOnChange = ({ value }) => {
@@ -38,7 +47,8 @@ function NationalityInputBox({
   return (
     <ComboBox
       accessibilityClearButtonLabel="Clear the current value"
-      id="nationality"
+      id={id}
+      name={name}
       inputValue={inputValue}
       noResultText="No results"
       onBlur={() => {
@@ -55,7 +65,8 @@ function NationalityInputBox({
       }}
       onSelect={handleSelect}
       options={suggestedOptions}
-      placeholder="Nationality"
+      label={label}
+      placeholder={placeholder}
       selectedOption={selected}
       errorMessage={errorMessage}
       size="lg"
@@ -64,8 +75,15 @@ function NationalityInputBox({
 }
 
 NationalityInputBox.propTypes = {
-  inputValue: PropTypes.string.isRequired,
-  setInputValue: PropTypes.func.isRequired,
+  id: PropTypes.string,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  selected: PropTypes.shape({
+    value: PropTypes.number,
+    label: PropTypes.string,
+  }).isRequired,
+  setSelected: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
   setErrorMessage: PropTypes.func,
 };

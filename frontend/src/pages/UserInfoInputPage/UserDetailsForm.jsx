@@ -1,4 +1,4 @@
-import { Button, Fieldset, TextField, ComboBox } from 'gestalt';
+import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState } from 'react';
 import { useSessionStorage } from 'react-use';
@@ -7,6 +7,12 @@ import NationalityInputBox from './NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
 
 function UserDetailsForm() {
+  const GENDER_OPTIONS = [
+    { label: 'Female', value: 0 },
+    { label: 'Male', value: 1 },
+    { label: 'Other', value: 2 },
+  ];
+
   const [FNErrorMessage, setFNErrorMessage] = useState('');
   const [LNErrorMessage, setLNErrorMessage] = useState('');
   const [DOBErrorMessage, setDOBErrorMessage] = useState('');
@@ -16,11 +22,12 @@ function UserDetailsForm() {
   const [FNValue, setFNValue] = useSessionStorage('firstName', '');
   const [LNValue, setLNValue] = useSessionStorage('lastName', '');
   const [DOBValue, setDOBValue] = useSessionStorage('dateOfBirth', '');
+  const [genderValue, setGenderValue] = useSessionStorage('gender', '');
   const [nationalityValue, setNationalityValue] = useSessionStorage(
     'nationality',
-    '',
+    null,
   );
-  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', '');
+  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', null);
 
   const navigate = useNavigate();
 
@@ -61,11 +68,18 @@ function UserDetailsForm() {
       FNValue,
       LNValue,
       DOBValue,
+      genderID: genderValue,
       nationalityValue,
+      nationalityID: nationalityValue?.value,
       POBValue,
+      POBID: POBValue?.value,
     });
 
-    navigate('/selection');
+    if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {
+      return;
+    } else {
+      navigate('/selection');
+    }
   }
 
   function handleNameChange(event) {
@@ -92,20 +106,24 @@ function UserDetailsForm() {
     }
   }
 
-  function handlePlaceOfBirthChange(event) {
-    const { value } = event;
-    if (value.length > 200) {
-      setPOBErrorMessage('Place of Birth should not exceed 200 characters');
+  function handleDateChange({ value }) {
+    if (!value || !(value instanceof Date)) {
+      setDOBErrorMessage('Invalid date');
       return;
     }
-    setPOBErrorMessage('');
-    setPOBValue(value);
+    //  iso 8601 format
+    setDOBValue(value.toISOString());
+    setDOBErrorMessage('');
+  }
+
+  function handleGenderChange({ value }) {
+    setGenderValue(value);
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-[788px] w-[calc(100vw-4.5rem)]"
+      className="min-w-[600px] max-w-[788px] w-[calc(100vw-4.5rem)]"
     >
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
@@ -113,8 +131,9 @@ function UserDetailsForm() {
             <div className="w-full ">
               <TextField
                 id="firstName"
+                label="First Name"
+                placeholder="Please enter your first name"
                 name="firstName"
-                placeholder="First Name"
                 size="lg"
                 onChange={handleNameChange}
                 onBlur={() => {
@@ -128,7 +147,8 @@ function UserDetailsForm() {
               <TextField
                 id="lastName"
                 name="lastName"
-                placeholder="Last Name"
+                label="Last Name"
+                placeholder="Please enter your last name"
                 size="lg"
                 onChange={handleNameChange}
                 onBlur={() => {
@@ -140,43 +160,62 @@ function UserDetailsForm() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex gap-4">
             <div className="flex-1">
+              {/* A date picker for the date of birth */}
               <DatePicker
                 id="DOB"
-                placeholder="Date of Birth"
-                onChange={(event) => {
-                  setDOBValue(event.value);
-                  setDOBErrorMessage('');
-                }}
+                label="Date of Birth"
+                placeholder="DD/MM/YYYY"
+                onChange={handleDateChange}
                 maxDate={new Date()}
                 errorMessage={DOBErrorMessage}
                 value={DOBValue}
               />
             </div>
-            <div className="flex-2">
+            <div className="flex-1">
+              {/* A gender option box */}
+
+              <SelectList
+                id="gender"
+                label="Gender"
+                placeholder="Please select"
+                size="lg"
+                onChange={handleGenderChange}
+                value={genderValue}
+              >
+                {GENDER_OPTIONS.map(({ label, value }) => (
+                  <SelectList.Option key={value} value={value} label={label} />
+                ))}
+              </SelectList>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
               <NationalityInputBox
-                inputValue={nationalityValue}
-                setInputValue={setNationalityValue}
+                id="nationality"
+                name="nationality"
+                label="The Country You Are Born In"
+                placeholder="Please type and select"
+                selected={nationalityValue}
+                setSelected={setNationalityValue}
                 errorMessage={nationalityErrorMessage}
                 setErrorMessage={setNationalityErrorMessage}
               />
             </div>
-          </div>
-
-          <div>
-            <TextField
-              id="placeOfBirth"
-              name="placeOfBirth"
-              placeholder="Place of Birth"
-              size="lg"
-              onChange={handlePlaceOfBirthChange}
-              onBlur={() => {
-                setPOBErrorMessage('');
-              }}
-              errorMessage={POBErrorMessage}
-              value={POBValue}
-            />
+            <div className="flex-1">
+              <NationalityInputBox
+                id="residency"
+                name="residency"
+                label="The Country You Are Residing In"
+                placeholder="Please type and select"
+                selected={POBValue}
+                setSelected={setPOBValue}
+                errorMessage={POBErrorMessage}
+                setErrorMessage={setPOBErrorMessage}
+              />
+            </div>
           </div>
           <Button text="Proceed" type="submit" size="lg" color="red" />
         </div>
