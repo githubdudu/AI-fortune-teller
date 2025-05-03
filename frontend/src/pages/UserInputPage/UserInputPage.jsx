@@ -10,11 +10,17 @@ import ThemeView from '../../components/ThemeView';
 function UserInputPage() {
   return (
     <>
-      {/* TODO: give max. and min. size for different viewport size */}
       <div className="w-165">
         <UserQuestionInput />
       </div>
-      <Box marginBottom={6} />
+      <Box marginBottom={2} />
+      <h2 className="text-[#261060] text-2xl font-bold text-center mb-7">
+        - or -
+      </h2>
+      <Box marginBottom={2} />
+      <h2 className="text-[#261060] text-4xl font-bold text-center mb-7">
+        Select a theme to let fate speak first.
+      </h2>
       <div className="w-250">
         <ThemeView />
       </div>

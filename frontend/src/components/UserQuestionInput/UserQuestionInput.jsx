@@ -54,31 +54,6 @@ function UserQuestionInput() {
 
   return (
     <>
-      {/* Gestalt */}
-      {/* <Text size="600" weight="bold" align="center">
-        What answer do you seek?
-      </Text>
-      <Box marginBottom={6} />
-      <TextArea
-        id="text-area-user-prompt"
-        label="User input"
-        labelDisplay="hidden"
-        onChange={({ value }) => setInput(value)}
-        placeholder="Select a category or type a question"
-        rows={1}
-        maxLength={{
-          characterCount: 280,
-          errorAccessibilityLabel:
-            'Limit reached. You can only use 280 characters in this field.',
-        }}
-        value={input}
-        disabled={false}
-      />
-      <Flex alignItems="center" justifyContent="center">
-        <Button text="Tell a Fortune" onClick={handleSubmit} size="sm" />
-      </Flex> */}
-
-      {/* Tailwind */}
       <div className="w-full max-w-2xl mx-auto">
         {/* TODO: Font to be changed later */}
         <h2 className="text-[#261060] text-5xl font-bold text-center mb-7">
@@ -87,7 +62,7 @@ function UserQuestionInput() {
         <div className="relative mb-1">
           <textarea
             id="text-area-user-prompt"
-            placeholder="Select a category or type a question"
+            placeholder="Type a question you'd like to seek from the cards"
             value={input}
             onChange={handleChange}
             rows={1}
