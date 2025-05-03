@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
 
 export default function CardSelectionPage() {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -52,15 +53,16 @@ export default function CardSelectionPage() {
   };
 
   const handleCardSelect = (cardId) => {
+    // Prevent selection if already have 3 cards selected and this card is not selected
     if (selectedCards.length >= 3 && !selectedCards.includes(cardId)) {
       return;
     }
 
-    if (selectedCards.includes(cardId)) {
-      setSelectedCards(selectedCards.filter((id) => id !== cardId));
-    } else if (selectedCards.length < 3) {
+    // Only allow adding cards, not removing them
+    if (!selectedCards.includes(cardId) && selectedCards.length < 3) {
       setSelectedCards([...selectedCards, cardId]);
     }
+    // Removed the code that allowed deselection
   };
 
   const handleCardFlip = (cardId, isFlipped) => {
@@ -72,7 +74,7 @@ export default function CardSelectionPage() {
   };
 
   const handleContinue = () => {
-    navigate('/');
+    navigate('/user-info-input');
   };
 
   const isCardDisabled = (cardId) => {
@@ -84,7 +86,7 @@ export default function CardSelectionPage() {
     return (
       <div className="selection-container">
         <div className="mystical-orb"></div>
-        <h1 className="selection-title">Loading Cards...</h1>
+        <LoadingAnimation />
       </div>
     );
   }
@@ -101,9 +103,20 @@ export default function CardSelectionPage() {
         </div>
       )}
 
-      <div className="cards-remaining">
-        <span>{3 - selectedCards.length} cards remaining</span>
-      </div>
+      {selectedCards.length === 3 ? (
+        <div className="next-button-container">
+          <Button
+            text="Continue to Reading"
+            color="blue"
+            onClick={handleContinue}
+            size="lg"
+          />
+        </div>
+      ) : (
+        <div className="cards-remaining">
+          <span>{3 - selectedCards.length} cards remaining</span>
+        </div>
+      )}
 
       <div className="card-container">
         {cards.map((card) => (
@@ -128,17 +141,6 @@ export default function CardSelectionPage() {
           </div>
         ))}
       </div>
-
-      <p className="mystical-quote">Find The Magic Within</p>
-
-      <Box marginTop={6}>
-        <Button
-          text="Continue to Reading"
-          color="blue"
-          disabled={selectedCards.length !== 3}
-          onClick={handleContinue}
-        />
-      </Box>
     </div>
   );
 }
