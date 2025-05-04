@@ -11,12 +11,21 @@ const TarotCard = ({
   name,
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [hasBeenFlipped, setHasBeenFlipped] = useState(false);
 
   const handleCardClick = () => {
     if (disabled) return;
 
+    // 如果卡牌已经翻转过了，不再允许翻转
+    if (hasBeenFlipped && isFlipped) return;
+
     const newFlipped = !isFlipped;
     setIsFlipped(newFlipped);
+
+    // 如果从背面翻到正面，标记该卡牌已经被翻转过
+    if (newFlipped) {
+      setHasBeenFlipped(true);
+    }
 
     if (onCardFlip) {
       onCardFlip(newFlipped);
@@ -25,7 +34,7 @@ const TarotCard = ({
 
   return (
     <div
-      className={`tarot-card ${isFlipped ? 'flipped' : ''} ${disabled ? 'disabled' : ''}`}
+      className={`tarot-card ${isFlipped ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${hasBeenFlipped && isFlipped ? 'no-flip-back' : ''}`}
       onClick={handleCardClick}
     >
       <div className="tarot-card-inner">
