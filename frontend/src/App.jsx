@@ -9,7 +9,7 @@ import UserInputPage from './pages/UserInputPage';
 import LoadingPage from './pages/LoadingPage';
 import CardSelectionPage from './pages/CardSelectionPage/CardSelectionPage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
-
+import ResultsPage from './pages/ResultsPage/ResultsPage';
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
             <Route path="/loading" element={<LoadingPage />} />
             <Route path="selection" element={<CardSelectionPage />} />
             <Route path="user-info-input" element={<UserInfoInputPage />} />
+            <Route path="results" element={<ResultsPage />} />
           </Route>
           {/* Remove this at the end */}
           <Route path="/image-generation" element={<ImageGenerationPage />} />

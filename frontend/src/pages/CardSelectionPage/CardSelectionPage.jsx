@@ -60,9 +60,16 @@ export default function CardSelectionPage() {
 
     // Only allow adding cards, not removing them
     if (!selectedCards.includes(cardId) && selectedCards.length < 3) {
-      setSelectedCards([...selectedCards, cardId]);
+      const newSelectedCards = [...selectedCards, cardId];
+      setSelectedCards(newSelectedCards);
+
+      // 如果选择了3张卡片，自动跳转到结果页面
+      if (newSelectedCards.length === 3) {
+        setTimeout(() => {
+          navigateToResults(newSelectedCards);
+        }, 1000); // 延迟一秒后跳转，让用户看到第三张卡片被选中
+      }
     }
-    // Removed the code that allowed deselection
   };
 
   const handleCardFlip = (cardId, isFlipped) => {
@@ -73,8 +80,31 @@ export default function CardSelectionPage() {
     }
   };
 
+  // Function to get selected card details
+  // This function will return the card details for the selected IDs
+  const getSelectedCardDetails = (selectedIds) => {
+    return selectedIds.map((id) => {
+      const card = cards.find((c) => c.id === id);
+      return card || { id };
+    });
+  };
+
+  // Function to navigate to results page
+  const navigateToResults = (selectedIds = selectedCards) => {
+    const selectedCardDetails = getSelectedCardDetails(selectedIds);
+
+    // Store selected cards in sessionStorage
+    // This will allow us to access the selected cards in the results page
+    sessionStorage.setItem(
+      'selectedCards',
+      JSON.stringify(selectedCardDetails),
+    );
+
+    navigate('/results');
+  };
+
   const handleContinue = () => {
-    navigate('/user-info-input');
+    navigateToResults();
   };
 
   const isCardDisabled = (cardId) => {
@@ -93,8 +123,6 @@ export default function CardSelectionPage() {
 
   return (
     <div className="selection-container">
-      <div className="mystical-orb"></div>
-
       <h1 className="selection-title">Select three Cards for your reading</h1>
 
       {error && (
@@ -106,7 +134,7 @@ export default function CardSelectionPage() {
       {selectedCards.length === 3 ? (
         <div className="next-button-container">
           <Button
-            text="Continue to Reading"
+            text="See Your Reading"
             color="blue"
             onClick={handleContinue}
             size="lg"

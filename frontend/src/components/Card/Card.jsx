@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Card.css';
 import PropTypes from 'prop-types';
 
@@ -9,9 +9,18 @@ const TarotCard = ({
   onCardFlip,
   description,
   name,
+  initialFlipped,
 }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [hasBeenFlipped, setHasBeenFlipped] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(initialFlipped || false);
+  const [hasBeenFlipped, setHasBeenFlipped] = useState(initialFlipped || false);
+
+  // 当initialFlipped属性改变时更新状态
+  useEffect(() => {
+    if (initialFlipped) {
+      setIsFlipped(true);
+      setHasBeenFlipped(true);
+    }
+  }, [initialFlipped]);
 
   const handleCardClick = () => {
     if (disabled) return;
@@ -62,6 +71,7 @@ TarotCard.propTypes = {
   onCardFlip: PropTypes.func,
   description: PropTypes.string,
   name: PropTypes.string,
+  initialFlipped: PropTypes.bool,
 };
 
 TarotCard.defaultProps = {
@@ -71,6 +81,7 @@ TarotCard.defaultProps = {
   onCardFlip: null,
   description: '',
   name: '',
+  initialFlipped: false,
 };
 
 export default TarotCard;
