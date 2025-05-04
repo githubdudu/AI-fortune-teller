@@ -108,6 +108,8 @@ export default function CardSelectionPage() {
   };
 
   const handleContinue = () => {
+    // Use these values to make the API call to AI fortune teller
+    console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
     navigateToResults();
   };
 
