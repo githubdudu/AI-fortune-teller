@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
+import { AppContext } from '../../context/AppContextProvider';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
+  // Context state
+  const { saveUserPrompt } = useContext(AppContext);
+  // internal state
   const [input, setInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [textAreaHeight, setTextAreaHeight] = useState(0);
@@ -42,8 +46,8 @@ function UserQuestionInput() {
       return;
     }
 
-    // TODO: Post API call to come here
-
+    // TODO: Save the input as user prompt in the context for later use
+    saveUserPrompt(trimmedInput);
     // TODO: change route accordingly
     navigate('/user-info-input');
   };

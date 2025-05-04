@@ -2,17 +2,20 @@
 import PropTypes from 'prop-types';
 import themeCardPlaceholder from '../../assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from '../../context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
 function ThemeCard({ theme }) {
   const image = IMAGE_BASE_URL + theme.image;
+  const { saveUserChosenTheme } = useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Store the selected theme in localStorage or context for later use
-    localStorage.setItem('selectedTheme', JSON.stringify(theme));
+    // Store the selected theme in context for later use
+    saveUserChosenTheme(theme);
 
     // Navigate to the user input page
     navigate(`/user-info-input`);
