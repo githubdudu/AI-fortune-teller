@@ -4,9 +4,15 @@ import { useSessionStorage } from 'react-use';
 
 export function AppContextProvider({ children }) {
   const [userPrompt, setUserPrompt] = useSessionStorage('userPrompt', '');
+  const [userChosenTheme, setUserChosenTheme] = useSessionStorage(
+    'userChosenTheme',
+    null,
+  );
 
   return (
-    <AppContext.Provider value={{ userPrompt, setUserPrompt }}>
+    <AppContext.Provider
+      value={{ userPrompt, setUserPrompt, userChosenTheme, setUserChosenTheme }}
+    >
       {children}
     </AppContext.Provider>
   );
