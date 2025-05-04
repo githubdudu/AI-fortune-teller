@@ -108,9 +108,7 @@ export default function CardSelectionPage() {
   };
 
   const handleContinue = () => {
-
     navigateToResults();
-
   };
 
   const isCardDisabled = (cardId) => {
