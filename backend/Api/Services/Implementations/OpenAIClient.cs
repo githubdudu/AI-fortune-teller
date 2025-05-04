@@ -1,55 +1,33 @@
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
+using OpenAI.Chat;
 
 namespace Api.Services.Implementations
 {
     public class OpenAIClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly string _baseUrl;
+        private readonly ChatClient _chatClient;
 
         public OpenAIClient(IConfiguration configuration)
         {
-            _httpClient = new HttpClient();
-            _apiKey = configuration.GetValue<string>("ExternalServices:OpenAI:ApiKey")
-                ?? throw new ArgumentNullException("OpenAI ApiKey is not configured");
-            _baseUrl = configuration.GetValue<string>("ExternalServices:OpenAI:BaseUrl")
-                ?? "https://api.openai.com/v1";
+            var apiKey = configuration.GetValue<string>("ExternalServices:OpenAI:ApiKey")
+                ?? throw new Exception("OpenAI ApiKey is not configured");
+
+            _chatClient = new ChatClient(
+                model: "gpt-4o",
+                apiKey: apiKey
+            );
         }
 
         public async Task<string> GenerateTextAsync(string prompt)
         {
-            var requestBody = new
+            try
             {
-                model = "gpt-4",
-                messages = new[]
-                {
-                    new { role = "user", content = prompt }
-                }
-            };
-
-            var content = new StringContent(
-                JsonSerializer.Serialize(requestBody),
-                Encoding.UTF8,
-                "application/json"
-            );
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _apiKey);
-
-            var response = await _httpClient.PostAsync($"{_baseUrl}/chat/completions", content);
-            response.EnsureSuccessStatusCode();
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-            using var jsonDoc = JsonDocument.Parse(responseBody);
-            var result = jsonDoc.RootElement
-                .GetProperty("choices")[0]
-                .GetProperty("message")
-                .GetProperty("content")
-                .GetString();
-
-            return result ?? string.Empty;
+                ChatCompletion completion = await _chatClient.CompleteChatAsync(prompt);
+                return completion.Content[0].Text ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to generate text from OpenAI", ex);
+            }
         }
     }
 }

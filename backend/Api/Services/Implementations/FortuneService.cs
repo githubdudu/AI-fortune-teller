@@ -1,4 +1,3 @@
-using Api.Models.Domain;
 using Api.Models.DTOs;
 using Api.Models.Requests;
 using Api.Repositories.Interfaces;
@@ -24,33 +23,29 @@ namespace Api.Services.Implementations
 
         public async Task<FortuneDto> GenerateFortuneAsync(CreateFortuneRequest request)
         {
-            // Validate the request
             if (!request.IsValid())
             {
-                throw new ArgumentException("Either Question or ThemeId must be provided");
+                throw new Exception("Either Question or ThemeId must be provided");
             }
 
-            // Get theme details if ThemeId is provided
-            string themeContext = string.Empty;
+            string chosenTheme = string.Empty;
             if (request.ThemeId.HasValue)
             {
                 var theme = await _themeRepository.GetByIdAsync(request.ThemeId.Value);
-                themeContext = theme?.Name ?? throw new KeyNotFoundException("Theme not found");
+                chosenTheme = theme?.Name ?? throw new Exception("Theme not found");
             }
 
-            // Get card details
             var cards = await _cardRepository.GetCardsByIdsAsync(request.CardIds);
             var cardNames = string.Join(", ", cards.Select(c => c.Name));
 
-            // Build the prompt based on whether we have a question or theme
             string prompt = request.Question != string.Empty
                 ? $"You are a professional tarot fortune teller. Based on the question: '{request.Question}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading."
-                : $"You are a professional tarot fortune teller. For the theme of '{themeContext}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading.";
+                : $"You are a professional tarot fortune teller. For the theme of '{chosenTheme}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading.";
 
-            // Generate fortune using OpenAI
             var fortuneResult = await _openAIClient.GenerateTextAsync(prompt);
+            //For testing if OpenAIClient is working properly. Delete later.
+            Console.WriteLine($"GPT >> {fortuneResult}");
 
-            // Create and return DTO
             return new FortuneDto
             {
                 Id = Guid.NewGuid(),
