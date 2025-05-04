@@ -9,13 +9,13 @@ const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
 function ThemeCard({ theme }) {
   const image = IMAGE_BASE_URL + theme.image;
-  const { setUserChosenTheme } = useContext(AppContext);
+  const { saveUserChosenTheme } = useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
     // Store the selected theme in context for later use
-    setUserChosenTheme(theme);
+    saveUserChosenTheme(theme);
 
     // Navigate to the user input page
     navigate(`/user-info-input`);

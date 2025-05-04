@@ -80,7 +80,7 @@ export default function CardSelectionPage() {
     console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
 
     // navigate to the result page
-    navigate('/');
+    navigate('/result-display');
   };
 
   const isCardDisabled = (cardId) => {
