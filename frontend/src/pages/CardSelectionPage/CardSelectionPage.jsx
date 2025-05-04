@@ -2,8 +2,10 @@ import Card from '../../components/Card/Card';
 import './CardSelectionPage.css';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+
+import { AppContext } from '../../context/AppContextProvider';
 
 export default function CardSelectionPage() {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -12,6 +14,8 @@ export default function CardSelectionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const { userPrompt, userChosenTheme, userInfo } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -72,6 +76,10 @@ export default function CardSelectionPage() {
   };
 
   const handleContinue = () => {
+    // Use these values to make the API call to AI fortune teller
+    console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
+
+    // navigate to the result page
     navigate('/');
   };
 
