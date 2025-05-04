@@ -7,7 +7,7 @@ function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
   // Context state
-  const { setUserPrompt } = useContext(AppContext);
+  const { saveUserPrompt } = useContext(AppContext);
   // internal state
   const [input, setInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -47,7 +47,7 @@ function UserQuestionInput() {
     }
 
     // TODO: Save the input as user prompt in the context for later use
-    setUserPrompt(trimmedInput);
+    saveUserPrompt(trimmedInput);
     // TODO: change route accordingly
     navigate('/user-info-input');
   };

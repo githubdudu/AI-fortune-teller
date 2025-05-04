@@ -1,12 +1,14 @@
 import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
-import { useState } from 'react';
-import { useSessionStorage } from 'react-use';
+import { useState, useContext, useEffect } from 'react';
 
 import NationalityInputBox from './NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../context/AppContextProvider';
 
 function UserDetailsForm() {
+  const { saveUserInfo } = useContext(AppContext);
+
   const GENDER_OPTIONS = [
     { label: 'Female', value: 0 },
     { label: 'Male', value: 1 },
@@ -19,17 +21,19 @@ function UserDetailsForm() {
   const [nationalityErrorMessage, setNationalityErrorMessage] = useState('');
   const [POBErrorMessage, setPOBErrorMessage] = useState('');
 
-  const [FNValue, setFNValue] = useSessionStorage('firstName', '');
-  const [LNValue, setLNValue] = useSessionStorage('lastName', '');
-  const [DOBValue, setDOBValue] = useSessionStorage('dateOfBirth', '');
-  const [genderValue, setGenderValue] = useSessionStorage('gender', '');
-  const [nationalityValue, setNationalityValue] = useSessionStorage(
-    'nationality',
-    null,
-  );
-  const [POBValue, setPOBValue] = useSessionStorage('placeOfBirth', null);
+  const [FNValue, setFNValue] = useState('');
+  const [LNValue, setLNValue] = useState('');
+  const [DOBValue, setDOBValue] = useState('');
+  const [genderValue, setGenderValue] = useState(null);
+  const [nationalityValue, setNationalityValue] = useState(null);
+  const [POBValue, setPOBValue] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Clear the Context when the component mounts
+    saveUserInfo(null);
+  }, []);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -73,6 +77,16 @@ function UserDetailsForm() {
       nationalityID: nationalityValue?.value,
       POBValue,
       POBID: POBValue?.value,
+    });
+
+    // Saved in Context for later use
+    saveUserInfo({
+      firstName: FNValue,
+      lastName: LNValue,
+      dateOfBirth: DOBValue,
+      genderID: genderValue,
+      nationalityID: nationalityValue?.value,
+      placeOfBirthID: POBValue?.value,
     });
 
     if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {

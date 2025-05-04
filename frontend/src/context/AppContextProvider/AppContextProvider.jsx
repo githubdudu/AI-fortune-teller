@@ -9,9 +9,18 @@ export function AppContextProvider({ children }) {
     null,
   );
 
+  const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
+
   return (
     <AppContext.Provider
-      value={{ userPrompt, setUserPrompt, userChosenTheme, setUserChosenTheme }}
+      value={{
+        userPrompt,
+        saveUserPrompt: setUserPrompt,
+        userChosenTheme,
+        saveUserChosenTheme: setUserChosenTheme,
+        userInfo,
+        saveUserInfo: setUserInfo,
+      }}
     >
       {children}
     </AppContext.Provider>
