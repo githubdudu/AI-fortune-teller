@@ -4,6 +4,10 @@ import axios from 'axios';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
 import { API_CONFIG } from '../../constants/config';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 // Hardcoded themes as fallback
 const hardcodedThemes = [
@@ -124,9 +128,37 @@ function ThemeView() {
           direction="row"
           gap={6}
         >
-          {themes.map((theme) => (
-            <ThemeCard key={theme.id} theme={theme} />
-          ))}
+          <div
+            className="swiper-container"
+            style={{ width: '100%', maxWidth: '1200px' }}
+          >
+            <Swiper
+              navigation={true}
+              modules={[Navigation]}
+              slidesPerView={3}
+              spaceBetween={-550}
+              loop={true}
+              initialSlide={1}
+              style={{ padding: '70px 500px' }}
+              // breakpoints={{
+              //   320: {
+              //     slidesPerView: 3,
+              //   },
+              //   768: {
+              //     slidesPerView: 3,
+              //   },
+              //   1024: {
+              //     slidesPerView: 3,
+              //   },
+              // }}
+            >
+              {themes.map((theme) => (
+                <SwiperSlide key={theme.id}>
+                  <ThemeCard theme={theme} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </Flex>
         {/* Show description only if a card is clicked */}
         <ThemeDescription />
