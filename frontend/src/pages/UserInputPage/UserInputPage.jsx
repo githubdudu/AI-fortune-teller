@@ -1,6 +1,8 @@
 import { Button, Image, TextArea, Box, Flex } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
+import { useState } from 'react';
+import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -8,8 +10,13 @@ import ThemeView from '../../components/ThemeView';
  */
 
 function UserInputPage() {
+  const [showPrompt, setShowPrompt] = useState(true);
+  const handlePromptClick = () => {
+    setShowPrompt(false);
+  };
   return (
     <>
+      <FloatingPrompt visible={showPrompt} onClick={handlePromptClick} />
       <div className="w-165">
         <UserQuestionInput />
       </div>
