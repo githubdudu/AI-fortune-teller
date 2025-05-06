@@ -51,7 +51,7 @@ namespace Api.Data
                     new Theme
                     {
                         Name = "decisions",
-                        ImageSource = "icons/decisions.png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.+Decision.jpg",
                         Description =
                             "Seek clarity when facing difficult choices or uncertain paths.",
                     },
