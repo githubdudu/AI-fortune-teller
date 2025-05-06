@@ -2,31 +2,37 @@
 import PropTypes from 'prop-types';
 import themeCardPlaceholder from '../../assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from '../../context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
 function ThemeCard({ theme }) {
   const image = IMAGE_BASE_URL + theme.image;
+  const { saveUserChosenTheme } = useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Store the selected theme in localStorage or context for later use
-    localStorage.setItem('selectedTheme', JSON.stringify(theme));
+    // Store the selected theme in context for later use
+    saveUserChosenTheme(theme);
 
     // Navigate to the user input page
     navigate(`/user-info-input`);
   };
 
   return (
-    <div onClick={handleClick} className="cursor-pointer">
+    <div
+      onClick={handleClick}
+      className="cursor-pointer w-full flex justify-center py-12"
+    >
       <img
         src={image}
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = themeCardPlaceholder;
         }}
-        className="h-60 border-1 border-gray-300 mx-auto rounded-md shadow-md transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"
+        className="h-60 object-contain border-1 border-gray-300 rounded-md shadow-lg transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_1.5em_rgba(100,108,255,0.67))]"
         alt={`${theme.name} theme card`}
       />
     </div>

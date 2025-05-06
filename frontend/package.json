@@ -20,12 +20,13 @@
     "gestalt": "^176.1.0",
     "gestalt-datepicker": "^177.0.0",
     "immer": "^10.1.1",
-    "prop-types": "^15.8.1",
     "motion": "^12.7.4",
+    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.5.0",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

@@ -4,6 +4,14 @@ import axios from 'axios';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
 import { API_CONFIG } from '../../constants/config';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper modules
+import { Navigation, Pagination } from 'swiper/modules';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import './ThemeView.css';
 
 // Hardcoded themes as fallback
 const hardcodedThemes = [
@@ -117,7 +125,7 @@ function ThemeView() {
     <>
       <Flex
         alignItems="center"
-        justifyContent="start"
+        justifyContent="center"
         direction="column"
         gap={6}
       >
@@ -125,20 +133,40 @@ function ThemeView() {
         {loading && <p>Loading themes...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {/* TODO: Add buttons (right & left) and animation to scroll through the theme cards, and prevent Theme cards overflowing & getting squashed */}
-        <Flex
-          alignItems="center"
-          justifyContent="start"
-          direction="row"
-          gap={6}
-        >
-          {themes.map((theme) => (
-            <div key={theme.id} onMouseEnter={() => setSelectedTheme(theme)}>
-              <ThemeCard key={theme.id} theme={theme} />
-            </div>
-          ))}
-        </Flex>
-        <ThemeDescription theme={selectedTheme} />
+        {/* Fixed className typo (removed space after md:) */}
+        <div className="swiper-container w-full md:max-w-[880px] lg:max-w-[1100px] px-4">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation={true}
+            pagination={{ clickable: true }}
+            slidesPerView={1}
+            spaceBetween={10}
+            loop={true}
+            initialSlide={0}
+            className="py-4"
+            breakpoints={{
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 5,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 10,
+              },
+            }}
+          >
+            {themes.map((theme) => (
+              <SwiperSlide
+                key={theme.id}
+                className="flex items-center justify-center"
+              >
+                <ThemeCard theme={theme} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        {/* Show description only if a card is clicked */}
+        <ThemeDescription />
       </Flex>
     </>
   );

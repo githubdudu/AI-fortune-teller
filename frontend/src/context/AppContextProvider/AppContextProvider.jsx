@@ -1,12 +1,27 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
+import { useSessionStorage } from 'react-use';
 
 export function AppContextProvider({ children }) {
-  const [count, setCount] = useState(0);
+  const [userPrompt, setUserPrompt] = useSessionStorage('userPrompt', '');
+  const [userChosenTheme, setUserChosenTheme] = useSessionStorage(
+    'userChosenTheme',
+    null,
+  );
+
+  const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
 
   return (
-    <AppContext.Provider value={{ count, setCount }}>
+    <AppContext.Provider
+      value={{
+        userPrompt,
+        saveUserPrompt: setUserPrompt,
+        userChosenTheme,
+        saveUserChosenTheme: setUserChosenTheme,
+        userInfo,
+        saveUserInfo: setUserInfo,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

@@ -2,8 +2,11 @@ import Card from '../../components/Card/Card';
 import './CardSelectionPage.css';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
+
+import { AppContext } from '../../context/AppContextProvider';
 
 export default function CardSelectionPage() {
   const [selectedCards, setSelectedCards] = useState([]);
@@ -12,6 +15,8 @@ export default function CardSelectionPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const { userPrompt, userChosenTheme, userInfo } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -52,14 +57,22 @@ export default function CardSelectionPage() {
   };
 
   const handleCardSelect = (cardId) => {
+    // Prevent selection if already have 3 cards selected and this card is not selected
     if (selectedCards.length >= 3 && !selectedCards.includes(cardId)) {
       return;
     }
 
-    if (selectedCards.includes(cardId)) {
-      setSelectedCards(selectedCards.filter((id) => id !== cardId));
-    } else if (selectedCards.length < 3) {
-      setSelectedCards([...selectedCards, cardId]);
+    // Only allow adding cards, not removing them
+    if (!selectedCards.includes(cardId) && selectedCards.length < 3) {
+      const newSelectedCards = [...selectedCards, cardId];
+      setSelectedCards(newSelectedCards);
+
+      // 如果选择了3张卡片，自动跳转到结果页面
+      if (newSelectedCards.length === 3) {
+        setTimeout(() => {
+          navigateToResults(newSelectedCards);
+        }, 1000); // 延迟一秒后跳转，让用户看到第三张卡片被选中
+      }
     }
   };
 
@@ -71,8 +84,33 @@ export default function CardSelectionPage() {
     }
   };
 
+  // Function to get selected card details
+  // This function will return the card details for the selected IDs
+  const getSelectedCardDetails = (selectedIds) => {
+    return selectedIds.map((id) => {
+      const card = cards.find((c) => c.id === id);
+      return card || { id };
+    });
+  };
+
+  // Function to navigate to results page
+  const navigateToResults = (selectedIds = selectedCards) => {
+    const selectedCardDetails = getSelectedCardDetails(selectedIds);
+
+    // Store selected cards in sessionStorage
+    // This will allow us to access the selected cards in the results page
+    sessionStorage.setItem(
+      'selectedCards',
+      JSON.stringify(selectedCardDetails),
+    );
+
+    navigate('/results');
+  };
+
   const handleContinue = () => {
-    navigate('/');
+
+    navigateToResults();
+
   };
 
   const isCardDisabled = (cardId) => {
@@ -84,15 +122,13 @@ export default function CardSelectionPage() {
     return (
       <div className="selection-container">
         <div className="mystical-orb"></div>
-        <h1 className="selection-title">Loading Cards...</h1>
+        <LoadingAnimation />
       </div>
     );
   }
 
   return (
     <div className="selection-container">
-      <div className="mystical-orb"></div>
-
       <h1 className="selection-title">Select three Cards for your reading</h1>
 
       {error && (
@@ -101,9 +137,20 @@ export default function CardSelectionPage() {
         </div>
       )}
 
-      <div className="cards-remaining">
-        <span>{3 - selectedCards.length} cards remaining</span>
-      </div>
+      {selectedCards.length === 3 ? (
+        <div className="next-button-container">
+          <Button
+            text="See Your Reading"
+            color="blue"
+            onClick={handleContinue}
+            size="lg"
+          />
+        </div>
+      ) : (
+        <div className="cards-remaining">
+          <span>{3 - selectedCards.length} cards remaining</span>
+        </div>
+      )}
 
       <div className="card-container">
         {cards.map((card) => (
@@ -128,17 +175,6 @@ export default function CardSelectionPage() {
           </div>
         ))}
       </div>
-
-      <p className="mystical-quote">Find The Magic Within</p>
-
-      <Box marginTop={6}>
-        <Button
-          text="Continue to Reading"
-          color="blue"
-          disabled={selectedCards.length !== 3}
-          onClick={handleContinue}
-        />
-      </Box>
     </div>
   );
 }
