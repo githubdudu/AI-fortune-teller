@@ -39,7 +39,7 @@ namespace Api.Data
                     new Theme
                     {
                         Name = "relationships",
-                        ImageSource = "icons/relationships.png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.+Relationship.jpg",
                         Description = "Understand connections with friends, family, or coworkers.",
                     },
                     new Theme
