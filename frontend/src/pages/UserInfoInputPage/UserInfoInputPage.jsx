@@ -1,4 +1,4 @@
-import UserDetailsForm from './UserDetailsForm';
+import UserDetailsForm from '$/components/UserDetailsForm';
 import UserInfoHeader from './UserInfoHeader';
 
 function UserInfoInputPage() {
