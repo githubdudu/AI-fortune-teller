@@ -18,7 +18,9 @@ namespace Api.Controllers.V1
         }
 
         [HttpPost("ask")]
-        public async Task<ActionResult<FortuneDto>> AskFortune([FromBody] CreateFortuneRequest request)
+        public async Task<ActionResult<FortuneDto>> AskFortune(
+            [FromBody] CreateFortuneRequest request
+        )
         {
             try
             {

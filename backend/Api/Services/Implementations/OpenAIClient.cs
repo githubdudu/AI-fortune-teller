@@ -12,11 +12,20 @@ namespace Api.Services.Implementations
 
         public OpenAIClient(IConfiguration configuration)
         {
-            var apiKey =
-                configuration.GetValue<string>("ExternalServices:OpenAI:ApiKey")
-                ?? throw new Exception("OpenAI ApiKey is not configured");
+            try
+            {
+                var apiKey =
+                    configuration.GetValue<string>("ExternalServices:OpenAI:ApiKey")
+                    ?? throw new Exception("OpenAI ApiKey is not configured");
 
-            _chatClient = new ChatClient(model: "gpt-4o", apiKey: apiKey);
+                _chatClient = new ChatClient(model: "gpt-4o", apiKey: apiKey);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initializing OpenAIClient: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                throw;
+            }
         }
 
         public async Task<string> GenerateTextAsync(string prompt)
@@ -28,6 +37,8 @@ namespace Api.Services.Implementations
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error in GenerateTextAsync: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 throw new Exception("Failed to generate text from OpenAI", ex);
             }
         }
