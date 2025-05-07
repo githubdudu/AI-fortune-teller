@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import { AppContextProvider } from './context/AppContextProvider';
 import AboutPage from './pages/AboutPage';
-import ImageGenerationPage from './pages/ImageGenerationPage';
 import RootLayoutPage from './pages/RootLayoutPage';
 
 import UserInputPage from './pages/UserInputPage';
@@ -31,8 +30,6 @@ function App() {
             <Route path="results" element={<ResultsPage />} />
             <Route path="profile" element={<UserProfile />} />
           </Route>
-          {/* Remove this at the end */}
-          <Route path="/image-generation" element={<ImageGenerationPage />} />
         </Routes>
       </BrowserRouter>
     </AppContextProvider>
