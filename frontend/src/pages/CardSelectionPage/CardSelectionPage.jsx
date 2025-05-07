@@ -5,6 +5,7 @@ import { Button, Box } from 'gestalt';
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
+import { AppContext } from '../../context/AppContextProvider';
 
 import { AppContext } from '../../context/AppContextProvider';
 
@@ -108,9 +109,9 @@ export default function CardSelectionPage() {
   };
 
   const handleContinue = () => {
-
+    // Use these values to make the API call to AI fortune teller
+    console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
     navigateToResults();
-
   };
 
   const isCardDisabled = (cardId) => {

@@ -31,5 +31,12 @@ namespace Api.Repositories
         {
             return await _context.Cards.FindAsync(id);
         }
+
+        public async Task<IEnumerable<Card>> GetCardsByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return await _context.Cards
+                .Where(card => ids.Contains(card.Id))
+                .ToListAsync();
+        }
     }
 }
