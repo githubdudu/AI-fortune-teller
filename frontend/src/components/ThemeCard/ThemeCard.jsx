@@ -25,13 +25,14 @@ function ThemeCard({ theme, onHover }) {
     // Call the onHover prop function with the current theme
     if (onHover) {
       onHover(theme);
+      console.log('Hovered over theme:', theme);
     }
   };
 
   return (
     <div
       onClick={handleClick}
-      onMouseEnter={handleMouseEnter()}
+      onMouseEnter={handleMouseEnter}
       className="cursor-pointer w-full flex justify-center py-12"
     >
       <img
