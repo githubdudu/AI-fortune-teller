@@ -4,12 +4,16 @@ namespace Api.Models.Requests
     {
         public string Question { get; set; } = string.Empty;
         public Guid? ThemeId { get; set; }
-        public Guid[] CardIds { get; set; } = [];
+        public required Guid[] CardIds { get; set; } = [];
 
         //Need user info
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(Question) || ThemeId.HasValue;
+            bool hasValidInput = !string.IsNullOrWhiteSpace(Question) || ThemeId.HasValue;
+            //Change selected cards validation accordingly.
+            bool hasValidCards = CardIds != null && CardIds.Length >= 1 && CardIds.Length <= 3;
+
+            return hasValidInput && hasValidCards;
         }
     }
 }
