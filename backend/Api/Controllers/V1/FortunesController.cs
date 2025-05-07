@@ -24,6 +24,12 @@ namespace Api.Controllers.V1
         {
             try
             {
+                if (request == null)
+                    return BadRequest("Request cannot be null");
+
+                if (!request.IsValid())
+                    return BadRequest("Request must include either a question or theme ID, and 1-3 cards");
+
                 var fortune = await _fortuneService.GenerateFortuneAsync(request);
                 return Ok(fortune);
             }
