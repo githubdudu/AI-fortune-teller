@@ -1,5 +1,5 @@
 import { Flex } from 'gestalt';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
@@ -86,6 +86,10 @@ function ThemeView() {
   const [error, setError] = useState(null);
   const [selectedTheme, setSelectedTheme] = useState(defaultTheme);
 
+  const handleThemeHover = useCallback((theme) => {
+    setSelectedTheme(theme);
+  }, []);
+
   useEffect(() => {
     const fetchThemes = async () => {
       if (!API_CONFIG.USE_API_THEMES) {
@@ -160,13 +164,13 @@ function ThemeView() {
                 key={theme.id}
                 className="flex items-center justify-center"
               >
-                <ThemeCard theme={theme} />
+                <ThemeCard theme={theme} onHover={handleThemeHover} />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
-        {/* Show description only if a card is clicked */}
-        <ThemeDescription />
+        {/* Show description for the currently selected or hovered theme */}
+        <ThemeDescription theme={selectedTheme} />
       </Flex>
     </>
   );

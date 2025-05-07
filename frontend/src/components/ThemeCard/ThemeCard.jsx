@@ -7,7 +7,7 @@ import { AppContext } from '../../context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
-function ThemeCard({ theme }) {
+function ThemeCard({ theme, onHover }) {
   const image = IMAGE_BASE_URL + theme.image;
   const { saveUserChosenTheme } = useContext(AppContext);
 
@@ -21,9 +21,18 @@ function ThemeCard({ theme }) {
     navigate(`/user-info-input`);
   };
 
+  const handleMouseEnter = () => {
+    // Call the onHover prop function with the current theme
+    if (onHover) {
+      onHover(theme);
+      console.log('Hovered over theme:', theme);
+    }
+  };
+
   return (
     <div
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
       className="cursor-pointer w-full flex justify-center py-12"
     >
       <img
@@ -46,6 +55,7 @@ ThemeCard.propTypes = {
     image: PropTypes.string,
     description: PropTypes.string,
   }).isRequired,
+  onHover: PropTypes.func,
 };
 
 export default ThemeCard;
