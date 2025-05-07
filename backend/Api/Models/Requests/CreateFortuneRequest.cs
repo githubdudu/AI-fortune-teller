@@ -9,11 +9,13 @@ namespace Api.Models.Requests
         //Need user info
         public bool IsValid()
         {
-            bool hasValidInput = !string.IsNullOrWhiteSpace(Question) || ThemeId.HasValue;
+            bool isThemeBased = ThemeId.HasValue;
+            bool isQuestionBased = !string.IsNullOrWhiteSpace(Question) && !ThemeId.HasValue;
+
             //Change selected cards validation accordingly.
             bool hasValidCards = CardIds != null && CardIds.Length >= 1 && CardIds.Length <= 3;
 
-            return hasValidInput && hasValidCards;
+            return (isThemeBased || isQuestionBased) && hasValidCards;
         }
     }
 }
