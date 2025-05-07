@@ -113,6 +113,7 @@ builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
 builder.Services.AddScoped<IFortuneRepository, FortuneRepository>();
 
 // Register services
+builder.Services.AddScoped<IOpenAIClient, OpenAIClient>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
