@@ -7,11 +7,8 @@ namespace Api.Repositories
 {
     public class DailyFortuneRepository : GenericRepository<DailyFortune>, IDailyFortuneRepository
     {
-        private readonly ApplicationDbContext _context;
-
         public DailyFortuneRepository(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<DailyFortune?> GetTodayFortuneByEmailAsync(string userEmail)
