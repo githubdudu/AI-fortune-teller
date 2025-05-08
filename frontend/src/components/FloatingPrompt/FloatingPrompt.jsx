@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingPrompt.css';
 import PropTypes from 'prop-types';
 
-function FloatingPrompt({ onClick, visible }) {
+function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
   return (
     <AnimatePresence>
       {visible && (
@@ -26,6 +26,26 @@ function FloatingPrompt({ onClick, visible }) {
           >
             <p className="prompt-text">The future is calling.</p>
             <p className="prompt-text">Are you ready to unlock it?</p>
+
+            {loading && <p>Loading themes...</p>}
+            {error ? (
+              <p className="prompt-text error">{error}</p>
+            ) : dailyFortune ? (
+              <>
+                <p className="prompt-text">
+                  Your Lucky Color: {dailyFortune.luckyColor}
+                </p>
+                <p className="prompt-text">
+                  Your Lucky Number: {dailyFortune.luckyNumber}
+                </p>
+                <p className="prompt-text">
+                  Piece of Advice: {dailyFortune.advice}
+                </p>
+              </>
+            ) : (
+              <p className="prompt-text">Loading your daily fortune...</p>
+            )}
+
             <button className="prompt-button" onClick={onClick}>
               Start Reading
             </button>
@@ -40,6 +60,14 @@ function FloatingPrompt({ onClick, visible }) {
 FloatingPrompt.propTypes = {
   onClick: PropTypes.func.isRequired,
   visible: PropTypes.bool.isRequired,
+  dailyFortune: PropTypes.shape({
+    luckyColor: PropTypes.string.isRequired,
+    luckyNumber: PropTypes.number.isRequired,
+    advice: PropTypes.string.isRequired,
+    createdAt: PropTypes.string,
+  }),
+  loading: PropTypes.bool,
+  error: PropTypes.string,
 };
 
 export default FloatingPrompt;

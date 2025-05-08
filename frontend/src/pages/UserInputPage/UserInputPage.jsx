@@ -1,8 +1,9 @@
-import { Button, Image, TextArea, Box, Flex } from 'gestalt';
+import { Box } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
+import axios from 'axios';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -11,12 +12,48 @@ import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 
 function UserInputPage() {
   const [showPrompt, setShowPrompt] = useState(true);
+  const [dailyFortune, setDailyFortune] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchDailyFortune = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/api/v1/DailyFortunes/me',
+        {
+          headers: {
+            Authorization:
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+          },
+        },
+      );
+      setDailyFortune(response.data);
+    } catch (err) {
+      console.error('Error fetching daily fortune:', err);
+      setError('Failed to load your daily fortune');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDailyFortune();
+  }, []);
+
   const handlePromptClick = () => {
     setShowPrompt(false);
   };
+
   return (
     <>
-      <FloatingPrompt visible={showPrompt} onClick={handlePromptClick} />
+      <FloatingPrompt
+        visible={showPrompt}
+        onClick={handlePromptClick}
+        dailyFortune={dailyFortune}
+        loading={loading}
+        error={error}
+      />
       <div className="w-165">
         <UserQuestionInput />
       </div>

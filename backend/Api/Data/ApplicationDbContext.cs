@@ -12,6 +12,7 @@ namespace Api.Data
         public DbSet<Theme> Themes { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Fortune> Fortunes { get; set; }
+        public DbSet<DailyFortune> DailyFortunes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
