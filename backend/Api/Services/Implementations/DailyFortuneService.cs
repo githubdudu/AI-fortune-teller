@@ -115,9 +115,9 @@ namespace Api.Services.Implementations
             _dailyFortuneRepository = dailyFortuneRepository;
         }
 
-        public async Task<DailyFortuneDto> GetOrCreateDailyFortuneAsync(Guid userId)
+        public async Task<DailyFortuneDto> GetOrCreateDailyFortuneByEmailAsync(string userEmail)
         {
-            var existing = await _dailyFortuneRepository.GetTodayFortuneAsync(userId);
+            var existing = await _dailyFortuneRepository.GetTodayFortuneByEmailAsync(userEmail);
 
             if (existing != null)
             {
@@ -130,8 +130,8 @@ namespace Api.Services.Implementations
             }
 
             var random = new Random();
-            var newFortune = await _dailyFortuneRepository.CreateDailyFortuneAsync(
-                userId,
+            var newDailyFortune = await _dailyFortuneRepository.CreateDailyFortuneAsync(
+                userEmail,
                 Colors[random.Next(Colors.Length)],
                 random.Next(1, 100),
                 Advices[random.Next(Advices.Length)]
@@ -139,9 +139,9 @@ namespace Api.Services.Implementations
 
             return new DailyFortuneDto
             {
-                LuckyColor = newFortune.LuckyColor,
-                LuckyNumber = newFortune.LuckyNumber,
-                Advice = newFortune.Advice
+                LuckyColor = newDailyFortune.LuckyColor,
+                LuckyNumber = newDailyFortune.LuckyNumber,
+                Advice = newDailyFortune.Advice
             };
         }
     }

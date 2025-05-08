@@ -4,6 +4,6 @@ namespace Api.Services.Interfaces
 {
     public interface IDailyFortuneService
     {
-        Task<DailyFortuneDto> GetOrCreateDailyFortuneAsync(Guid userId);
+        Task<DailyFortuneDto> GetOrCreateDailyFortuneByEmailAsync(string userEmail);
     }
 }

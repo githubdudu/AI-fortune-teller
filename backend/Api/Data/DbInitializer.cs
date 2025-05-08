@@ -838,8 +838,8 @@ namespace Api.Data
                 context.Users.Add(new User
                 {
                     Id = TestUserId,
-                    Username = "testuser",
                     Email = "test@example.com",
+                    DisplayName = "testuser",
                     CreatedAt = DateTime.UtcNow,
                 });
             }

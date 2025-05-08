@@ -9,30 +9,35 @@ namespace Api.Controllers.V1
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Authorize]
+    // [Authorize]
     public class DailyFortunesController : ControllerBase
     {
         private readonly IDailyFortuneService _dailyFortuneService;
-        //Test user's Guid
-        private static readonly Guid UserId = new("11111111-1111-1111-1111-111111111111");
+        private readonly IUserService _userService;
 
-        public DailyFortunesController(IDailyFortuneService dailyFortuneService)
+        public DailyFortunesController(IDailyFortuneService dailyFortuneService, IUserService userService)
         {
             _dailyFortuneService = dailyFortuneService;
+            _userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet("me")]
+        [Authorize]
         public async Task<ActionResult<DailyFortuneDto>> GetDailyFortune()
         {
-            //Commented out to use hardcoded test user's id
-            // var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
 
-            // if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            // {
-            //     return Unauthorized();
-            // }
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(new { message = "User email not found in token" });
+            }
 
-            var result = await _dailyFortuneService.GetOrCreateDailyFortuneAsync(UserId);
+            var user = await _userService.GetUserByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+            var result = await _dailyFortuneService.GetOrCreateDailyFortuneByEmailAsync(userEmail);
             return Ok(result);
         }
     }
