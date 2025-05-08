@@ -16,7 +16,15 @@ export default function CardSelectionPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { userPrompt, userChosenTheme, userInfo } = useContext(AppContext);
+  const {
+    userPrompt,
+    userChosenTheme,
+    userInfo,
+    saveUserChosenCards,
+    saveUserPrompt,
+    saveUserChosenTheme,
+    saveUserInfo,
+  } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -105,20 +113,20 @@ export default function CardSelectionPage() {
   const navigateToResults = (selectedIds = selectedCards) => {
     const selectedCardDetails = getSelectedCardDetails(selectedIds);
 
-    // Store selected cards in sessionStorage
-    // This will allow us to access the selected cards in the results page
-    sessionStorage.setItem(
-      'selectedCards',
-      JSON.stringify(selectedCardDetails),
-    );
+    // Save selected cards to context (which uses sessionStorage internally)
+    saveUserChosenCards(selectedCardDetails);
+
+    // Use context methods instead of direct sessionStorage access
     if (userPrompt) {
-      sessionStorage.setItem('userQuestion', userPrompt);
+      saveUserPrompt(userPrompt);
     }
+
     if (userChosenTheme) {
-      sessionStorage.setItem('selectedThemeId', userChosenTheme.id);
+      saveUserChosenTheme(userChosenTheme);
     }
+
     if (userInfo) {
-      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+      saveUserInfo(userInfo);
     }
 
     navigate('/results');

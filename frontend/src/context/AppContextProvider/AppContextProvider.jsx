@@ -9,6 +9,11 @@ export function AppContextProvider({ children }) {
     null,
   );
 
+  const [userChosenCards, setUserChosenCards] = useSessionStorage(
+    'userChosenCards',
+    null,
+  );
+
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
@@ -20,6 +25,8 @@ export function AppContextProvider({ children }) {
   return (
     <AppContext.Provider
       value={{
+        userChosenCards,
+        saveUserChosenCards: setUserChosenCards,
         userPrompt,
         saveUserPrompt: setUserPrompt,
         userChosenTheme,

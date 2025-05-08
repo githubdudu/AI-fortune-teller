@@ -15,17 +15,13 @@ function ThemeCard({ theme, onHover }) {
     clearQuestionAndTheme,
     userPrompt,
     userChosenTheme,
+    userChonsenCards,
+    saveUserChosenCards,
   } = useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // Clear session storage to reset any previous selections
-    sessionStorage.clear();
-    console.log('Session storage cleared');
-    console.log('all SessionStorage data:', { ...sessionStorage });
-    // Clear session storage to reset any previous selections
-
     // Clear the user question and theme from context
     clearQuestionAndTheme();
     if (!userPrompt) {
@@ -37,6 +33,12 @@ function ThemeCard({ theme, onHover }) {
       console.log('userChosenTheme is empty');
     } else {
       console.log('userChosenTheme:', userChosenTheme);
+    }
+    saveUserChosenCards(null);
+    if (!userChonsenCards) {
+      console.log('userChonsenCards is empty');
+    } else {
+      console.log('userChonsenCards:', userChonsenCards);
     }
 
     // Store the selected theme in context for later use

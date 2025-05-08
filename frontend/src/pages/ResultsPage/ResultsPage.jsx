@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box, Text, Heading } from 'gestalt';
 import Card from '../../components/Card/Card';
 import './ResultsPage.css';
 import axios from 'axios';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
+import { AppContext } from '../../context/AppContextProvider';
 
 const ResultsPage = () => {
   const navigate = useNavigate();
@@ -15,19 +16,26 @@ const ResultsPage = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // get userChosenCards from context
+  const {
+    userChosenCards,
+    userPrompt,
+    userChosenTheme,
+    clearQuestionAndTheme,
+    saveUserChosenCards,
+  } = useContext(AppContext);
+
   useEffect(() => {
-    console.log(sessionStorage);
-    const storedCards = sessionStorage.getItem('selectedCards');
     console.log('Created at:', createdAt);
-    if (storedCards) {
-      const cards = JSON.parse(storedCards);
-      setSelectedCards(cards);
-      console.log('Selected cards:', cards);
+
+    if (userChosenCards && userChosenCards.length > 0) {
+      setSelectedCards(userChosenCards);
+      console.log('Selected cards:', userChosenCards);
 
       // Get card IDs for API request
-      const cardIds = cards.map((card) => card.id.toString());
-      const question = sessionStorage.getItem('userQuestion') || null;
-      const themeId = sessionStorage.getItem('selectedThemeId');
+      const cardIds = userChosenCards.map((card) => card.id.toString());
+      const question = userPrompt || '';
+      const themeId = userChosenTheme ? userChosenTheme.id : null;
 
       console.log('Question:', question);
       console.log('Theme ID:', themeId);
@@ -133,13 +141,10 @@ const ResultsPage = () => {
   }, []);
 
   const handleNewReading = () => {
-    sessionStorage.removeItem('selectedCards');
-    sessionStorage.removeItem('userQuestion');
-    sessionStorage.removeItem('selectedThemeId');
+    clearQuestionAndTheme();
+    saveUserChosenCards(null);
     navigate('/selection');
   };
-
-  // If loading, show the loading animation
 
   return (
     <div className="results-container">
