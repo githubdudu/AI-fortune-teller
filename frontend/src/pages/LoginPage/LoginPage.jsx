@@ -11,31 +11,39 @@
  * for social authentication or single sign-on.
  */
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSessionStorage } from 'react-use';
+import axios from 'axios';
 
 import {
-  auth,
   logInWithEmailAndPassword,
   signInWithGoogle,
 } from '$/utils/firebase.js';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 import Loading from '$/components/LoadingAnimation';
+import { API_CONFIG } from '$/constants/config';
+import { AppContext } from '$/context/AppContextProvider';
 
 const Login = () => {
+  const { setUserProfile } = useContext(AppContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, loading, error] = useAuthState(auth);
+  const [loginToken, setLoginToken] = useSessionStorage('auth_token', null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   // This hook captures the callback from the Firebase authentication provider.
   // It detects if the User has been authenticated and redirects to the home page.
   useEffect(() => {
-    if (user) {
+    if (loginToken) {
       navigate('/');
     }
-  }, [user]);
+  }, [loginToken]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
@@ -48,6 +56,42 @@ const Login = () => {
 
   if (error) {
     console.error('Error logging in:', error);
+  }
+
+  async function handleSignInWithGoogle() {
+    try {
+      const user = await signInWithGoogle();
+
+      setLoading(true);
+      // Send the user access token to our own backend server.
+      const AUTH_LOGIN_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`;
+      const loginResponse = await axios.post(
+        AUTH_LOGIN_URL,
+        {
+          firebaseToken: user.accessToken,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            'Access-Control-Allow-Origin': '*',
+          },
+          withCredentials: true,
+        },
+      );
+      if (loginResponse.status !== 200) {
+        throw new Error('Error calling the "auth/login" endpoint');
+      }
+      if (!loginResponse.data.user) {
+        throw new Error('Error: No user data returned from the server');
+      }
+      // Store the access token in session storage
+      setLoginToken(true);
+      setUserProfile(loginResponse.data.user);
+    } catch (error) {
+      setError(error);
+    }
+    setLoading(false);
   }
 
   return (
@@ -74,7 +118,7 @@ const Login = () => {
       </button>
       <br />
       <br />
-      <button onClick={signInWithGoogle}>Login with Google</button>
+      <button onClick={handleSignInWithGoogle}>Login with Google</button>
       <br />
       <br />
       <Link to="/sign-up">

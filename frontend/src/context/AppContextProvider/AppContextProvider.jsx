@@ -10,6 +10,7 @@ export function AppContextProvider({ children }) {
   );
 
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
+  const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
   return (
     <AppContext.Provider
@@ -20,6 +21,8 @@ export function AppContextProvider({ children }) {
         saveUserChosenTheme: setUserChosenTheme,
         userInfo,
         saveUserInfo: setUserInfo,
+        userProfile,
+        setUserProfile,
       }}
     >
       {children}

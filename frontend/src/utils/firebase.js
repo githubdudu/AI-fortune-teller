@@ -23,14 +23,7 @@ import {
   signOut,
 } from 'firebase/auth';
 
-import {
-  getFirestore,
-  query,
-  getDocs,
-  collection,
-  where,
-  addDoc,
-} from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 console.log('Loading env vars: ' + JSON.stringify(import.meta.env));
 
@@ -96,19 +89,9 @@ export const signInWithGoogle = async () => {
   console.log('Signing in with Google');
   try {
     const res = await signInWithPopup(auth, googleProvider);
-    console.log('Signing in with Google:' + JSON.stringify(res));
+    console.log('Signing in with Google:', { res });
     const user = res.user;
-    const q = query(collection(db, 'users'), where('uid', '==', user.uid));
-    const docs = await getDocs(q);
-    console.log('User data:' + JSON.stringify(q) + ' ' + JSON.stringify(docs));
-    if (docs.docs.length === 0) {
-      await addDoc(collection(db, 'users'), {
-        uid: user.uid,
-        name: user.displayName,
-        authProvider: 'google',
-        email: user.email,
-      });
-    }
+    return user;
   } catch (err) {
     console.error('Error signing in with Google: ' + JSON.stringify(err));
     alert(err.message);
