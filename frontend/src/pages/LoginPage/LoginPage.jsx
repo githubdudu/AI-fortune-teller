@@ -13,7 +13,7 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSessionStorage } from 'react-use';
+import { useLocalStorage } from 'react-use';
 import axios from 'axios';
 
 import {
@@ -30,7 +30,7 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginToken, setLoginToken] = useSessionStorage('auth_token', null);
+  const [loginToken, setLoginToken] = useLocalStorage('auth_token', null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
