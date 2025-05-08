@@ -209,6 +209,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// IMPORTANT: Position CORS middleware at the beginning of the pipeline
+app.UseCors("AllowAll");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -249,9 +252,6 @@ else
 
 // Add global exception handling middleware
 app.UseGlobalExceptionMiddleware();
-
-// IMPORTANT: Use AllowAll CORS policy instead of AllowFrontend
-app.UseCors("AllowAll");
 
 // Only use HTTPS redirection in production
 if (!app.Environment.IsDevelopment())
