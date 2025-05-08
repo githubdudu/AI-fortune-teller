@@ -66,7 +66,7 @@ FloatingPrompt.propTypes = {
     advice: PropTypes.string.isRequired,
     createdAt: PropTypes.string,
   }),
-  loading: PropTypes.string,
+  loading: PropTypes.bool,
   error: PropTypes.string,
 };
 
