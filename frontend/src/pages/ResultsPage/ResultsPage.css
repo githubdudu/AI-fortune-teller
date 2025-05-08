@@ -102,6 +102,15 @@
   object-fit: cover;
 }
 
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+  margin-top: 0px;
+}
+
 @media (max-width: 768px) {
   .selected-cards-display {
     flex-direction: column;
