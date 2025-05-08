@@ -7,7 +7,6 @@ import axios from 'axios';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
 
 const ResultsPage = () => {
-  // Check if the user is authenticated
   const navigate = useNavigate();
   const [selectedCards, setSelectedCards] = useState([]);
   const [readingResult, setReadingResult] = useState('');
@@ -19,6 +18,7 @@ const ResultsPage = () => {
   useEffect(() => {
     console.log(sessionStorage);
     const storedCards = sessionStorage.getItem('selectedCards');
+    console.log('Created at:', createdAt);
     if (storedCards) {
       const cards = JSON.parse(storedCards);
       setSelectedCards(cards);
@@ -143,9 +143,7 @@ const ResultsPage = () => {
 
   return (
     <div className="results-container">
-      <Heading size="xl" accessibilityLevel={1}>
-        Your Tarot Reading Results
-      </Heading>
+      {/* <h1>Your Tarot Reading Results</h1> */}
 
       {error && (
         <Box marginBottom={4} padding={2} color="red">
@@ -165,14 +163,9 @@ const ResultsPage = () => {
 
       <Box>
         <Text align="center">
-          The cards have revealed your path. Here is your personalized reading.
+          {/* The cards have revealed your path. Here is your personalized reading. */}
         </Text>
       </Box>
-
-      <div
-        className="fixed top-115 left-1/2 -translate-x-1/2 w-1200 h-1200 bg-[#FFF9F7] rounded-full z-[-1] pointer-events-none"
-        style={{ boxShadow: '0px 80px 300px rgba(0, 0, 0, 0.75)' }}
-      />
 
       <div className="selected-cards-display">
         {selectedCards.map((card) => (
@@ -193,12 +186,10 @@ const ResultsPage = () => {
       {isLoading ? (
         <div className="loading-interpretation" style={{ marginTop: '20px' }}>
           <LoadingAnimation />
-          <Text align="center" size="lg" color="darkGray">
-            Interpreting your cards...
-          </Text>
+          <Text align="center" size="lg" color="darkGray"></Text>
         </div>
       ) : (
-        <Box marginTop={8} marginBottom={4} width="90%" maxWidth={800}>
+        <Box marginTop={8} marginBottom={4}>
           <Heading size="md" accessibilityLevel={2}>
             Your Reading Interpretation
           </Heading>
