@@ -73,3 +73,21 @@ select#gender {
 #user-dropdown {
   min-width: 115px;
 }
+
+button[name="login-button"] > div {
+  background-color: var(--color-pink-500);
+}
+button[name="login-button"]:hover > div {
+  background-image: linear-gradient(
+    90deg,
+    #FFE1AD 0%,
+    #FFAE8B 30%
+  );
+}
+
+button[name="edit-button"] > div {
+  background-color: var(--color-pink-500);
+}
+button[name="edit-button"]:hover > div {
+  background-color: var(--color-pink-600);
+}
