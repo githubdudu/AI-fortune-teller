@@ -6,7 +6,7 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
   return (
     <AnimatePresence>
       {visible && (
-        <div className="floating-prompt-container">
+        <motion.div className="floating-prompt-container" exit={{ opacity: 0 }}>
           <motion.div
             className="floating-prompt-modal"
             initial={{ y: '100%', opacity: 0 }}
@@ -50,7 +50,7 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
               Start Reading
             </button>
           </motion.div>
-        </div>
+        </motion.div>
       )}
       ;
     </AnimatePresence>
