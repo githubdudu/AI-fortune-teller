@@ -2,7 +2,7 @@ import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState, useContext, useEffect } from 'react';
 
-import NationalityInputBox from './NationalityInputBox';
+import NationalityInputBox from '$/components/NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContextProvider';
 
