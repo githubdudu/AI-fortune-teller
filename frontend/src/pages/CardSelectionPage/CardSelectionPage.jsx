@@ -68,7 +68,7 @@ export default function CardSelectionPage() {
       setSelectedCards(newSelectedCards);
 
       // 如果选择了3张卡片，自动跳转到结果页面
-      if (newSelectedCards.length === 3) {
+      if (newSelectedCards.length === 4) {
         setTimeout(() => {
           navigateToResults(newSelectedCards);
         }, 1000); // 延迟一秒后跳转，让用户看到第三张卡片被选中
@@ -103,6 +103,15 @@ export default function CardSelectionPage() {
       'selectedCards',
       JSON.stringify(selectedCardDetails),
     );
+    if (userPrompt) {
+      sessionStorage.setItem('userQuestion', userPrompt);
+    }
+    if (userChosenTheme) {
+      sessionStorage.setItem('selectedThemeId', userChosenTheme.id);
+    }
+    if (userInfo) {
+      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+    }
 
     navigate('/results');
   };
