@@ -119,6 +119,9 @@ builder.Services.AddScoped<IThemeService, ThemeService>();
 builder.Services.AddScoped<IFortuneService, FortuneService>();
 builder.Services.AddSingleton<IOpenAIClient, OpenAIClient>();
 
+// Register Firebase Auth Service
+builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
+
 // Configure JWT Authentication
 builder
     .Services.AddAuthentication(options =>
@@ -139,6 +142,16 @@ builder
                     context.Token = null;
                     return Task.CompletedTask;
                 }
+
+                // Check for token in cookies
+                if (
+                    string.IsNullOrEmpty(context.Token)
+                    && context.Request.Cookies.TryGetValue("auth_token", out var token)
+                )
+                {
+                    context.Token = token;
+                }
+
                 return Task.CompletedTask;
             },
             OnChallenge = context =>
@@ -177,11 +190,19 @@ builder
 // Configure CORS
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins =
+        builder.Configuration.GetSection("CorsPolicy:AllowedOrigins").Get<string[]>()
+        ?? new[] { "http://localhost:3000" };
+
     options.AddPolicy(
         "AllowAll",
-        builder =>
+        corsBuilder =>
         {
-            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            corsBuilder
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials(); // This is needed for cookies
         }
     );
 });
