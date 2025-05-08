@@ -15,7 +15,7 @@
 
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSessionStorage } from 'react-use';
+import { useLocalStorage } from 'react-use';
 
 import { registerWithEmailAndPassword } from '$/utils/firebase.js';
 
@@ -25,7 +25,7 @@ const SignUp = () => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginToken] = useSessionStorage('auth_token', null);
+  const [loginToken] = useLocalStorage('auth_token', null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
