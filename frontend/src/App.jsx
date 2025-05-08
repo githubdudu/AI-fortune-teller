@@ -12,6 +12,8 @@ import TestingModalPage from './pages/TestingModalPage';
 
 import ResultsPage from './pages/ResultsPage/ResultsPage';
 import UserProfile from './pages/UserProfile/UserProfile';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
 
             <Route path="results" element={<ResultsPage />} />
             <Route path="profile" element={<UserProfile />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="sign-up" element={<SignUpPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
