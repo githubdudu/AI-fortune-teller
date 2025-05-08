@@ -15,25 +15,30 @@
 
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSessionStorage } from 'react-use';
 
-import { auth, registerWithEmailAndPassword } from '$/utils/firebase.js';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { registerWithEmailAndPassword } from '$/utils/firebase.js';
 
 import Loading from '$/components/LoadingAnimation';
 
 const SignUp = () => {
+  const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, loading, error] = useAuthState(auth);
+  const [loginToken] = useSessionStorage('auth_token', null);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   // This hook captures the callback from the Firebase authentication provider.
   // It detects if the User has been authenticated and redirects to the home page.
   useEffect(() => {
-    if (user) {
+    if (loginToken) {
       navigate('/');
     }
-  }, [user]);
+  }, [loginToken]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
@@ -48,9 +53,40 @@ const SignUp = () => {
     console.error('Error signing up:', error);
   }
 
+  async function handleSignUpWithEmail(userName, email, password) {
+    setLoading(true);
+    try {
+      const user = await registerWithEmailAndPassword(
+        userName,
+        email,
+        password,
+      );
+
+      if (!user) {
+        throw new Error('Error: registering by email and password failed');
+      }
+      // display the success message and redirect to the login page
+      alert(
+        'User created successfully! After close this message, you will be redirected to the login page.',
+      );
+      navigate('/login');
+      setLoading(false); // Move setLoading(false) here to ensure it's called after navigation
+    } catch (error) {
+      setError(error);
+      console.error('Sign up error:', error);
+    }
+    setLoading(false);
+  }
   return (
     <div className="View">
       <h1>Sign Up</h1>
+      <input
+        type="text"
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+        placeholder="User Name"
+      />
+      <br />
       <input
         type="text"
         value={email}
@@ -67,7 +103,7 @@ const SignUp = () => {
       />
       <br />
       <br />
-      <button onClick={() => registerWithEmailAndPassword(email, password)}>
+      <button onClick={() => handleSignUpWithEmail(userName, email, password)}>
         Submit
       </button>
       <br />

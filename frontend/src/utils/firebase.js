@@ -156,6 +156,7 @@ export const registerWithEmailAndPassword = async (name, email, password) => {
       authProvider: 'local',
       email,
     });
+    return user;
   } catch (err) {
     console.error(
       'Error signing up with email and password: ' + JSON.stringify(err),
