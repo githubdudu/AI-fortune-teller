@@ -46,13 +46,29 @@ const ResultsPage = () => {
 
   return (
     <div className="results-container">
-      <h1>Your Tarot Reading Results</h1>
+      <Heading size="xl" accessibilityLevel={1}>
+        Your Tarot Reading Results
+      </Heading>
 
-      <Box>
-        <Text align="center">
+      <Box marginTop={2} marginBottom={6} maxWidth={640}>
+        <Text align="center" italic>
           The cards have revealed your path. Here is your personalized reading.
         </Text>
       </Box>
+
+      <Box marginBottom={6} width="90%" maxWidth={800}>
+        <Heading size="md" accessibilityLevel={2}>
+          Your Reading Interpretation
+        </Heading>
+        <Box marginTop={2}>
+          <Text>{readingResult}</Text>
+        </Box>
+      </Box>
+
+      <div
+        className="fixed top-115 left-1/2 -translate-x-1/2 w-1200 h-1200 bg-[#FFF9F7] rounded-full z-[-1] pointer-events-none"
+        style={{ boxShadow: '0px 80px 300px rgba(0, 0, 0, 0.75)' }}
+      />
 
       <div className="selected-cards-display">
         {selectedCards.map((card) => (
@@ -70,15 +86,6 @@ const ResultsPage = () => {
           </div>
         ))}
       </div>
-
-      <Box marginTop={8} marginBottom={4}>
-        <Heading size="md" accessibilityLevel={2}>
-          Your Reading Interpretation
-        </Heading>
-        <Box marginTop={2} marginBottom={6}>
-          <Text>{readingResult}</Text>
-        </Box>
-      </Box>
 
       <Box marginTop={6} display="flex" justifyContent="center">
         <Button

@@ -12,6 +12,7 @@ import UserInfoInputPage from './pages/UserInfoInputPage';
 import TestingModalPage from './pages/TestingModalPage';
 
 import ResultsPage from './pages/ResultsPage/ResultsPage';
+import UserProfile from './pages/UserProfile/UserProfile';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="testing" element={<TestingModalPage />} />
 
             <Route path="results" element={<ResultsPage />} />
+            <Route path="profile" element={<UserProfile />} />
           </Route>
           {/* Remove this at the end */}
           <Route path="/image-generation" element={<ImageGenerationPage />} />
