@@ -1,15 +1,10 @@
-using System;
-
-namespace Api.Models.Domain
+namespace Api.Models.DTOs
 {
-    public class DailyFortune
+    public class DailyFortuneDto
     {
-        public Guid Id { get; set; }
-        public required Guid UserId { get; set; }
         public required string LuckyColor { get; set; } = string.Empty;
         public int LuckyNumber { get; set; }
         public required string Advice { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     }
 }

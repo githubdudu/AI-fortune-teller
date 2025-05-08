@@ -6,6 +6,7 @@ using Api.Repositories;
 using Api.Repositories.Interfaces;
 using Api.Services.Implementations;
 using Api.Services.Interfaces;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,12 +112,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
 builder.Services.AddScoped<IFortuneRepository, FortuneRepository>();
+builder.Services.AddScoped<IDailyFortuneRepository, DailyFortuneRepository>();
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
 builder.Services.AddScoped<IFortuneService, FortuneService>();
+builder.Services.AddScoped<IDailyFortuneService, DailyFortuneService>();
 builder.Services.AddSingleton<IOpenAIClient, OpenAIClient>();
 
 // Register Firebase Auth Service
