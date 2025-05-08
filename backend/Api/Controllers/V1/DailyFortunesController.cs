@@ -13,6 +13,8 @@ namespace Api.Controllers.V1
     public class DailyFortunesController : ControllerBase
     {
         private readonly IDailyFortuneService _dailyFortuneService;
+        //Test user's Guid
+        private static readonly Guid UserId = new("11111111-1111-1111-1111-111111111111");
 
         public DailyFortunesController(IDailyFortuneService dailyFortuneService)
         {
@@ -22,15 +24,15 @@ namespace Api.Controllers.V1
         [HttpGet]
         public async Task<ActionResult<DailyFortuneDto>> GetDailyFortune()
         {
-            //TODO: Review this to decide either to use JWT token or GetUserId
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            //Commented out to use hardcoded test user's id
+            // var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                return Unauthorized();
-            }
+            // if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            // {
+            //     return Unauthorized();
+            // }
 
-            var result = await _dailyFortuneService.GetOrCreateDailyFortuneAsync(userId);
+            var result = await _dailyFortuneService.GetOrCreateDailyFortuneAsync(UserId);
             return Ok(result);
         }
     }
