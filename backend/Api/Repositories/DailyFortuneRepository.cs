@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Api.Data;
 using Api.Models.Domain;
 using Api.Repositories.Interfaces;
