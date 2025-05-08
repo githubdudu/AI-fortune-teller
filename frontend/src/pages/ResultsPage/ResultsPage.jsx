@@ -18,12 +18,13 @@ const ResultsPage = () => {
   useEffect(() => {
     console.log(sessionStorage);
     const storedCards = sessionStorage.getItem('selectedCards');
+    console.log('Created at:', createdAt);
     if (storedCards) {
       const cards = JSON.parse(storedCards);
       setSelectedCards(cards);
       console.log('Selected cards:', cards);
 
-      // 获取卡片ID用于API请求
+      // Get card IDs for API request
       const cardIds = cards.map((card) => card.id.toString());
       const question = sessionStorage.getItem('userQuestion') || null;
       const themeId = sessionStorage.getItem('selectedThemeId');
@@ -32,17 +33,17 @@ const ResultsPage = () => {
       console.log('Theme ID:', themeId);
       console.log('Card IDs:', cardIds);
 
-      // 设置为加载状态
+      // Set to loading state
       setIsLoading(true);
 
-      // 增加2秒延迟
+      // Add a 2-second delay
       setTimeout(() => {
-        // 发送POST请求获取解读结果，添加认证头部
+        // Send POST request to get reading result with authentication header
         axios
           .post(
             'http://localhost:5000/api/v1/Fortunes/ask',
             {
-              question: question || null,
+              question: question || '',
               cardIds: cardIds,
               themeId: themeId || null,
             },
@@ -54,30 +55,31 @@ const ResultsPage = () => {
             },
           )
           .then((response) => {
-            // 根据API返回的格式解析数据
+            // Parse data according to API response format
             const { id, result, cardsIds, createdAt } = response.data;
             setReadingResult(result);
             setResponseId(id);
             setCreatedAt(new Date(createdAt).toLocaleDateString());
             setError(null);
-            setIsLoading(false); // 设置加载完成
+            setIsLoading(false); // Set loading to complete
+            console.log('Reading result fetched successfully');
             console.log('API response:', response.data);
             console.log('Reading result:', result);
             console.log('Created at:', createdAt);
             console.log('Cards IDs:', cardsIds);
 
-            // 如果API返回了卡片ID，可以用这个更新显示的卡片
-            // 这里保留原有的卡片，因为API可能只返回ID而没有详细信息
+            // If the API returns card IDs, we could use them to update the displayed cards
+            // Keeping the original cards here since the API might only return IDs without detailed information
           })
           .catch((error) => {
             console.error('Error fetching reading result:', error);
 
-            // 检查是否有响应并且是否有详细的错误消息
+            // Check if there's a response with detailed error message
             let errorMessage =
               'Unable to fetch your reading. Please try again later.';
 
             if (error.response && error.response.data) {
-              // 如果是 OpenAI API 错误，显示更具体的信息
+              // If it's an OpenAI API error, display more specific information
               if (
                 error.response.data.includes(
                   'Failed to generate text from OpenAI',
@@ -91,13 +93,13 @@ const ResultsPage = () => {
             }
 
             setError(errorMessage);
-            // 请求失败时使用默认解读文本
+            // Use default reading text when request fails
             setReadingResult(
               'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.',
             );
-            setIsLoading(false); // 设置加载完成
+            setIsLoading(false); // Set loading to complete
           });
-      }, 2000); // 添加2秒延迟
+      }, 2000); // Add 2-second delay
     } else {
       setSelectedCards([
         {
@@ -123,7 +125,7 @@ const ResultsPage = () => {
         'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.',
       );
 
-      // 模拟加载效果，即使是使用默认数据
+      // Simulate loading effect, even when using default data
       setTimeout(() => {
         setIsLoading(false);
       }, 2000);
@@ -137,11 +139,11 @@ const ResultsPage = () => {
     navigate('/selection');
   };
 
-  // 如果正在加载，显示加载动画
+  // If loading, show the loading animation
 
   return (
     <div className="results-container">
-      <h1>Your Tarot Reading Results</h1>
+      {/* <h1>Your Tarot Reading Results</h1> */}
 
       {error && (
         <Box marginBottom={4} padding={2} color="red">
@@ -154,14 +156,14 @@ const ResultsPage = () => {
       {responseId && (
         <Box marginBottom={2}>
           <Text align="center" size="sm" color="gray">
-            Reading ID: {responseId} • {createdAt}
+            {/* Reading ID: {responseId} • {createdAt} */}
           </Text>
         </Box>
       )}
 
       <Box>
         <Text align="center">
-          The cards have revealed your path. Here is your personalized reading.
+          {/* The cards have revealed your path. Here is your personalized reading. */}
         </Text>
       </Box>
 

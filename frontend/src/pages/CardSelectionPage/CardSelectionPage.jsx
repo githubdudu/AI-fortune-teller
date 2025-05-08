@@ -75,11 +75,11 @@ export default function CardSelectionPage() {
       const newSelectedCards = [...selectedCards, cardId];
       setSelectedCards(newSelectedCards);
 
-      // 如果选择了3张卡片，自动跳转到结果页面
+      // If 3 cards are selected, automatically navigate to the results page
       if (newSelectedCards.length === 4) {
         setTimeout(() => {
           navigateToResults(newSelectedCards);
-        }, 1000); // 延迟一秒后跳转，让用户看到第三张卡片被选中
+        }, 1000); // Delay for 1 second to let the user see the third card being selected
       }
     }
   };
