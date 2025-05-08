@@ -14,8 +14,6 @@ namespace Api.Models.Domain
         [Required]
         [MaxLength(3)]
         public Guid[] CardsIds { get; set; } = [];
-        //Need to add user info
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }

@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import { AppContextProvider } from './context/AppContextProvider';
 import AboutPage from './pages/AboutPage';
-import ImageGenerationPage from './pages/ImageGenerationPage';
 import RootLayoutPage from './pages/RootLayoutPage';
 
 import UserInputPage from './pages/UserInputPage';
@@ -12,6 +11,9 @@ import UserInfoInputPage from './pages/UserInfoInputPage';
 import TestingModalPage from './pages/TestingModalPage';
 
 import ResultsPage from './pages/ResultsPage/ResultsPage';
+import UserProfile from './pages/UserProfile/UserProfile';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
@@ -28,9 +30,10 @@ function App() {
             <Route path="testing" element={<TestingModalPage />} />
 
             <Route path="results" element={<ResultsPage />} />
+            <Route path="profile" element={<UserProfile />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="sign-up" element={<SignUpPage />} />
           </Route>
-          {/* Remove this at the end */}
-          <Route path="/image-generation" element={<ImageGenerationPage />} />
         </Routes>
       </BrowserRouter>
     </AppContextProvider>

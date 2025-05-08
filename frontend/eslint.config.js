@@ -5,6 +5,9 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import react from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import viteConfig from './vite.config.js';
+
+import viteConfig from './vite.config.js';
 
 export default [
   { ignores: ['dist'] },
@@ -34,6 +37,9 @@ export default [
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },
+        vite: {
+          viteConfig: viteConfig,
+        }
       },
     },
     rules: {

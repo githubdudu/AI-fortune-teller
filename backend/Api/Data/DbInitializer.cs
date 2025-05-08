@@ -5,6 +5,9 @@ namespace Api.Data
 {
     public static class DbInitializer
     {
+        //Initialize testuser's id as Guid
+        public static readonly Guid TestUserId = new("11111111-1111-1111-1111-111111111111");
+
         public static void InitializeData(ApplicationDbContext context)
         {
             if (!context.Themes.Any())
@@ -827,6 +830,18 @@ namespace Api.Data
                         Suit = "Wands",
                     }
                 );
+            }
+
+            //Initialize test user
+            if (!context.Users.Any(u => u.Id == TestUserId))
+            {
+                context.Users.Add(new User
+                {
+                    Id = TestUserId,
+                    Email = "test@example.com",
+                    DisplayName = "testuser",
+                    CreatedAt = DateTime.UtcNow,
+                });
             }
 
             context.SaveChanges();
