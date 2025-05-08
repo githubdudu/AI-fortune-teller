@@ -33,11 +33,11 @@ namespace Api.Services.Implementations
             return user != null ? MapUserToDto(user) : null;
         }
 
-        public async Task<UserDto?> GetUserByUsernameAsync(string username)
-        {
-            var user = await _userRepository.GetByUsernameAsync(username);
-            return user != null ? MapUserToDto(user) : null;
-        }
+        // public async Task<UserDto?> GetUserByUsernameAsync(string username)
+        // {
+        //     var user = await _userRepository.GetByUsernameAsync(username);
+        //     return user != null ? MapUserToDto(user) : null;
+        // }
 
         public async Task<UserDto> CreateUserAsync(CreateUserRequest request)
         {
@@ -50,17 +50,18 @@ namespace Api.Services.Implementations
                     $"A user with email {request.Email} already exists."
                 );
 
-            var existingUserByUsername = await _userRepository.GetByUsernameAsync(request.Username);
-            if (existingUserByUsername != null)
-                throw new InvalidOperationException(
-                    $"A user with username {request.Username} already exists."
-                );
+            // var existingUserByUsername = await _userRepository.GetByUsernameAsync(request.Username);
+            // if (existingUserByUsername != null)
+            //     throw new InvalidOperationException(
+            //         $"A user with username {request.Username} already exists."
+            //     );
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = request.Username,
+                // Username = request.Username,
                 Email = request.Email,
+                DisplayName = request.DisplayName,
                 CreatedAt = DateTime.UtcNow,
             };
 
@@ -76,14 +77,14 @@ namespace Api.Services.Implementations
             if (user == null)
                 throw new KeyNotFoundException($"User with ID {id} not found.");
 
-            // Check if another user already has the requested username
-            var existingUserWithUsername = await _userRepository.GetByUsernameAsync(
-                request.Username
-            );
-            if (existingUserWithUsername != null && existingUserWithUsername.Id != id)
-                throw new InvalidOperationException(
-                    $"Username {request.Username} is already taken."
-                );
+            // // Check if another user already has the requested username
+            // var existingUserWithUsername = await _userRepository.GetByUsernameAsync(
+            //     request.Username
+            // );
+            // if (existingUserWithUsername != null && existingUserWithUsername.Id != id)
+            //     throw new InvalidOperationException(
+            //         $"Username {request.Username} is already taken."
+            //     );
 
             // Check if another user already has the requested email
             var existingUserWithEmail = await _userRepository.GetByEmailAsync(request.Email);
@@ -93,8 +94,13 @@ namespace Api.Services.Implementations
                 );
 
             // Update the user
-            user.Username = request.Username;
+            // user.Username = request.Username;
             user.Email = request.Email;
+            user.DisplayName = request.DisplayName;
+            user.DateOfBirth = request.DateOfBirth;
+            user.Gender = request.Gender;
+            user.ResidenceCountry = request.ResidenceCountry;
+            user.BornCountry = request.BornCountry;
             user.UpdatedAt = DateTime.UtcNow;
 
             await _userRepository.UpdateAsync(user);
@@ -117,8 +123,13 @@ namespace Api.Services.Implementations
             return new UserDto
             {
                 Id = user.Id,
-                Username = user.Username,
+                // Username = user.Username,
                 Email = user.Email,
+                DisplayName = user.DisplayName,
+                DateOfBirth = user.DateOfBirth,
+                Gender = user.Gender,
+                ResidenceCountry = user.ResidenceCountry,
+                BornCountry = user.BornCountry,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
             };

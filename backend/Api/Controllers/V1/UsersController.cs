@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Api.Models.DTOs;
 using Api.Models.Requests;
 using Api.Services.Interfaces;
@@ -9,7 +10,7 @@ namespace Api.Controllers.V1
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Authorize]
+    // [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -33,6 +34,27 @@ namespace Api.Controllers.V1
             if (user == null)
             {
                 return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            // Extract user email from claims
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(new { message = "User email not found in token" });
+            }
+
+            var user = await _userService.GetUserByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
             }
 
             return Ok(user);
