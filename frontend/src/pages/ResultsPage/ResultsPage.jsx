@@ -7,6 +7,7 @@ import axios from 'axios';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
 
 const ResultsPage = () => {
+  // Check if the user is authenticated
   const navigate = useNavigate();
   const [selectedCards, setSelectedCards] = useState([]);
   const [readingResult, setReadingResult] = useState('');
