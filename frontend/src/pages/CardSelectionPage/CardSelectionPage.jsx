@@ -170,6 +170,7 @@ export default function CardSelectionPage() {
 
       <div className="card-container">
         {cards.map((card) => (
+          // Check if the card is already selected
           <div
             key={card.id}
             className={`card-wrapper ${selectedCards.includes(card.id) ? 'selected' : ''}`}
