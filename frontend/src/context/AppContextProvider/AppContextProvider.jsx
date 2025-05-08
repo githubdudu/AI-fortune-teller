@@ -10,6 +10,7 @@ export function AppContextProvider({ children }) {
   );
 
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
+  const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
@@ -26,6 +27,8 @@ export function AppContextProvider({ children }) {
         userInfo,
         saveUserInfo: setUserInfo,
         clearQuestionAndTheme,
+        userProfile,
+        setUserProfile,
       }}
     >
       {children}
