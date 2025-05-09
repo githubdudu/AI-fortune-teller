@@ -16,15 +16,7 @@ export default function CardSelectionPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const {
-    userPrompt,
-    userChosenTheme,
-    userInfo,
-    saveUserChosenCards,
-    saveUserPrompt,
-    saveUserChosenTheme,
-    saveUserInfo,
-  } = useContext(AppContext);
+  const { saveUserChosenCards } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -35,41 +27,41 @@ export default function CardSelectionPage() {
 
     // Add a 2-second delay before fetching cards
     setTimeout(() => {
-      axios
-        .get('http://localhost:5000/api/v1/cards/random?limit=5', {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
-          },
-        })
-        .then((response) => {
-          setCards(response.data || []);
-          setIsLoading(false);
-          console.log('Cards fetched:', response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching cards:', error);
-          setError(error);
-          setIsLoading(false);
-
-          // Fallback to demo cards if API fails
-          setCards([
-            { id: 1, name: 'The Fool', imageSource: '/defautFrontCard.png' },
-            {
-              id: 2,
-              name: 'The Magician',
-              imageSource: '/defautFrontCard.png',
-            },
-            {
-              id: 3,
-              name: 'The High Priestess',
-              imageSource: '/defautFrontCard.png',
-            },
-            { id: 4, name: 'The Empress', imageSource: '/defautFrontCard.png' },
-            { id: 5, name: 'The Emperor', imageSource: '/defautFrontCard.png' },
-          ]);
-        });
+      setIsLoading(false);
     }, 2000); // 2-second delay
+    axios
+      .get('http://localhost:5000/api/v1/cards/random?limit=5', {
+        headers: {
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+        },
+      })
+      .then((response) => {
+        setCards(response.data || []);
+        console.log('Cards fetched:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching cards:', error);
+        setError(error);
+        setIsLoading(false);
+
+        // Fallback to demo cards if API fails
+        setCards([
+          { id: 1, name: 'The Fool', imageSource: '/defautFrontCard.png' },
+          {
+            id: 2,
+            name: 'The Magician',
+            imageSource: '/defautFrontCard.png',
+          },
+          {
+            id: 3,
+            name: 'The High Priestess',
+            imageSource: '/defautFrontCard.png',
+          },
+          { id: 4, name: 'The Empress', imageSource: '/defautFrontCard.png' },
+          { id: 5, name: 'The Emperor', imageSource: '/defautFrontCard.png' },
+        ]);
+      });
   };
 
   const handleCardSelect = (cardId) => {
@@ -116,25 +108,11 @@ export default function CardSelectionPage() {
     // Save selected cards to context (which uses sessionStorage internally)
     saveUserChosenCards(selectedCardDetails);
 
-    // Use context methods instead of direct sessionStorage access
-    if (userPrompt) {
-      saveUserPrompt(userPrompt);
-    }
-
-    if (userChosenTheme) {
-      saveUserChosenTheme(userChosenTheme);
-    }
-
-    if (userInfo) {
-      saveUserInfo(userInfo);
-    }
-
     navigate('/results');
   };
 
   const handleContinue = () => {
     // Use these values to make the API call to AI fortune teller
-    console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
     navigateToResults();
   };
 
