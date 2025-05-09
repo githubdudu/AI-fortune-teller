@@ -14,12 +14,21 @@ export function AppContextProvider({ children }) {
     null,
   );
 
+  const [readingResult, setReadingResult] = useSessionStorage(
+    'readingResult',
+    null,
+  );
+
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
+  };
+
+  const clearReadingResult = () => {
+    setReadingResult(null);
   };
 
   return (
@@ -36,6 +45,9 @@ export function AppContextProvider({ children }) {
         clearQuestionAndTheme,
         userProfile,
         setUserProfile,
+        readingResult,
+        saveReadingResult: setReadingResult,
+        clearReadingResult,
       }}
     >
       {children}

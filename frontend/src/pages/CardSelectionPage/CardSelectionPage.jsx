@@ -13,10 +13,17 @@ export default function CardSelectionPage() {
   const [flippedCards, setFlippedCards] = useState([]);
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [readingResult, setReadingResult] = useState(null);
+
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { saveUserChosenCards } = useContext(AppContext);
+  const {
+    saveUserChosenCards,
+    saveReadingResult,
+    userChosenTheme,
+    userPrompt,
+  } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -102,18 +109,120 @@ export default function CardSelectionPage() {
   };
 
   // Function to navigate to results page
-  const navigateToResults = (selectedIds = selectedCards) => {
-    const selectedCardDetails = getSelectedCardDetails(selectedIds);
+  const navigateToResults = (
+    cardsIds = selectedCards,
+    result = readingResult,
+  ) => {
+    const selectedCardDetails = getSelectedCardDetails(cardsIds);
 
     // Save selected cards to context (which uses sessionStorage internally)
     saveUserChosenCards(selectedCardDetails);
+    saveReadingResult(result);
 
     navigate('/results');
   };
-
   const handleContinue = () => {
     // Use these values to make the API call to AI fortune teller
-    navigateToResults();
+
+    if (selectedCards && selectedCards.length > 0) {
+      console.log('Selected cards:', selectedCards);
+
+      // Get card IDs for API request
+      const cardIds = selectedCards; // 이미 ID 배열임
+      const question = userPrompt || '';
+      const themeId = userChosenTheme ? userChosenTheme.id : null;
+      console.log('Question:', question);
+      console.log('Theme ID:', themeId);
+      console.log('Card IDs:', cardIds);
+
+      // Set to loading state
+      setIsLoading(true);
+
+      axios
+        .post(
+          'http://localhost:5000/api/v1/Fortunes/ask',
+          {
+            question: question || '',
+            cardIds: cardIds,
+            themeId: themeId || null,
+          },
+          {
+            headers: {
+              Authorization:
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+            },
+          },
+        )
+        .then((response) => {
+          // Parse data according to API response format
+          const { result, cardsIds } = response.data;
+          setReadingResult(result);
+
+          setError(null);
+          setIsLoading(false); // Set loading to complete
+          console.log('Reading result fetched successfully');
+          console.log('API response:', response.data);
+          console.log('Reading result:', result);
+          console.log('Cards IDs:', cardsIds);
+
+          navigateToResults(cardsIds, result);
+
+          // If the API returns card IDs, we could use them to update the displayed cards
+          // Keeping the original cards here since the API might only return IDs without detailed information
+        })
+        .catch((error) => {
+          console.error('Error fetching reading result:', error);
+
+          // Check if there's a response with detailed error message
+          let errorMessage =
+            'Unable to fetch your reading. Please try again later.';
+
+          if (error.response && error.response.data) {
+            // If it's an OpenAI API error, display more specific information
+            if (
+              error.response.data.includes(
+                'Failed to generate text from OpenAI',
+              )
+            ) {
+              errorMessage =
+                'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
+            } else {
+              errorMessage = `Server error: ${error.response.data}`;
+            }
+          }
+
+          setError(errorMessage);
+          // Use default reading text when request fails
+          setReadingResult(
+            'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.',
+          );
+          setIsLoading(false); // Set loading to complete
+        });
+    } else {
+      setSelectedCards([
+        {
+          id: 1,
+          name: 'The Fool',
+          description: 'New beginnings, innocence, spontaneity',
+          imageSource: '/defautFrontCard.png',
+        },
+        {
+          id: 2,
+          name: 'The Magician',
+          description: 'Manifestation, resourcefulness, power',
+          imageSource: '/defautFrontCard.png',
+        },
+        {
+          id: 3,
+          name: 'The High Priestess',
+          description: 'Intuition, sacred knowledge, divine feminine',
+          imageSource: '/defautFrontCard.png',
+        },
+      ]);
+      setReadingResult(
+        'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.',
+      );
+    }
   };
 
   const isCardDisabled = (cardId) => {
