@@ -7,7 +7,14 @@ function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
   // Context state
-  const { saveUserPrompt } = useContext(AppContext);
+  const {
+    saveUserPrompt,
+    clearQuestionAndTheme,
+    userChosenTheme,
+    userPrompt,
+    userChosenCards,
+    saveUserChosenCards,
+  } = useContext(AppContext);
   // internal state
   const [input, setInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -35,6 +42,27 @@ function UserQuestionInput() {
   }, [errorMessage]);
 
   const handleSubmit = () => {
+    clearQuestionAndTheme();
+    // Clear the user question and theme from context
+    if (!userPrompt) {
+      console.log('userPrompt is empty');
+    } else {
+      console.log('userPrompt:', userPrompt);
+    }
+    if (!userChosenTheme) {
+      console.log('userChosenTheme is empty');
+    } else {
+      console.log('userChosenTheme:', userChosenTheme);
+    }
+
+    // Clear the user chosen cards from context
+    saveUserChosenCards(null);
+    if (!userChosenCards) {
+      console.log('userChosenCards is empty');
+    } else {
+      console.log('userChosenCards:', userChosenCards);
+    }
+
     const trimmedInput = input.trim();
     const wordCount = trimmedInput.split(/\s+/).length;
 

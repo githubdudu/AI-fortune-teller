@@ -9,11 +9,38 @@ const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
 function ThemeCard({ theme, onHover }) {
   const image = IMAGE_BASE_URL + theme.image;
-  const { saveUserChosenTheme } = useContext(AppContext);
+
+  const {
+    saveUserChosenTheme,
+    clearQuestionAndTheme,
+    userPrompt,
+    userChosenTheme,
+    userChonsenCards,
+    saveUserChosenCards,
+  } = useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
+    // Clear the user question and theme from context
+    clearQuestionAndTheme();
+    if (!userPrompt) {
+      console.log('userPrompt is empty');
+    } else {
+      console.log('userPrompt:', userPrompt);
+    }
+    if (!userChosenTheme) {
+      console.log('userChosenTheme is empty');
+    } else {
+      console.log('userChosenTheme:', userChosenTheme);
+    }
+    saveUserChosenCards(null);
+    if (!userChonsenCards) {
+      console.log('userChonsenCards is empty');
+    } else {
+      console.log('userChonsenCards:', userChonsenCards);
+    }
+
     // Store the selected theme in context for later use
     saveUserChosenTheme(theme);
 

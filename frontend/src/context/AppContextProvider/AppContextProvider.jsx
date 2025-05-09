@@ -9,18 +9,31 @@ export function AppContextProvider({ children }) {
     null,
   );
 
+  const [userChosenCards, setUserChosenCards] = useSessionStorage(
+    'userChosenCards',
+    null,
+  );
+
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
+
+  const clearQuestionAndTheme = () => {
+    setUserPrompt('');
+    setUserChosenTheme(null);
+  };
 
   return (
     <AppContext.Provider
       value={{
+        userChosenCards,
+        saveUserChosenCards: setUserChosenCards,
         userPrompt,
         saveUserPrompt: setUserPrompt,
         userChosenTheme,
         saveUserChosenTheme: setUserChosenTheme,
         userInfo,
         saveUserInfo: setUserInfo,
+        clearQuestionAndTheme,
         userProfile,
         setUserProfile,
       }}

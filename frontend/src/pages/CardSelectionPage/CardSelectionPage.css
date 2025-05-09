@@ -80,9 +80,7 @@
   cursor: pointer;
 }
 
-.card-wrapper:hover {
-  transform: translateY(-10px);
-}
+
 
 .card-wrapper.selected {
   transform: translateY(-15px);

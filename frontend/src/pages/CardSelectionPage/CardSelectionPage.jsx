@@ -16,7 +16,7 @@ export default function CardSelectionPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const { userPrompt, userChosenTheme, userInfo } = useContext(AppContext);
+  const { saveUserChosenCards } = useContext(AppContext);
 
   useEffect(() => {
     fetchCards();
@@ -24,6 +24,11 @@ export default function CardSelectionPage() {
 
   const fetchCards = () => {
     setIsLoading(true);
+
+    // Add a 2-second delay before fetching cards
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 2-second delay
     axios
       .get('http://localhost:5000/api/v1/cards/random?limit=5', {
         headers: {
@@ -33,7 +38,6 @@ export default function CardSelectionPage() {
       })
       .then((response) => {
         setCards(response.data || []);
-        setIsLoading(false);
         console.log('Cards fetched:', response.data);
       })
       .catch((error) => {
@@ -44,7 +48,11 @@ export default function CardSelectionPage() {
         // Fallback to demo cards if API fails
         setCards([
           { id: 1, name: 'The Fool', imageSource: '/defautFrontCard.png' },
-          { id: 2, name: 'The Magician', imageSource: '/defautFrontCard.png' },
+          {
+            id: 2,
+            name: 'The Magician',
+            imageSource: '/defautFrontCard.png',
+          },
           {
             id: 3,
             name: 'The High Priestess',
@@ -67,11 +75,11 @@ export default function CardSelectionPage() {
       const newSelectedCards = [...selectedCards, cardId];
       setSelectedCards(newSelectedCards);
 
-      // 如果选择了3张卡片，自动跳转到结果页面
-      if (newSelectedCards.length === 3) {
+      // If 3 cards are selected, automatically navigate to the results page
+      if (newSelectedCards.length === 4) {
         setTimeout(() => {
           navigateToResults(newSelectedCards);
-        }, 1000); // 延迟一秒后跳转，让用户看到第三张卡片被选中
+        }, 1000); // Delay for 1 second to let the user see the third card being selected
       }
     }
   };
@@ -97,19 +105,14 @@ export default function CardSelectionPage() {
   const navigateToResults = (selectedIds = selectedCards) => {
     const selectedCardDetails = getSelectedCardDetails(selectedIds);
 
-    // Store selected cards in sessionStorage
-    // This will allow us to access the selected cards in the results page
-    sessionStorage.setItem(
-      'selectedCards',
-      JSON.stringify(selectedCardDetails),
-    );
+    // Save selected cards to context (which uses sessionStorage internally)
+    saveUserChosenCards(selectedCardDetails);
 
     navigate('/results');
   };
 
   const handleContinue = () => {
     // Use these values to make the API call to AI fortune teller
-    console.log(userPrompt, userChosenTheme, userInfo, selectedCards);
     navigateToResults();
   };
 
@@ -118,10 +121,9 @@ export default function CardSelectionPage() {
   };
 
   // Display a loading state while fetching cards
-  if (isLoading && !cards.length) {
+  if (isLoading) {
     return (
       <div className="selection-container">
-        <div className="mystical-orb"></div>
         <LoadingAnimation />
       </div>
     );
@@ -154,6 +156,7 @@ export default function CardSelectionPage() {
 
       <div className="card-container">
         {cards.map((card) => (
+          // Check if the card is already selected
           <div
             key={card.id}
             className={`card-wrapper ${selectedCards.includes(card.id) ? 'selected' : ''}`}

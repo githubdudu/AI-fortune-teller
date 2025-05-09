@@ -10,6 +10,7 @@
   100% {
     box-shadow: 0 0 50px rgba(255, 244, 183, 0.5);
   }
+    
 }
 
 
@@ -23,7 +24,6 @@
 
 .tarot-card.disabled {
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .tarot-card-inner {
@@ -39,12 +39,14 @@
   position: absolute;
   border-radius: 10px;
   animation: glow 2s infinite alternate;
+  transform: translateY(-10px);
 }
 
 .tarot-card.disabled .tarot-card-inner:hover {
   position: relative;
   animation: none;
   box-shadow: none;
+  transform: none;
 }
 
 .tarot-card.flipped .tarot-card-inner {
