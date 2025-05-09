@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Box, Flex } from 'gestalt';
 
 import ArcanaVerseLogo from '../../components/ArcanaVerseLogo';
-import NavBar from './NavBar';
+import UserAvatarButton from './UserAvatarButton';
 
 function RootLayoutPage() {
   return (
@@ -12,7 +12,7 @@ function RootLayoutPage() {
       direction="column"
       height="100vh"
     >
-      <NavBar />
+      <UserAvatarButton />
       <Box marginBottom={10}>
         <ArcanaVerseLogo />
       </Box>
