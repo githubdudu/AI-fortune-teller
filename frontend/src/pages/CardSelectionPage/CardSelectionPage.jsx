@@ -128,7 +128,7 @@ export default function CardSelectionPage() {
       console.log('Selected cards:', selectedCards);
 
       // Get card IDs for API request
-      const cardIds = selectedCards; // 이미 ID 배열임
+      const cardIds = selectedCards;
       const question = userPrompt || '';
       const themeId = userChosenTheme ? userChosenTheme.id : null;
       console.log('Question:', question);
