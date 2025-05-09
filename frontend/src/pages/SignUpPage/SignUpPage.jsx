@@ -14,15 +14,18 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from 'react-use';
+import { TextField, Button } from 'gestalt';
 
 import { registerWithEmailAndPassword } from '$/utils/firebase.js';
 
 import Loading from '$/components/LoadingAnimation';
+import FormContainer from '../../components/FormContainer';
+import FormTitle from '../../components/FormTitle';
 
 const SignUp = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginToken] = useLocalStorage('auth_token', null);
@@ -53,6 +56,16 @@ const SignUp = () => {
     console.error('Error signing up:', error);
   }
 
+  function handleNameChange(event) {
+    const { value } = event;
+    console.log(event);
+
+    if (value.length > 50) {
+      return;
+    }
+    setUsername(value);
+  }
+
   async function handleSignUpWithEmail(userName, email, password) {
     setLoading(true);
     try {
@@ -78,41 +91,88 @@ const SignUp = () => {
     setLoading(false);
   }
   return (
-    <div className="View">
-      <h1>Sign Up</h1>
-      <input
-        type="text"
-        value={userName}
-        onChange={(e) => setUserName(e.target.value)}
-        placeholder="User Name"
-      />
-      <br />
-      <input
-        type="text"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email Address"
-      />
-      <br />
-      <br />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <br />
-      <br />
-      <button onClick={() => handleSignUpWithEmail(userName, email, password)}>
-        Submit
-      </button>
-      <br />
-      <br />
-      <Link to="/login">
-        <button>I already have an account</button>
-      </Link>
-    </div>
+    <FormContainer>
+      <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
+      <div className="flex flex-col gap-4 min-w-[500px]">
+        <Username />
+        <Email />
+        <Password />
+        <SignUpButton />
+        <IHaveAnAccountButton />
+      </div>
+    </FormContainer>
   );
+
+  function Username() {
+    return (
+      <div>
+        <TextField
+          id="username"
+          label="User Name"
+          placeholder="Please create your user name"
+          name="username"
+          size="lg"
+          onChange={handleNameChange}
+          value={username}
+        />
+      </div>
+    );
+  }
+
+  function Email() {
+    return (
+      <div>
+        <TextField
+          id="email"
+          label="Email"
+          placeholder="Please enter your email address"
+          name="email"
+          size="lg"
+          onChange={(e) => setEmail(e.value)}
+          value={email}
+        />
+      </div>
+    );
+  }
+
+  function Password() {
+    return (
+      <div>
+        <TextField
+          id="password"
+          label="Password"
+          placeholder="Please create your password"
+          name="password"
+          size="lg"
+          type="password"
+          onChange={(e) => setPassword(e.value)}
+          value={password}
+        />
+      </div>
+    );
+  }
+
+  function SignUpButton() {
+    return (
+      <Button
+        text="Continue"
+        onClick={() => handleSignUpWithEmail(username, email, password)}
+        size="lg"
+        color="red"
+      />
+    );
+  }
+
+  function IHaveAnAccountButton() {
+    return (
+      <Button
+        text="I already have an account"
+        size="lg"
+        color="transparent"
+        onClick={() => navigate('/login')}
+      />
+    );
+  }
 };
 
 export default SignUp;

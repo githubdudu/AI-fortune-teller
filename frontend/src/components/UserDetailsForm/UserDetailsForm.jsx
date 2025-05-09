@@ -143,99 +143,138 @@ function UserDetailsForm() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="w-full ">
-              <TextField
-                id="firstName"
-                label="First Name"
-                placeholder="Please enter your first name"
-                name="firstName"
-                size="lg"
-                onChange={handleNameChange}
-                onBlur={() => {
-                  setFNErrorMessage('');
-                }}
-                errorMessage={FNErrorMessage}
-                value={FNValue}
-              />
+              <FirstName />
             </div>
             <div className="w-full ">
-              <TextField
-                id="lastName"
-                name="lastName"
-                label="Last Name"
-                placeholder="Please enter your last name"
-                size="lg"
-                onChange={handleNameChange}
-                onBlur={() => {
-                  setLNErrorMessage('');
-                }}
-                errorMessage={LNErrorMessage}
-                value={LNValue}
-              />
+              <LastName />
             </div>
           </div>
 
           <div className="flex gap-4">
             <div className="flex-1">
-              {/* A date picker for the date of birth */}
-              <DatePicker
-                id="DOB"
-                label="Date of Birth"
-                placeholder="DD/MM/YYYY"
-                onChange={handleDateChange}
-                maxDate={new Date()}
-                errorMessage={DOBErrorMessage}
-                value={DOBValue}
-              />
+              <DateOfBirth />
             </div>
             <div className="flex-1">
-              {/* A gender option box */}
-
-              <SelectList
-                id="gender"
-                label="Gender"
-                placeholder="Please select"
-                size="lg"
-                onChange={handleGenderChange}
-                value={genderValue}
-              >
-                {GENDER_OPTIONS.map(({ label, value }) => (
-                  <SelectList.Option key={value} value={value} label={label} />
-                ))}
-              </SelectList>
+              <Gender />
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <NationalityInputBox
-                id="nationality"
-                name="nationality"
-                label="The Country You Are Born In"
-                placeholder="Please type and select"
-                selected={nationalityValue}
-                setSelected={setNationalityValue}
-                errorMessage={nationalityErrorMessage}
-                setErrorMessage={setNationalityErrorMessage}
-              />
+              <PlaceOfBirth />
             </div>
             <div className="flex-1">
-              <NationalityInputBox
-                id="residency"
-                name="residency"
-                label="The Country You Are Residing In"
-                placeholder="Please type and select"
-                selected={POBValue}
-                setSelected={setPOBValue}
-                errorMessage={POBErrorMessage}
-                setErrorMessage={setPOBErrorMessage}
-              />
+              <Residency />
             </div>
           </div>
-          <Button text="Proceed" type="submit" size="lg" color="red" />
+          <ProceedButton />
         </div>
       </Fieldset>
     </form>
   );
+
+  function FirstName() {
+    return (
+      <TextField
+        id="firstName"
+        label="First Name"
+        placeholder="Please enter your first name"
+        name="firstName"
+        size="lg"
+        onChange={handleNameChange}
+        onBlur={() => {
+          setFNErrorMessage('');
+        }}
+        errorMessage={FNErrorMessage}
+        value={FNValue}
+      />
+    );
+  }
+
+  function LastName() {
+    return (
+      <TextField
+        id="lastName"
+        name="lastName"
+        label="Last Name"
+        placeholder="Please enter your last name"
+        size="lg"
+        onChange={handleNameChange}
+        onBlur={() => {
+          setLNErrorMessage('');
+        }}
+        errorMessage={LNErrorMessage}
+        value={LNValue}
+      />
+    );
+  }
+
+  /* A date picker for the date of birth */
+  function DateOfBirth() {
+    return (
+      <DatePicker
+        id="DOB"
+        label="Date of Birth"
+        placeholder="DD/MM/YYYY"
+        onChange={handleDateChange}
+        maxDate={new Date()}
+        errorMessage={DOBErrorMessage}
+        value={DOBValue}
+      />
+    );
+  }
+
+  /* A gender option box */
+  function Gender() {
+    return (
+      <SelectList
+        id="gender"
+        label="Gender"
+        placeholder="Please select"
+        size="lg"
+        onChange={handleGenderChange}
+        value={genderValue}
+      >
+        {GENDER_OPTIONS.map(({ label, value }) => (
+          <SelectList.Option key={value} value={value} label={label} />
+        ))}
+      </SelectList>
+    );
+  }
+
+  function PlaceOfBirth() {
+    return (
+      <NationalityInputBox
+        id="nationality"
+        name="nationality"
+        label="The Country You Are Born In"
+        placeholder="Please type and select"
+        selected={nationalityValue}
+        setSelected={setNationalityValue}
+        errorMessage={nationalityErrorMessage}
+        setErrorMessage={setNationalityErrorMessage}
+      />
+    );
+  }
+
+  function Residency() {
+    return (
+      <NationalityInputBox
+        id="residency"
+        name="residency"
+        label="The Country You Are Residing In"
+        placeholder="Please type and select"
+        selected={POBValue}
+        setSelected={setPOBValue}
+        errorMessage={POBErrorMessage}
+        setErrorMessage={setPOBErrorMessage}
+      />
+    );
+  }
+
+  function ProceedButton() {
+    return <Button text="Proceed" type="submit" size="lg" color="red" />;
+  }
 }
 
 export default UserDetailsForm;

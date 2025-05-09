@@ -12,9 +12,10 @@
  */
 
 import { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from 'react-use';
 import axios from 'axios';
+import { TextField, Button } from 'gestalt';
 
 import {
   logInWithEmailAndPassword,
@@ -24,6 +25,8 @@ import {
 import Loading from '$/components/LoadingAnimation';
 import { API_CONFIG } from '$/constants/config';
 import { AppContext } from '$/context/AppContextProvider';
+import FormContainer from '../../components/FormContainer';
+import FormTitle from '../../components/FormTitle';
 
 const Login = () => {
   const { setUserProfile } = useContext(AppContext);
@@ -95,37 +98,95 @@ const Login = () => {
   }
 
   return (
-    <div className="View">
-      <h1>Login</h1>
-      <input
-        type="text"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email Address"
-      />
-      <br />
-      <br />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <br />
-      <br />
-      <button onClick={() => logInWithEmailAndPassword(email, password)}>
-        Submit
-      </button>
-      <br />
-      <br />
-      <button onClick={handleSignInWithGoogle}>Login with Google</button>
-      <br />
-      <br />
-      <Link to="/sign-up">
-        <button>I don&apos;t have an account</button>
-      </Link>
-    </div>
+    <FormContainer>
+      <FormTitle title="Login" subtitle="Please enter your credentials" />
+      <div className="flex flex-col gap-4 min-w-[500px]">
+        <Email />
+        <Password />
+        <SignInButton />
+        <AuthDivider />
+        <SignInWithGoogleButton />
+        <IDontHaveAnAccountButton />
+      </div>
+    </FormContainer>
   );
+
+  function Email() {
+    return (
+      <div>
+        <TextField
+          id="email"
+          label="Email"
+          placeholder="Please enter your email address"
+          name="email"
+          size="lg"
+          onChange={(e) => setEmail(e.value)}
+          value={email}
+        />
+      </div>
+    );
+  }
+
+  function Password() {
+    return (
+      <div>
+        <TextField
+          id="password"
+          label="Password"
+          placeholder="Please enter your password"
+          name="password"
+          size="lg"
+          type="password"
+          onChange={(e) => setPassword(e.value)}
+          value={password}
+        />
+      </div>
+    );
+  }
+
+  function AuthDivider() {
+    return (
+      <div
+        className="flex items-center text-center mt-3 
+          before:relative before:inline-block  before:w-1/2 before:h-px before:bg-gray-300 before:right-[0.5em]
+          after:relative after:inline-block  after:w-1/2 after:h-px after:bg-gray-300 after:left-[0.5em]"
+      >
+        Or
+      </div>
+    );
+  }
+  function SignInButton() {
+    return (
+      <Button
+        text="Sign in"
+        onClick={() => logInWithEmailAndPassword(email, password)}
+        size="lg"
+        color="red"
+      />
+    );
+  }
+
+  function SignInWithGoogleButton() {
+    return (
+      <Button
+        text="Sign in with Google"
+        type="button"
+        size="lg"
+        onClick={handleSignInWithGoogle}
+      />
+    );
+  }
+
+  function IDontHaveAnAccountButton() {
+    return (
+      <Button
+        text="I don't have an account"
+        size="lg"
+        color="transparent"
+        onClick={() => navigate('/sign-up')}
+      />
+    );
+  }
 };
 
 export default Login;
