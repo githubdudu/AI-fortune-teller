@@ -25,11 +25,12 @@ function UserAvatarButton() {
       setIsLoggedIn(auth_tokenExists);
     };
 
+    setOpen(false);
     checkLoginStatus();
   }, []);
 
   const handleAvatarButtonClick = () => {
-    setOpen(!open);
+    setOpen((prevOpen) => !prevOpen);
     console.log('Clicked!');
     console.log('isLoggedIn: ', isLoggedIn);
     console.log('open: ', open);
@@ -41,6 +42,12 @@ function UserAvatarButton() {
     switch (item.value) {
       case 'profile':
         navigate('/profile');
+        break;
+      case 'daily-fortune':
+        //useContext set floating window to true
+        break;
+      case 'card-gallery':
+        navigate('/gallery');
         break;
       case 'logout':
         handleLogout();
@@ -62,28 +69,31 @@ function UserAvatarButton() {
   return (
     <Sticky top={0}>
       <div className="w-screen flex justify-end pt-4 pr-6">
-        <div className="hover:opacity-80 transition-opacity">
-          <button
-            className="bg-transparent border-0 p-0 m-0 cursor-pointer"
-            onClick={handleAvatarButtonClick}
-            aria-label="User menu"
-            type="button"
-            ref={anchorRef}
-          >
-            <Avatar
-              name={userProfile?.displayName || 'User'}
-              size="sm"
-              outline
-            />
-          </button>
-        </div>
-        {open && (
+        {isLoggedIn ? (
+          <div className="hover:opacity-80 transition-opacity">
+            <button
+              className="bg-transparent border-0 p-0 m-0 cursor-pointer"
+              onClick={handleAvatarButtonClick}
+              aria-label="User menu"
+              type="button"
+              ref={anchorRef}
+            >
+              <Avatar
+                name={userProfile?.displayName || 'User'}
+                size="sm"
+                outline
+              />
+            </button>
+          </div>
+        ) : (
+          <div className="w-8 h-8"></div> // empty placeholder for replacing useravatarbutton's location when not logged in
+        )}
+        {isLoggedIn && open && (
           <Dropdown
             anchor={anchorRef.current}
             id="user-dropdown"
             onDismiss={() => setOpen(false)}
             zIndex={new CompositeZIndex([PAGE_HEADER_ZINDEX])}
-            forceDirection
             idealDirection="bottom"
           >
             <Dropdown.Item
@@ -92,20 +102,16 @@ function UserAvatarButton() {
             />
             <Dropdown.Item
               onSelect={handleSelect}
+              option={{ value: 'daily-fortune', label: 'Daily Fortune' }}
+            />
+            <Dropdown.Item
+              onSelect={handleSelect}
+              option={{ value: 'card-gallery', label: 'Card Gallery' }}
+            />
+            <Dropdown.Item
+              onSelect={handleSelect}
               option={{ value: 'logout', label: 'Logout' }}
             />
-            {/* {isLoggedIn && (
-              <>
-                <Dropdown.Item
-                  onSelect={handleSelect}
-                  option={{ value: 'profile', label: 'Profile' }}
-                />
-                <Dropdown.Item
-                  onSelect={handleSelect}
-                  option={{ value: 'logout', label: 'Logout' }}
-                />
-              </>
-            )} */}
           </Dropdown>
         )}
       </div>
