@@ -79,7 +79,7 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
                   </div>
                 </div>
                 <div className="fortune-advice">
-                  <div className="fortune-label">Pice of advice:</div>
+                  <div className="fortune-label">Piece of advice:</div>
                   <p>{dailyFortune.advice}</p>
                 </div>
               </div>
