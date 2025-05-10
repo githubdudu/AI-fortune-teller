@@ -7,6 +7,7 @@ import axios from 'axios';
 import { AppContext } from '$/context/AppContextProvider';
 import DailyFortuneContent from './DailyFortuneContent';
 import LoginForm from '$/components/LoginForm';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -14,11 +15,14 @@ import LoginForm from '$/components/LoginForm';
  */
 
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen, isLoggedIn } = useContext(AppContext);
+  const { isModalOpen, toggleModalOpen, isLoggedIn, userProfile } =
+    useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchDailyFortune = async () => {
     setLoading(true);
@@ -45,6 +49,14 @@ function UserInputPage() {
     fetchDailyFortune();
   }, []);
 
+  useEffect(() => {
+    // If the user is logged in, but the information is missing, showing a form
+    if (isLoggedIn && missingProfileInfo(userProfile)) {
+      navigate('/user-info-input');
+      return;
+    }
+  }, [isLoggedIn]);
+
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
     if (!isLoggedIn) {
@@ -65,6 +77,16 @@ function UserInputPage() {
         />
       );
     }
+  };
+
+  const missingProfileInfo = (userProfile) => {
+    return (
+      !userProfile ||
+      !userProfile.bornCountry ||
+      !userProfile.dateOfBirth ||
+      !userProfile.gender ||
+      !userProfile.residentCountry
+    );
   };
 
   return (
