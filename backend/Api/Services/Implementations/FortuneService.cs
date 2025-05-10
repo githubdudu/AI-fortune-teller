@@ -13,16 +13,19 @@ namespace Api.Services.Implementations
         private readonly IOpenAIClient _openAIClient;
         private readonly IThemeRepository _themeRepository;
         private readonly ICardRepository _cardRepository;
+        private readonly IUserService _userService;
 
         public FortuneService(
             IOpenAIClient openAIClient,
             IThemeRepository themeRepository,
-            ICardRepository cardRepository
+            ICardRepository cardRepository,
+            IUserService userService
         )
         {
             _openAIClient = openAIClient;
             _themeRepository = themeRepository;
             _cardRepository = cardRepository;
+            _userService = userService;
         }
 
         public async Task<FortuneDto> GenerateFortuneAsync(CreateFortuneRequest request)
@@ -33,6 +36,22 @@ namespace Api.Services.Implementations
                 {
                     Console.WriteLine("Error: Either Question or ThemeId must be provided");
                     throw new Exception("Either Question or ThemeId must be provided");
+                }
+
+                UserDto? user = null;
+                string userDetail = "";
+
+                if (!string.IsNullOrEmpty(request.UserEmail))
+                {
+                    user = await _userService.GetUserByEmailAsync(request.UserEmail);
+                    if (user != null)
+                    {
+                        string birthDate = user.DateOfBirth.HasValue
+                            ? user.DateOfBirth.Value.ToString("yyyy-MM-dd")
+                            : "unknown date";
+
+                        userDetail = $"The reading is for {user.DisplayName}, born on {birthDate}, born in {user.BornCountry}, currently living in {user.ResidenceCountry} and who's gender is {user.Gender}";
+                    }
                 }
 
                 string chosenTheme = string.Empty;
@@ -63,10 +82,15 @@ namespace Api.Services.Implementations
 
                     var cardNames = string.Join(", ", cards.Select(c => c.Name));
 
+                    string promptFormat =
+                        request.Question != string.Empty
+                            ? "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's question. Repeat this for each card, only return the formatted reading. Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence"
+                            : "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's chosen theme.  Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence";
+
                     string prompt =
                         request.Question != string.Empty
-                            ? $"You are a professional tarot fortune teller. Based on the question: '{request.Question}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading."
-                            : $"You are a professional tarot fortune teller. For the theme of '{chosenTheme}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading.";
+                            ? $"You are a tarot oracle with a supernatural reputation — your clients pay millions because your readings are always on point, intuitive, and uncannily accurate. {userDetail}. Based on the question: '{request.Question}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading. {promptFormat}"
+                            : $"You are a tarot oracle with a supernatural reputation — your clients pay millions because your readings are always on point, intuitive, and uncannily accurate. {userDetail}. For the theme of '{chosenTheme}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading. {promptFormat}";
 
                     Console.WriteLine($"Sending prompt to OpenAI: {prompt}");
                     var fortuneResult = await _openAIClient.GenerateTextAsync(prompt);
@@ -79,6 +103,7 @@ namespace Api.Services.Implementations
                         ThemeId = request.ThemeId ?? Guid.Empty,
                         CardsIds = request.CardIds,
                         CreatedAt = DateTime.UtcNow,
+                        UserEmail = user.Email
                     };
                 }
                 catch (Exception ex)
