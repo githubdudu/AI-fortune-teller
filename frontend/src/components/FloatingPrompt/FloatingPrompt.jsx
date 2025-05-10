@@ -3,23 +3,23 @@ import './FloatingPrompt.css';
 import PropTypes from 'prop-types';
 
 const colorMap = {
-  Red: '#FF4C4C',
-  Blue: '#4C6EFF',
-  Green: '#4CFF4C',
-  Yellow: '#FFFF4C',
-  Orange: '#FFAE42',
-  Pink: '#FFB6C1',
-  Navy: '#001F54',
+  Red: '#FF0000',
+  Blue: '#0000FF',
+  Green: '#008000',
+  Yellow: '#FFD700',
+  Orange: '#FFA500',
+  Pink: '#FFC0CB',
+  Navy: '#000080',
   'Lime Green': '#32CD32',
-  'Baby Pink': '#FFC1CC',
+  'Baby Pink': '#F4C2C2',
   Coral: '#FF7F50',
-  Gray: '#BEBEBE',
+  Gray: '#808080',
   Khaki: '#F0E68C',
   Beige: '#F5F5DC',
-  Brown: '#8B4513',
+  Brown: '#A52A2A',
   Mint: '#98FF98',
   Lavender: '#E6E6FA',
-  Purple: '#A020F0',
+  Purple: '#800080',
   Black: '#000000',
   White: '#FFFFFF',
 };
@@ -47,29 +47,40 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
             }}
           >
             <p className="prompt-text">The future is calling.</p>
-            <p className="prompt-text">Are you ready to unlock it?</p>
+            <p className="prompt-text">Click to start your fortune.</p>
 
             {loading && <p>Loading themes...</p>}
             {error ? (
               <p className="prompt-text error">{error}</p>
             ) : dailyFortune ? (
               <div className="fortune-card">
-                <div
-                  className="fortune-color"
-                  style={{
-                    backgroundColor:
-                      colorMap[dailyFortune.luckyColor] || '#FFC0CB',
-                  }}
-                >
-                  <span className="fortune-number">
-                    {dailyFortune.luckyColor}
-                  </span>
-                  <span className="fortune-color-name">
-                    {dailyFortune.luckyNumber}
-                  </span>
+                <div className="fortune-main">
+                  <div className="fortune-block">
+                    <div className="fortune-label">Your lucky number</div>
+                    <div className="fortune-number">
+                      {dailyFortune.luckyNumber}
+                    </div>
+                  </div>
+
+                  <div className="fortune-block">
+                    <div className="fortune-label">Your lucky colour</div>
+                    <div className="fortune-color-line">
+                      <span
+                        className="color-swatch"
+                        style={{
+                          backgroundColor:
+                            colorMap[dailyFortune.luckyColor] || '#FFC0CB',
+                        }}
+                      ></span>
+                      <span className="fortune-color-name">
+                        {dailyFortune.luckyColor}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <div className="fortune-advice">
-                  <p>Piece of Advice: {dailyFortune.advice}</p>
+                  <div className="fortune-label">Pice of advice:</div>
+                  <p>{dailyFortune.advice}</p>
                 </div>
               </div>
             ) : (
