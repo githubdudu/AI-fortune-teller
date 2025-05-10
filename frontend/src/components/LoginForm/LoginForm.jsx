@@ -11,7 +11,7 @@
  * for social authentication or single sign-on.
  */
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { TextField, Button } from 'gestalt';
@@ -28,7 +28,7 @@ import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
 
 const Login = () => {
-  const { login, isLoggedIn } = useContext(AppContext);
+  const { login } = useContext(AppContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,14 +36,6 @@ const Login = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-
-  // This hook captures the callback from the Firebase authentication provider.
-  // It detects if the User has been authenticated and redirects to the home page.
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/');
-    }
-  }, [isLoggedIn]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
