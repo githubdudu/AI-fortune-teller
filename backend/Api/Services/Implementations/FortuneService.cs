@@ -50,7 +50,7 @@ namespace Api.Services.Implementations
                             ? user.DateOfBirth.Value.ToString("yyyy-MM-dd")
                             : "unknown date";
 
-                        userDetail = $"The reading is for {user.DisplayName}, born on {birthDate}, born in {user.BornCountry}, currently living in {user.ResidenceCountry} and who's gender is {user.Gender})";
+                        userDetail = $"The reading is for {user.DisplayName}, born on {birthDate}, born in {user.BornCountry}, currently living in {user.ResidenceCountry} and who's gender is {user.Gender}";
                     }
                 }
 
