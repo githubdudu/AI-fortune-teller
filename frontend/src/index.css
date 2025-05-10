@@ -68,3 +68,8 @@ body {
 select#gender {
   height: 52px;
 }
+
+/* Hack to DropDown of Gestalt */
+#user-dropdown {
+  min-width: 115px;
+}
