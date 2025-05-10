@@ -7,6 +7,7 @@ import NationalityInputBox from '$/components/NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContextProvider';
 import { API_CONFIG } from '../../constants/config';
+import { COUNTRY_LIST } from '../../constants/nationality';
 
 function UserDetailsForm() {
   const { userProfile } = useContext(AppContext);
@@ -31,11 +32,18 @@ function UserDetailsForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setFNValue(userProfile?.firstName || '');
+    setFNValue(userProfile?.displayName || '');
     setDOBValue(userProfile?.dateOfBirth || '');
     setGenderValue(userProfile?.gender || null);
-    setNationalityValue(userProfile?.residenceCountry || null);
-    setPOBValue(userProfile?.bornCountry || null);
+    setNationalityValue(
+      COUNTRY_LIST.find(
+        ({ label }) => label === userProfile?.residenceCountry,
+      ) || null,
+    );
+    setPOBValue(
+      COUNTRY_LIST.find(({ label }) => label === userProfile?.bornCountry) ||
+        null,
+    );
   }, [userProfile]);
 
   function handleSubmit(event) {
@@ -101,8 +109,8 @@ function UserDetailsForm() {
       },
       withCredentials: true,
     });
-    if (response.status !== 200 || response.status !== 204) {
-      throw new Error('Error calling the "auth/login" endpoint');
+    if (response.status !== 200 && response.status !== 204) {
+      throw new Error('Error calling the "put user" endpoint');
     }
   }
 

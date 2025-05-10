@@ -60,32 +60,34 @@ function UserInputPage() {
     // do user me request
     if (!isLoggedIn) return;
     const getUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
-          {
-            headers: {
-              Authorization: BEARER_TOKEN,
-            },
-            withCredentials: true,
+      const response = await axios.get(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
+        {
+          headers: {
+            Authorization: BEARER_TOKEN,
           },
-        );
-        if (response.status !== 200) {
-          throw new Error('Failed to fetch user profile');
-        }
-        setUserProfile(response.data);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setError('Failed to load user profile');
+          withCredentials: true,
+        },
+      );
+      if (response.status !== 200) {
+        throw new Error('Failed to fetch user profile');
       }
+      setUserProfile(response.data);
     };
-    getUserProfile();
 
+    try {
+      setLoading(true);
+      getUserProfile();
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      setError('Failed to load user profile');
+    }
     // If the user is logged in, but the information is missing, showing a form
     if (isLoggedIn && missingProfileInfo(userProfile)) {
       navigate('/user-info-input');
       return;
     }
+    setLoading(false);
   }, [isLoggedIn]);
 
   const FloatingContent = () => {
@@ -113,10 +115,10 @@ function UserInputPage() {
   const missingProfileInfo = (userProfile) => {
     return (
       !userProfile ||
-      !userProfile.bornCountry ||
-      !userProfile.dateOfBirth ||
-      !userProfile.gender ||
-      !userProfile.residenceCountry
+      userProfile.bornCountry === undefined ||
+      userProfile.dateOfBirth === undefined ||
+      userProfile.gender === undefined ||
+      userProfile.residenceCountry === undefined
     );
   };
 
