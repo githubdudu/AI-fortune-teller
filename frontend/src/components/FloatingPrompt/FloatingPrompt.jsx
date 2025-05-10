@@ -24,16 +24,20 @@ const colorMap = {
   White: '#FFFFFF',
 };
 
-function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
+function FloatingPrompt({ visible, shouldReduceMotion = true, children }) {
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div className="floating-prompt-container" exit={{ opacity: 0 }}>
+        <div className="floating-prompt-container">
           <motion.div
             className="floating-prompt-modal"
             initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1, scale: [1, 1.02, 1] }}
-            exit={{ y: '100%', opacity: 0 }}
+            animate={
+              shouldReduceMotion
+                ? { y: 0, opacity: 1 }
+                : { y: 0, opacity: 1, scale: [1, 1.02, 1] }
+            }
+            exit="hidden"
             transition={{
               y: { type: 'spring', stiffness: 60, damping: 22 },
               opacity: { duration: 0.5 },
@@ -91,7 +95,7 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
               Start Reading
             </button>
           </motion.div>
-        </motion.div>
+        </div>
       )}
       ;
     </AnimatePresence>
@@ -99,16 +103,9 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
 }
 
 FloatingPrompt.propTypes = {
-  onClick: PropTypes.func.isRequired,
   visible: PropTypes.bool.isRequired,
-  dailyFortune: PropTypes.shape({
-    luckyColor: PropTypes.string.isRequired,
-    luckyNumber: PropTypes.number.isRequired,
-    advice: PropTypes.string.isRequired,
-    createdAt: PropTypes.string,
-  }),
-  loading: PropTypes.bool,
-  error: PropTypes.string,
+  shouldReduceMotion: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 export default FloatingPrompt;

@@ -1,9 +1,11 @@
 import { Box } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import { AppContext } from '$/context/AppContextProvider';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -11,7 +13,7 @@ import axios from 'axios';
  */
 
 function UserInputPage() {
-  const [showPrompt, setShowPrompt] = useState(true);
+  const { isModalOpen, toggleModalOpen } = useContext(AppContext);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,19 +43,22 @@ function UserInputPage() {
     fetchDailyFortune();
   }, []);
 
-  const handlePromptClick = () => {
-    setShowPrompt(false);
+  const FloatingContent = () => {
+    return (
+      <DailyFortuneContent
+        loading={loading}
+        error={error}
+        dailyFortune={dailyFortune}
+        onClick={toggleModalOpen}
+      />
+    );
   };
 
   return (
     <>
-      <FloatingPrompt
-        visible={showPrompt}
-        onClick={handlePromptClick}
-        dailyFortune={dailyFortune}
-        loading={loading}
-        error={error}
-      />
+      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={false}>
+        <FloatingContent />
+      </FloatingPrompt>
       <div className="w-165">
         <UserQuestionInput />
       </div>
@@ -77,3 +82,44 @@ function UserInputPage() {
 }
 
 export default UserInputPage;
+
+function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
+  return (
+    <>
+      <p className="prompt-text">The future is calling.</p>
+      <p className="prompt-text">Are you ready to unlock it?</p>
+      {loading && <p>Loading themes...</p>}
+      {error ? (
+        <p className="prompt-text error">{error}</p>
+      ) : dailyFortune ? (
+        <>
+          <p className="prompt-text">
+            Your Lucky Color: {dailyFortune.luckyColor}
+          </p>
+          <p className="prompt-text">
+            Your Lucky Number: {dailyFortune.luckyNumber}
+          </p>
+          <p className="prompt-text">Piece of Advice: {dailyFortune.advice}</p>
+        </>
+      ) : (
+        <p className="prompt-text">Loading your daily fortune...</p>
+      )}
+
+      <button className="prompt-button" onClick={onClick}>
+        Start Reading
+      </button>
+    </>
+  );
+}
+
+DailyFortuneContent.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  dailyFortune: PropTypes.shape({
+    luckyColor: PropTypes.string.isRequired,
+    luckyNumber: PropTypes.number.isRequired,
+    advice: PropTypes.string.isRequired,
+    createdAt: PropTypes.string,
+  }),
+};

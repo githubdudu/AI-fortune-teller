@@ -22,6 +22,8 @@ export function AppContextProvider({ children }) {
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
+  const [isModalOpen, setIsModalOpen] = useSessionStorage('isModalOpen', true);
+
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
@@ -29,6 +31,10 @@ export function AppContextProvider({ children }) {
 
   const clearReadingResult = () => {
     setReadingResult(null);
+  };
+
+  const toggleModalOpen = () => {
+    setIsModalOpen((prev) => !prev);
   };
 
   return (
@@ -48,6 +54,8 @@ export function AppContextProvider({ children }) {
         readingResult,
         saveReadingResult: setReadingResult,
         clearReadingResult,
+        isModalOpen,
+        toggleModalOpen,
       }}
     >
       {children}

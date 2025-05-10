@@ -7,7 +7,6 @@ import LoadingPage from './pages/LoadingPage';
 import FortunePage from './pages/FortunePage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
 import UserProfile from './pages/UserProfile/UserProfile';
-import LoginPage from './components/LoginForm';
 import SignUpPage from './pages/SignUpPage';
 
 function App() {
@@ -23,7 +22,6 @@ function App() {
             <Route path="fortune" element={<FortunePage />} />
             <Route path="user-info-input" element={<UserInfoInputPage />} />
             <Route path="profile" element={<UserProfile />} />
-            <Route path="login" element={<LoginPage />} />
             <Route path="sign-up" element={<SignUpPage />} />
           </Route>
         </Routes>
