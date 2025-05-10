@@ -59,6 +59,9 @@ export function AppContextProvider({ children }) {
     setUserPrompt('');
     setUserChosenTheme(null);
     setReadingResult(null);
+
+    // Clear the modal state
+    setIsModalOpen(true);
   };
 
   return (
