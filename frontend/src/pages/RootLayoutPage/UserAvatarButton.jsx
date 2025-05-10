@@ -41,7 +41,7 @@ function UserAvatarButton() {
         navigate('/profile');
         break;
       case 'daily-fortune':
-        //useContext set floating window to true
+        // TODO: Implement functionality to set a floating window to true using useContext
         break;
       case 'card-gallery':
         navigate('/gallery');
