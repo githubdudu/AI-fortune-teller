@@ -258,53 +258,94 @@ const FortunePage = () => {
           </Text>
         </Box>
 
-        <div className="selected-cards-display">
-          {userChosenCards?.map((card) => (
-            <div key={card.id}>
-              <div>
-                <Card
-                  frontImage={card.imageSource || '/defautFrontCard.png'}
-                  backImage={card.imageSource || '/defaultBackCard.png'}
-                  initialFlipped={true}
-                  name={card.name}
-                  description={card.description}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+        <SelectedCardsDisplay />
+        <ReadingInterpretationDisplay />
 
-        <Box marginTop={8} marginBottom={4}>
-          <Heading size="md" accessibilityLevel={2}>
-            Your Reading Interpretation
-          </Heading>
-          <Box marginTop={2} marginBottom={6}>
-            <Text>{contextReadingResult || readingResult}</Text>
-          </Box>
-        </Box>
-
-        <Box marginTop={6} display="flex" justifyContent="center">
-          <Button
-            text="Start New Reading"
-            color="blue"
-            onClick={handleNewReading}
-            size="lg"
-          />
-        </Box>
+        <NewReadingButton />
       </div>
     );
   }
 
-  return (
-    <div className="selection-container">
-      <h1 className="selection-title">Select Three Cards for your Reading</h1>
+  return <SelectionDisplay />;
 
-      {error && (
-        <div className="error-message">
-          Could not fetch cards from server. Using demo cards instead.
-        </div>
-      )}
+  function ReadingInterpretationDisplay() {
+    return (
+      <Box marginTop={8} marginBottom={4}>
+        <Heading size="md" accessibilityLevel={2}>
+          Your Reading Interpretation
+        </Heading>
+        <Box marginTop={2} marginBottom={6}>
+          <Text>{contextReadingResult || readingResult}</Text>
+        </Box>
+      </Box>
+    );
+  }
 
+  function NewReadingButton() {
+    return (
+      <Box marginTop={6} display="flex" justifyContent="center">
+        <Button
+          text="Start New Reading"
+          color="blue"
+          onClick={handleNewReading}
+          size="lg"
+        />
+      </Box>
+    );
+  }
+
+  function SelectedCardsDisplay() {
+    return (
+      <div className="selected-cards-display">
+        {userChosenCards?.map((card) => (
+          <div key={card.id}>
+            <div>
+              <Card
+                frontImage={card.imageSource || '/defautFrontCard.png'}
+                backImage={card.imageSource || '/defaultBackCard.png'}
+                initialFlipped={true}
+                name={card.name}
+                description={card.description}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  function SelectionDisplay() {
+    return (
+      <div className="selection-container">
+        <h1 className="selection-title">Select Three Cards for your Reading</h1>
+
+        {error && (
+          <div className="error-message">
+            Could not fetch cards from server. Using demo cards instead.
+          </div>
+        )}
+
+        <CardsDisplay />
+        {selectedCards.length === 3 ? (
+          <div>
+            <Button
+              text="See Your Reading"
+              color="blue"
+              onClick={() => handleReadButton()}
+              size="lg"
+            />
+          </div>
+        ) : (
+          <div className="cards-remaining">
+            <span>{3 - selectedCards.length} cards remaining</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function CardsDisplay() {
+    return (
       <div className="card-container">
         {cards.map((card) => (
           // Check if the card is already selected
@@ -329,22 +370,8 @@ const FortunePage = () => {
           </div>
         ))}
       </div>
-      {selectedCards.length === 3 ? (
-        <div>
-          <Button
-            text="See Your Reading"
-            color="blue"
-            onClick={() => handleReadButton()}
-            size="lg"
-          />
-        </div>
-      ) : (
-        <div className="cards-remaining">
-          <span>{3 - selectedCards.length} cards remaining</span>
-        </div>
-      )}
-    </div>
-  );
+    );
+  }
 };
 
 export default FortunePage;
