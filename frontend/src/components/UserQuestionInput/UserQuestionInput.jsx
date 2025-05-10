@@ -77,7 +77,7 @@ function UserQuestionInput() {
     // TODO: Save the input as user prompt in the context for later use
     saveUserPrompt(trimmedInput);
     // TODO: change route accordingly
-    navigate('/user-info-input');
+    navigate('/fortune');
   };
 
   const handleDismiss = () => {

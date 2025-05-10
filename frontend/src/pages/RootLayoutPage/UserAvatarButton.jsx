@@ -32,10 +32,11 @@ function UserAvatarButton() {
 
     switch (item.value) {
       case 'profile':
-        navigate('/profile');
+        navigate('/user-info-input');
         break;
       case 'daily-fortune':
         toggleModalOpen();
+        navigate('/');
         break;
       case 'card-gallery':
         navigate('/gallery');
