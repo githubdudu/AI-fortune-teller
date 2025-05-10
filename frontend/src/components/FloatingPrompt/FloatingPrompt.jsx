@@ -2,6 +2,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingPrompt.css';
 import PropTypes from 'prop-types';
 
+const colorMap = {
+  Red: '#FF4C4C',
+  Blue: '#4C6EFF',
+  Green: '#4CFF4C',
+  Yellow: '#FFFF4C',
+  Orange: '#FFAE42',
+  Pink: '#FFB6C1',
+  Navy: '#001F54',
+  'Lime Green': '#32CD32',
+  'Baby Pink': '#FFC1CC',
+  Coral: '#FF7F50',
+  Gray: '#BEBEBE',
+  Khaki: '#F0E68C',
+  Beige: '#F5F5DC',
+  Brown: '#8B4513',
+  Mint: '#98FF98',
+  Lavender: '#E6E6FA',
+  Purple: '#A020F0',
+  Black: '#000000',
+  White: '#FFFFFF',
+};
+
 function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
   return (
     <AnimatePresence>
@@ -31,17 +53,25 @@ function FloatingPrompt({ onClick, visible, dailyFortune, loading, error }) {
             {error ? (
               <p className="prompt-text error">{error}</p>
             ) : dailyFortune ? (
-              <>
-                <p className="prompt-text">
-                  Your Lucky Color: {dailyFortune.luckyColor}
-                </p>
-                <p className="prompt-text">
-                  Your Lucky Number: {dailyFortune.luckyNumber}
-                </p>
-                <p className="prompt-text">
-                  Piece of Advice: {dailyFortune.advice}
-                </p>
-              </>
+              <div className="fortune-card">
+                <div
+                  className="fortune-color"
+                  style={{
+                    backgroundColor:
+                      colorMap[dailyFortune.luckyColor] || '#FFC0CB',
+                  }}
+                >
+                  <span className="fortune-number">
+                    {dailyFortune.luckyColor}
+                  </span>
+                  <span className="fortune-color-name">
+                    {dailyFortune.luckyNumber}
+                  </span>
+                </div>
+                <div className="fortune-advice">
+                  <p>Piece of Advice: {dailyFortune.advice}</p>
+                </div>
+              </div>
             ) : (
               <p className="prompt-text">Loading your daily fortune...</p>
             )}
