@@ -19,7 +19,7 @@ function NationalityInputBox({
   errorMessage = '',
   setErrorMessage = () => {},
 }) {
-  const [inputValue, setInputValue] = useState();
+  const [inputValue, setInputValue] = useState(selected?.label || '');
   const [suggestedOptions, setSuggestedOptions] = useState(COUNTRY_OPTIONS);
 
   const handleOnChange = ({ value }) => {
