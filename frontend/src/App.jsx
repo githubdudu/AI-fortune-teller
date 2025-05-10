@@ -7,7 +7,7 @@ import LoadingPage from './pages/LoadingPage';
 import FortunePage from './pages/FortunePage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
 import UserProfile from './pages/UserProfile/UserProfile';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './components/LoginForm';
 import SignUpPage from './pages/SignUpPage';
 
 function App() {
