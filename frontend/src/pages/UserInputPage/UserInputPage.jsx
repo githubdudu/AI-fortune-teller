@@ -8,15 +8,23 @@ import { AppContext } from '$/context/AppContextProvider';
 import DailyFortuneContent from './DailyFortuneContent';
 import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
+import { API_CONFIG } from '$/constants/config';
 
+const BEARER_TOKEN =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo';
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
  * @returns
  */
 
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen, isLoggedIn, userProfile } =
-    useContext(AppContext);
+  const {
+    isModalOpen,
+    toggleModalOpen,
+    isLoggedIn,
+    userProfile,
+    setUserProfile,
+  } = useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,8 +39,7 @@ function UserInputPage() {
         'http://localhost:5000/api/v1/DailyFortunes/me',
         {
           headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+            Authorization: BEARER_TOKEN,
           },
         },
       );
@@ -50,6 +57,30 @@ function UserInputPage() {
   }, []);
 
   useEffect(() => {
+    // do user me request
+    if (!isLoggedIn) return;
+    const getUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
+          {
+            headers: {
+              Authorization: BEARER_TOKEN,
+            },
+            withCredentials: true,
+          },
+        );
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch user profile');
+        }
+        setUserProfile(response.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setError('Failed to load user profile');
+      }
+    };
+    getUserProfile();
+
     // If the user is logged in, but the information is missing, showing a form
     if (isLoggedIn && missingProfileInfo(userProfile)) {
       navigate('/user-info-input');
@@ -85,7 +116,7 @@ function UserInputPage() {
       !userProfile.bornCountry ||
       !userProfile.dateOfBirth ||
       !userProfile.gender ||
-      !userProfile.residentCountry
+      !userProfile.residenceCountry
     );
   };
 

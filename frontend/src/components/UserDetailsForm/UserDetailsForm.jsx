@@ -1,13 +1,15 @@
 import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 import NationalityInputBox from '$/components/NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContextProvider';
+import { API_CONFIG } from '../../constants/config';
 
 function UserDetailsForm() {
-  const { saveUserInfo } = useContext(AppContext);
+  const { userProfile } = useContext(AppContext);
 
   const GENDER_OPTIONS = [
     { label: 'Female', value: 0 },
@@ -16,13 +18,11 @@ function UserDetailsForm() {
   ];
 
   const [FNErrorMessage, setFNErrorMessage] = useState('');
-  const [LNErrorMessage, setLNErrorMessage] = useState('');
   const [DOBErrorMessage, setDOBErrorMessage] = useState('');
   const [nationalityErrorMessage, setNationalityErrorMessage] = useState('');
   const [POBErrorMessage, setPOBErrorMessage] = useState('');
 
   const [FNValue, setFNValue] = useState('');
-  const [LNValue, setLNValue] = useState('');
   const [DOBValue, setDOBValue] = useState('');
   const [genderValue, setGenderValue] = useState(null);
   const [nationalityValue, setNationalityValue] = useState(null);
@@ -31,9 +31,12 @@ function UserDetailsForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear the Context when the component mounts
-    saveUserInfo(null);
-  }, []);
+    setFNValue(userProfile?.firstName || '');
+    setDOBValue(userProfile?.dateOfBirth || '');
+    setGenderValue(userProfile?.gender || null);
+    setNationalityValue(userProfile?.residenceCountry || null);
+    setPOBValue(userProfile?.bornCountry || null);
+  }, [userProfile]);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -42,12 +45,6 @@ function UserDetailsForm() {
       setFNErrorMessage('This field is required');
     } else {
       setFNErrorMessage('');
-    }
-
-    if (!LNValue) {
-      setLNErrorMessage('This field is required');
-    } else {
-      setLNErrorMessage('');
     }
 
     if (!DOBValue) {
@@ -68,56 +65,58 @@ function UserDetailsForm() {
       setPOBErrorMessage('');
     }
 
-    console.log({
-      FNValue,
-      LNValue,
-      DOBValue,
-      genderID: genderValue,
-      nationalityValue,
-      nationalityID: nationalityValue?.value,
-      POBValue,
-      POBID: POBValue?.value,
-    });
-
-    // Saved in Context for later use
-    saveUserInfo({
-      firstName: FNValue,
-      lastName: LNValue,
+    const requestBody = {
+      email: userProfile?.email,
+      displayName: FNValue,
       dateOfBirth: DOBValue,
-      genderID: genderValue,
-      nationalityID: nationalityValue?.value,
-      placeOfBirthID: POBValue?.value,
-    });
+      gender: genderValue,
+      residenceCountry: nationalityValue.label,
+      bornCountry: POBValue.label,
+    };
+    console.log({ requestBody });
 
-    if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {
+    if (!FNValue || !DOBValue || !nationalityValue || !POBValue) {
       return;
-    } else {
-      navigate('/fortune');
+    }
+
+    try {
+      putUserRequest(requestBody);
+      navigate('/');
+    } catch (error) {
+      console.error('Error putting user request:', error);
+      return;
+    }
+  }
+
+  async function putUserRequest(requestBody) {
+    const USER_PUT_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${
+      userProfile?.id ? `/${userProfile.id}` : ''
+    }`;
+    const response = await axios.put(USER_PUT_URL, {
+      ...requestBody,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Access-Control-Allow-Origin': '*',
+      },
+      withCredentials: true,
+    });
+    if (response.status !== 200 || response.status !== 204) {
+      throw new Error('Error calling the "auth/login" endpoint');
     }
   }
 
   function handleNameChange(event) {
     const { value } = event;
-    const { id } = event.event.target;
     console.log(event);
 
-    if (id === 'firstName') {
-      if (value.length > 50) {
-        setFNErrorMessage('Name should not exceed 50 characters');
-        return;
-      } else {
-        setFNErrorMessage('');
-      }
-      setFNValue(value);
-    } else if (id === 'lastName') {
-      if (value.length > 50) {
-        setLNErrorMessage('Name should not exceed 50 characters');
-        return;
-      } else {
-        setLNErrorMessage('');
-      }
-      setLNValue(value);
+    if (value.length > 50) {
+      setFNErrorMessage('Name should not exceed 50 characters');
+      return;
+    } else {
+      setFNErrorMessage('');
     }
+    setFNValue(value);
   }
 
   function handleDateChange({ value }) {
@@ -142,20 +141,14 @@ function UserDetailsForm() {
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="w-full ">
-              <FirstName />
-            </div>
-            <div className="w-full ">
-              <LastName />
-            </div>
-          </div>
-
-          <div className="flex gap-4">
             <div className="flex-1">
-              <DateOfBirth />
+              <UserName />
             </div>
             <div className="flex-1">
               <Gender />
+            </div>
+            <div className="flex-1">
+              <DateOfBirth />
             </div>
           </div>
 
@@ -173,13 +166,13 @@ function UserDetailsForm() {
     </form>
   );
 
-  function FirstName() {
+  function UserName() {
     return (
       <TextField
-        id="firstName"
-        label="First Name"
-        placeholder="Please enter your first name"
-        name="firstName"
+        id="UserName"
+        label="User Name"
+        placeholder="Please enter your user name"
+        name="username"
         size="lg"
         onChange={handleNameChange}
         onBlur={() => {
@@ -187,24 +180,6 @@ function UserDetailsForm() {
         }}
         errorMessage={FNErrorMessage}
         value={FNValue}
-      />
-    );
-  }
-
-  function LastName() {
-    return (
-      <TextField
-        id="lastName"
-        name="lastName"
-        label="Last Name"
-        placeholder="Please enter your last name"
-        size="lg"
-        onChange={handleNameChange}
-        onBlur={() => {
-          setLNErrorMessage('');
-        }}
-        errorMessage={LNErrorMessage}
-        value={LNValue}
       />
     );
   }
@@ -273,7 +248,9 @@ function UserDetailsForm() {
   }
 
   function ProceedButton() {
-    return <Button text="Proceed" type="submit" size="lg" color="red" />;
+    return (
+      <Button text="Save and Continue" type="submit" size="lg" color="red" />
+    );
   }
 }
 
