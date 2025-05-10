@@ -1,16 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
 import { AppContextProvider } from './context/AppContextProvider';
 import AboutPage from './pages/AboutPage';
 import RootLayoutPage from './pages/RootLayoutPage';
-
 import UserInputPage from './pages/UserInputPage';
 import LoadingPage from './pages/LoadingPage';
-import CardSelectionPage from './pages/CardSelectionPage/CardSelectionPage';
+import FortunePage from './pages/FortunePage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
-import TestingModalPage from './pages/TestingModalPage';
-
-import ResultsPage from './pages/ResultsPage/ResultsPage';
 import UserProfile from './pages/UserProfile/UserProfile';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -25,11 +20,8 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="user-input" element={<UserInputPage />} />
             <Route path="/loading" element={<LoadingPage />} />
-            <Route path="selection" element={<CardSelectionPage />} />
+            <Route path="fortune" element={<FortunePage />} />
             <Route path="user-info-input" element={<UserInfoInputPage />} />
-            <Route path="testing" element={<TestingModalPage />} />
-
-            <Route path="results" element={<ResultsPage />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="sign-up" element={<SignUpPage />} />
