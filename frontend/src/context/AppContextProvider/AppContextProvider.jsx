@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
-import { useSessionStorage } from 'react-use';
+import { useLocalStorage, useSessionStorage } from 'react-use';
+
+import { logout as firebaseLogout } from '$/utils/firebase.js';
 
 export function AppContextProvider({ children }) {
   const [userPrompt, setUserPrompt] = useSessionStorage('userPrompt', '');
@@ -24,6 +26,8 @@ export function AppContextProvider({ children }) {
 
   const [isModalOpen, setIsModalOpen] = useSessionStorage('isModalOpen', true);
 
+  const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
+
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
@@ -35,6 +39,26 @@ export function AppContextProvider({ children }) {
 
   const toggleModalOpen = () => {
     setIsModalOpen((prev) => !prev);
+  };
+
+  const login = (profile) => {
+    setIsLoggedIn(true);
+    setUserProfile(profile);
+  };
+
+  const logout = () => {
+    // Clear the local storage
+    setIsLoggedIn(false);
+    // Log out from Firebase
+    firebaseLogout();
+
+    // Clear the session storage
+    setUserProfile(null);
+    setUserInfo(null);
+    setUserChosenCards(null);
+    setUserPrompt('');
+    setUserChosenTheme(null);
+    setReadingResult(null);
   };
 
   return (
@@ -56,6 +80,9 @@ export function AppContextProvider({ children }) {
         clearReadingResult,
         isModalOpen,
         toggleModalOpen,
+        login,
+        logout,
+        isLoggedIn,
       }}
     >
       {children}

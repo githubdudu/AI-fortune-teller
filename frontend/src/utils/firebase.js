@@ -177,8 +177,9 @@ export const registerWithEmailAndPassword = async (name, email, password) => {
 export const logInWithEmailAndPassword = async (email, password) => {
   console.log('Authenticating with email and password: ' + email);
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const res = await signInWithEmailAndPassword(auth, email, password);
     console.log('User authenticated!');
+    return res.user;
   } catch (err) {
     console.error(
       'Error logging in with email and password: ' + JSON.stringify(err),

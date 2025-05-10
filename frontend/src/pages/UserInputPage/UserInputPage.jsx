@@ -6,6 +6,7 @@ import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import axios from 'axios';
 import { AppContext } from '$/context/AppContextProvider';
 import DailyFortuneContent from './DailyFortuneContent';
+import LoginForm from '$/components/LoginForm';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -13,7 +14,8 @@ import DailyFortuneContent from './DailyFortuneContent';
  */
 
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen } = useContext(AppContext);
+  const { isModalOpen, toggleModalOpen, isLoggedIn } = useContext(AppContext);
+  const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,19 +46,30 @@ function UserInputPage() {
   }, []);
 
   const FloatingContent = () => {
-    return (
-      <DailyFortuneContent
-        loading={loading}
-        error={error}
-        dailyFortune={dailyFortune}
-        onClick={toggleModalOpen}
-      />
-    );
+    // If the user is not logged in, display the login form
+    if (!isLoggedIn) {
+      setNoMotionFlag(true);
+      return <LoginForm />;
+    }
+
+    // Display the daily fortune content if the user is logged in
+    if (isLoggedIn) {
+      setNoMotionFlag(false);
+
+      return (
+        <DailyFortuneContent
+          loading={loading}
+          error={error}
+          dailyFortune={dailyFortune}
+          onClick={toggleModalOpen}
+        />
+      );
+    }
   };
 
   return (
     <>
-      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={false}>
+      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
         <FloatingContent />
       </FloatingPrompt>
       <div className="w-165">
