@@ -92,7 +92,7 @@ function UserDetailsForm() {
     if (!FNValue || !LNValue || !DOBValue || !nationalityValue || !POBValue) {
       return;
     } else {
-      navigate('/selection');
+      navigate('/fortune');
     }
   }
 
