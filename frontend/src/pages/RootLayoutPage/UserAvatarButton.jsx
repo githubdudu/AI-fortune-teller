@@ -31,9 +31,6 @@ function UserAvatarButton() {
 
   const handleAvatarButtonClick = () => {
     setOpen((prevOpen) => !prevOpen);
-    console.log('Clicked!');
-    console.log('isLoggedIn: ', isLoggedIn);
-    console.log('open: ', open);
   };
 
   const handleSelect = ({ item }) => {
