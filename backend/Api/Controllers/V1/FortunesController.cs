@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using Api.Models.DTOs;
 using Api.Models.Requests;
 using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.V1
@@ -18,6 +20,7 @@ namespace Api.Controllers.V1
         }
 
         [HttpPost("ask")]
+        [Authorize]
         public async Task<ActionResult<FortuneDto>> AskFortune(
             [FromBody] CreateFortuneRequest request
         )
@@ -29,6 +32,17 @@ namespace Api.Controllers.V1
 
                 if (!request.IsValid())
                     return BadRequest("Request must include either a question or theme ID, and 1-3 cards");
+
+                var userEmail = User.FindFirstValue(ClaimTypes.Email);
+
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return Unauthorized(new { message = "User must be logged in to get a fortune reading" });
+                }
+                else
+                {
+                    request.UserEmail = userEmail;
+                }
 
                 var fortune = await _fortuneService.GenerateFortuneAsync(request);
                 return Ok(fortune);

@@ -5,6 +5,7 @@ namespace Api.Models.Requests
         public string Question { get; set; } = string.Empty;
         public Guid? ThemeId { get; set; }
         public required Guid[] CardIds { get; set; } = [];
+        public string UserEmail { get; set; } = string.Empty;
 
         //Need user info
         public bool IsValid()
