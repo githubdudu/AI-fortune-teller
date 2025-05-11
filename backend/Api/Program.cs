@@ -102,9 +102,19 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure SQL Server with Entity Framework Core
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb")
-);
+// if (builder.Environment.IsDevelopment())
+// {
+//     // Local debugging → use the in-memory store
+//     builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseInMemoryDatabase("InMemoryDb")
+// );
+// }
+// else
+// {
+// Production/staging → use the real SQL Server on RDS
+builder.Services.AddDbContext<ApplicationDbContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// }
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
@@ -273,7 +283,9 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
+    // db.Database.Migrate();  
     DbInitializer.InitializeData(db); // Changed from DbInitialiser to DbInitializer
 }
+
 
 app.Run();
