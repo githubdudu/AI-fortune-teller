@@ -15,7 +15,7 @@ function UserDetailsForm() {
   const GENDER_OPTIONS = [
     { label: 'Female', value: 0 },
     { label: 'Male', value: 1 },
-    { label: 'Other', value: 2 },
+    { label: 'Other', value: -1 },
   ];
 
   const [FNErrorMessage, setFNErrorMessage] = useState('');
@@ -46,7 +46,7 @@ function UserDetailsForm() {
     );
   }, [userProfile]);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     if (!FNValue) {
@@ -88,7 +88,7 @@ function UserDetailsForm() {
     }
 
     try {
-      putUserRequest(requestBody);
+      await putUserRequest(requestBody);
       navigate('/');
     } catch (error) {
       console.error('Error putting user request:', error);
@@ -138,7 +138,7 @@ function UserDetailsForm() {
   }
 
   function handleGenderChange({ value }) {
-    setGenderValue(value);
+    setGenderValue(parseInt(value));
   }
 
   return (

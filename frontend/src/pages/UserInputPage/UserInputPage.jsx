@@ -35,6 +35,8 @@ function UserInputPage() {
   const fetchDailyFortune = async () => {
     setLoading(true);
     try {
+      console.log('bearer: ', BEARER_TOKEN);
+      console.log('HI');
       const response = await axios.get(
         'http://localhost:5000/api/v1/DailyFortunes/me',
         {
@@ -72,6 +74,7 @@ function UserInputPage() {
       if (response.status !== 200) {
         throw new Error('Failed to fetch user profile');
       }
+      console.log('data: ', response.data);
       setUserProfile(response.data);
     };
 
