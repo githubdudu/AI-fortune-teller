@@ -13,20 +13,14 @@ function UserAvatarButton() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const anchorRef = useRef(null);
   const PAGE_HEADER_ZINDEX = new FixedZIndex(10);
 
-  const { userProfile } = useContext(AppContext);
+  const { userProfile, isLoggedIn, logout, toggleModalOpen } =
+    useContext(AppContext);
 
   useEffect(() => {
-    const checkLoginStatus = () => {
-      const auth_tokenExists = !!localStorage.getItem('auth_token');
-      setIsLoggedIn(auth_tokenExists);
-    };
-
     setOpen(false);
-    checkLoginStatus();
   }, []);
 
   const handleAvatarButtonClick = () => {
@@ -37,30 +31,25 @@ function UserAvatarButton() {
     setOpen(false);
 
     switch (item.value) {
+      case 'home':
+        navigate('/');
+        break;
       case 'profile':
-        navigate('/profile');
+        navigate('/user-info-input');
         break;
       case 'daily-fortune':
-        // TODO: Implement functionality to set a floating window to true using useContext
+        toggleModalOpen();
+        navigate('/');
         break;
       case 'card-gallery':
         navigate('/gallery');
         break;
       case 'logout':
-        handleLogout();
+        logout();
         break;
       default:
         break;
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('userProfile');
-    setIsLoggedIn(false);
-    navigate('/');
-    setOpen(false);
   };
 
   return (
@@ -93,6 +82,10 @@ function UserAvatarButton() {
             zIndex={new CompositeZIndex([PAGE_HEADER_ZINDEX])}
             idealDirection="bottom"
           >
+            <Dropdown.Item
+              onSelect={handleSelect}
+              option={{ value: 'home', label: 'Home' }}
+            />
             <Dropdown.Item
               onSelect={handleSelect}
               option={{ value: 'profile', label: 'Profile' }}

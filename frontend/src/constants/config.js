@@ -9,5 +9,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     THEMES: '/Themes', // Endpoint for themes
     LOGIN: '/auth/login',
+    USER_ME: '/users/me', // Endpoint for testing
+    USER: '/users', // Endpoint for user information
   },
 };

@@ -7,8 +7,8 @@ import LoadingPage from './pages/LoadingPage';
 import FortunePage from './pages/FortunePage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
 import UserProfile from './pages/UserProfile/UserProfile';
-import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import AuthRoute from './authroute/AuthRoute';
 
 function App() {
   return (
@@ -16,14 +16,35 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<RootLayoutPage />}>
-            <Route path="/" element={<Navigate to="/user-input" />} />
+            <Route path="/" element={<Navigate to="/home" />} />
             <Route path="about" element={<AboutPage />} />
-            <Route path="user-input" element={<UserInputPage />} />
+            <Route path="home" element={<UserInputPage />} />
             <Route path="/loading" element={<LoadingPage />} />
-            <Route path="fortune" element={<FortunePage />} />
-            <Route path="user-info-input" element={<UserInfoInputPage />} />
-            <Route path="profile" element={<UserProfile />} />
-            <Route path="login" element={<LoginPage />} />
+            <Route
+              path="user-info-input"
+              element={
+                <AuthRoute>
+                  <UserInfoInputPage />
+                </AuthRoute>
+              }
+            />
+
+            <Route
+              path="fortune"
+              element={
+                <AuthRoute>
+                  <FortunePage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <AuthRoute>
+                  <UserProfile />
+                </AuthRoute>
+              }
+            />
             <Route path="sign-up" element={<SignUpPage />} />
           </Route>
         </Routes>

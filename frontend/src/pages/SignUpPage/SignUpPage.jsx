@@ -13,9 +13,8 @@
  * indicators, to enhance the user experience and provide additional security features.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from 'react-use';
 import { TextField, Button } from 'gestalt';
 
 import { registerWithEmailAndPassword } from '$/utils/firebase.js';
@@ -23,13 +22,16 @@ import { registerWithEmailAndPassword } from '$/utils/firebase.js';
 import Loading from '$/components/LoadingAnimation';
 import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
+import { AppContext } from '$/context/AppContextProvider';
+import { API_CONFIG } from '$/constants/config';
+import axios from 'axios';
 
 const SignUp = () => {
+  const { isLoggedIn, login } = useContext(AppContext);
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginToken] = useLocalStorage('auth_token', null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -38,10 +40,10 @@ const SignUp = () => {
   // This hook captures the callback from the Firebase authentication provider.
   // It detects if the User has been authenticated and redirects to the home page.
   useEffect(() => {
-    if (loginToken) {
+    if (isLoggedIn) {
       navigate('/');
     }
-  }, [loginToken]);
+  }, [isLoggedIn]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
@@ -78,12 +80,33 @@ const SignUp = () => {
       if (!user) {
         throw new Error('Error: registering by email and password failed');
       }
-      // display the success message and redirect to the login page
-      alert(
-        'User created successfully! After close this message, you will be redirected to the login page.',
+      // Send the user access token to our own backend server.
+      const AUTH_LOGIN_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`;
+      const loginResponse = await axios.post(
+        AUTH_LOGIN_URL,
+        {
+          firebaseToken: user.accessToken,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            'Access-Control-Allow-Origin': '*',
+          },
+          withCredentials: true,
+        },
       );
-      navigate('/login');
-      setLoading(false); // Move setLoading(false) here to ensure it's called after navigation
+      if (loginResponse.status !== 200) {
+        throw new Error('Error calling the "auth/login" endpoint');
+      }
+      if (!loginResponse.data.user) {
+        throw new Error('Error: No user data returned from the server');
+      }
+
+      // display the success message and redirect to the login page
+      alert('User created successfully! Automatically logging in...');
+
+      login(loginResponse.data.user);
     } catch (error) {
       setError(error);
       console.error('Sign up error:', error);
@@ -94,11 +117,11 @@ const SignUp = () => {
     <FormContainer>
       <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
       <div className="flex flex-col gap-4 min-w-[500px]">
-        <Username />
-        <Email />
-        <Password />
-        <SignUpButton />
-        <IHaveAnAccountButton />
+        {Username()}
+        {Email()}
+        {Password()}
+        {SignUpButton()}
+        {IHaveAnAccountButton()}
       </div>
     </FormContainer>
   );
@@ -169,7 +192,7 @@ const SignUp = () => {
         text="I already have an account"
         size="lg"
         color="transparent"
-        onClick={() => navigate('/login')}
+        onClick={() => navigate('/')}
       />
     );
   }

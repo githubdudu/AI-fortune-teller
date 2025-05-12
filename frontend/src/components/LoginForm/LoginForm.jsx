@@ -11,9 +11,8 @@
  * for social authentication or single sign-on.
  */
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from 'react-use';
 import axios from 'axios';
 import { TextField, Button } from 'gestalt';
 
@@ -29,24 +28,14 @@ import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
 
 const Login = () => {
-  const { setUserProfile } = useContext(AppContext);
+  const { login } = useContext(AppContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loginToken, setLoginToken] = useLocalStorage('auth_token', null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-
-  // This hook captures the callback from the Firebase authentication provider.
-  // It detects if the User has been authenticated and redirects to the home page.
-  useEffect(() => {
-    if (loginToken) {
-      navigate('/');
-    }
-  }, [loginToken]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
@@ -61,9 +50,12 @@ const Login = () => {
     console.error('Error logging in:', error);
   }
 
-  async function handleSignInWithGoogle() {
+  async function handleSignIn(loginFunction, ...params) {
     try {
-      const user = await signInWithGoogle();
+      const user = await loginFunction(...params);
+      if (!user || !user.accessToken) {
+        throw new Error('Error: no user data or no access token');
+      }
 
       setLoading(true);
       // Send the user access token to our own backend server.
@@ -88,9 +80,8 @@ const Login = () => {
       if (!loginResponse.data.user) {
         throw new Error('Error: No user data returned from the server');
       }
-      // Store the access token in session storage
-      setLoginToken(true);
-      setUserProfile(loginResponse.data.user);
+      // login
+      login(loginResponse.data.user);
     } catch (error) {
       setError(error);
     }
@@ -98,15 +89,15 @@ const Login = () => {
   }
 
   return (
-    <FormContainer>
+    <FormContainer withBackground={false}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
       <div className="flex flex-col gap-4 min-w-[500px]">
-        <Email />
-        <Password />
-        <SignInButton />
+        {Email()}
+        {Password()}
+        {SignInButton()}
         <AuthDivider />
-        <SignInWithGoogleButton />
-        <IDontHaveAnAccountButton />
+        {SignInWithGoogleButton()}
+        {IDontHaveAnAccountButton()}
       </div>
     </FormContainer>
   );
@@ -159,7 +150,9 @@ const Login = () => {
     return (
       <Button
         text="Sign in"
-        onClick={() => logInWithEmailAndPassword(email, password)}
+        onClick={async () =>
+          handleSignIn(logInWithEmailAndPassword, email, password)
+        }
         size="lg"
         color="red"
       />
@@ -172,7 +165,7 @@ const Login = () => {
         text="Sign in with Google"
         type="button"
         size="lg"
-        onClick={handleSignInWithGoogle}
+        onClick={async () => handleSignIn(signInWithGoogle)}
       />
     );
   }

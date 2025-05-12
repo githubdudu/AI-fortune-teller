@@ -1,30 +1,47 @@
 import { Box } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import axios from 'axios';
+import { AppContext } from '$/context/AppContextProvider';
+import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
+import LoginForm from '$/components/LoginForm';
+import { useNavigate } from 'react-router-dom';
+import { API_CONFIG } from '$/constants/config';
 
+const BEARER_TOKEN =
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo';
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
  * @returns
  */
 
 function UserInputPage() {
-  const [showPrompt, setShowPrompt] = useState(true);
+  const {
+    isModalOpen,
+    toggleModalOpen,
+    isLoggedIn,
+    userProfile,
+    setUserProfile,
+  } = useContext(AppContext);
+  const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
+
   const fetchDailyFortune = async () => {
     setLoading(true);
     try {
+      console.log('bearer: ', BEARER_TOKEN);
+      console.log('HI');
       const response = await axios.get(
         'http://localhost:5000/api/v1/DailyFortunes/me',
         {
           headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
+            Authorization: BEARER_TOKEN,
           },
         },
       );
@@ -41,19 +58,78 @@ function UserInputPage() {
     fetchDailyFortune();
   }, []);
 
-  const handlePromptClick = () => {
-    setShowPrompt(false);
+  useEffect(() => {
+    // do user me request
+    if (!isLoggedIn) return;
+    const getUserProfile = async () => {
+      const response = await axios.get(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
+        {
+          headers: {
+            Authorization: BEARER_TOKEN,
+          },
+          withCredentials: true,
+        },
+      );
+      if (response.status !== 200) {
+        throw new Error('Failed to fetch user profile');
+      }
+      console.log('data: ', response.data);
+      setUserProfile(response.data);
+    };
+
+    try {
+      setLoading(true);
+      getUserProfile();
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      setError('Failed to load user profile');
+    }
+    // If the user is logged in, but the information is missing, showing a form
+    if (isLoggedIn && missingProfileInfo(userProfile)) {
+      navigate('/user-info-input');
+      return;
+    }
+    setLoading(false);
+  }, [isLoggedIn]);
+
+  const FloatingContent = () => {
+    // If the user is not logged in, display the login form
+    if (!isLoggedIn) {
+      setNoMotionFlag(true);
+      return <LoginForm />;
+    }
+
+    // Display the daily fortune content if the user is logged in
+    if (isLoggedIn) {
+      setNoMotionFlag(false);
+
+      return (
+        <DailyFortuneContent
+          loading={loading}
+          error={error}
+          dailyFortune={dailyFortune}
+          onClick={toggleModalOpen}
+        />
+      );
+    }
+  };
+
+  const missingProfileInfo = (userProfile) => {
+    return (
+      !userProfile ||
+      userProfile.bornCountry === undefined ||
+      userProfile.dateOfBirth === undefined ||
+      userProfile.gender === undefined ||
+      userProfile.residenceCountry === undefined
+    );
   };
 
   return (
     <>
-      <FloatingPrompt
-        visible={showPrompt}
-        onClick={handlePromptClick}
-        dailyFortune={dailyFortune}
-        loading={loading}
-        error={error}
-      />
+      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
+        <FloatingContent />
+      </FloatingPrompt>
       <div className="w-165">
         <UserQuestionInput />
       </div>

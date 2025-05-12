@@ -45,7 +45,7 @@ function ThemeCard({ theme, onHover }) {
     saveUserChosenTheme(theme);
 
     // Navigate to the user input page
-    navigate(`/user-info-input`);
+    navigate(`/fortune`);
   };
 
   const handleMouseEnter = () => {
