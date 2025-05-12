@@ -117,11 +117,11 @@ const SignUp = () => {
     <FormContainer>
       <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
       <div className="flex flex-col gap-4 min-w-[500px]">
-        <Username />
-        <Email />
-        <Password />
-        <SignUpButton />
-        <IHaveAnAccountButton />
+        {Username()}
+        {Email()}
+        {Password()}
+        {SignUpButton()}
+        {IHaveAnAccountButton()}
       </div>
     </FormContainer>
   );

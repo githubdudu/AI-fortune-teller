@@ -149,26 +149,16 @@ function UserDetailsForm() {
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <UserName />
-            </div>
-            <div className="flex-1">
-              <Gender />
-            </div>
-            <div className="flex-1">
-              <DateOfBirth />
-            </div>
+            <div className="flex-1">{UserName()}</div>
+            <div className="flex-1">{Gender()}</div>
+            <div className="flex-1">{DateOfBirth()}</div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <PlaceOfBirth />
-            </div>
-            <div className="flex-1">
-              <Residency />
-            </div>
+            <div className="flex-1">{PlaceOfBirth()}</div>
+            <div className="flex-1">{Residency()}</div>
           </div>
-          <ProceedButton />
+          {ProceedButton()}
         </div>
       </Fieldset>
     </form>

@@ -92,12 +92,12 @@ const Login = () => {
     <FormContainer withBackground={false}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
       <div className="flex flex-col gap-4 min-w-[500px]">
-        <Email />
-        <Password />
-        <SignInButton />
+        {Email()}
+        {Password()}
+        {SignInButton()}
         <AuthDivider />
-        <SignInWithGoogleButton />
-        <IDontHaveAnAccountButton />
+        {SignInWithGoogleButton()}
+        {IDontHaveAnAccountButton()}
       </div>
     </FormContainer>
   );
