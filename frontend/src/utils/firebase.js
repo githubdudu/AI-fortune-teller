@@ -25,8 +25,6 @@ import {
 
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
-console.log('Loading env vars: ' + JSON.stringify(import.meta.env));
-
 if (!import.meta.env.VITE_FIREBASE_API_KEY) {
   throw new Error('Missing VITE_FIREBASE_API_KEY env var.');
 }
@@ -62,19 +60,15 @@ const config = {
 
 // Initializing the Firebase application.
 const app = initializeApp(config);
-console.log('Firebase app: ' + JSON.stringify(app));
 
 // Initializing the Firestore database connection.
 const db = getFirestore(app);
-console.log('Firebase db: ' + JSON.stringify(db));
 
 // Initializing the Firebase auth provider.
 export const auth = getAuth(app);
-console.log('Firebase auth: ' + JSON.stringify(auth));
 
 // Initializing Google auth provider.
 const googleProvider = new GoogleAuthProvider();
-console.log('Google auth provider: ' + JSON.stringify(googleProvider));
 
 /*
  * Opens a popup to authenticate with a Google account.
