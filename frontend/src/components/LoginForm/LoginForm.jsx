@@ -4,11 +4,6 @@
  * This component displays a form that allows the user to log in with their username and password.
  * The component handles form submission, validation, and error handling, and communicates with
  * the backend server to authenticate the user and redirect them to the appropriate page.
- *
- * The component uses the React Bootstrap library for styling and UI components, and includes
- * several custom components for handling form input, authentication requests, and error messages.
- * The component may also use third-party libraries or services, such as Google or Facebook,
- * for social authentication or single sign-on.
  */
 
 import { useContext, useState } from 'react';
@@ -33,7 +28,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [emailSignInError, setEmailSignInError] = useState(null);
+  const [googleSignInError, setGoogleSignInError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -46,18 +42,14 @@ const Login = () => {
     );
   }
 
-  if (error) {
-    console.error('Error logging in:', error);
-  }
-
   async function handleSignIn(loginFunction, ...params) {
     try {
+      setLoading(true);
       const user = await loginFunction(...params);
       if (!user || !user.accessToken) {
-        throw new Error('Error: no user data or no access token');
+        throw new Error('Could not get user access token from Firebase');
       }
 
-      setLoading(true);
       // Send the user access token to our own backend server.
       const AUTH_LOGIN_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`;
       const loginResponse = await axios.post(
@@ -83,7 +75,13 @@ const Login = () => {
       // login
       login(loginResponse.data.user);
     } catch (error) {
-      setError(error);
+      if (error.cause === 'sign_in_with_google') {
+        setGoogleSignInError(error);
+        setEmailSignInError();
+      } else if (error.cause === 'sign_in_with_email') {
+        setEmailSignInError(error);
+        setGoogleSignInError();
+      }
     }
     setLoading(false);
   }
@@ -94,8 +92,10 @@ const Login = () => {
       <div className="flex flex-col gap-4 min-w-[500px]">
         {Email()}
         {Password()}
+        {ErrorMessage(emailSignInError)}
         {SignInButton()}
         <AuthDivider />
+        {ErrorMessage(googleSignInError)}
         {SignInWithGoogleButton()}
         {IDontHaveAnAccountButton()}
       </div>
@@ -146,6 +146,16 @@ const Login = () => {
       </div>
     );
   }
+
+  function ErrorMessage(error) {
+    return (
+      error &&
+      error.message && (
+        <div className="text-red-500 text-center">{error.message}</div>
+      )
+    );
+  }
+
   function SignInButton() {
     return (
       <Button
