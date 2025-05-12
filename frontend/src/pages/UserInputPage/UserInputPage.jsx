@@ -114,12 +114,14 @@ function UserInputPage() {
   };
 
   const missingProfileInfo = (userProfile) => {
+    // Check if any of the required fields are nullish
+    // Use == instead of === to check for both null and undefined
     return (
       !userProfile ||
-      userProfile.bornCountry === undefined ||
-      userProfile.dateOfBirth === undefined ||
-      userProfile.gender === undefined ||
-      userProfile.residenceCountry === undefined
+      userProfile.bornCountry == null ||
+      userProfile.dateOfBirth == null ||
+      userProfile.gender == null ||
+      userProfile.residenceCountry == null
     );
   };
 

@@ -12,10 +12,15 @@ import { COUNTRY_LIST } from '../../constants/nationality';
 function UserDetailsForm() {
   const { userProfile } = useContext(AppContext);
 
+  /**
+   * options {label: string, value: string}[]
+   * @type {Array<{label: string, value: string}>}
+   * https://gestalt.pinterest.systems/web/selectlist#SelectList.OptionProps
+   */
   const GENDER_OPTIONS = [
-    { label: 'Female', value: 0 },
-    { label: 'Male', value: 1 },
-    { label: 'Other', value: -1 },
+    { label: 'Female', value: '0' },
+    { label: 'Male', value: '1' },
+    { label: 'Other', value: '-1' },
   ];
 
   const [FNErrorMessage, setFNErrorMessage] = useState('');
@@ -32,9 +37,9 @@ function UserDetailsForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setFNValue(userProfile?.displayName || '');
-    setDOBValue(userProfile?.dateOfBirth || '');
-    setGenderValue(userProfile?.gender || null);
+    setFNValue(userProfile?.displayName ?? '');
+    setDOBValue(userProfile?.dateOfBirth ?? '');
+    setGenderValue(userProfile?.gender?.toString() ?? null);
     setNationalityValue(
       COUNTRY_LIST.find(
         ({ label }) => label === userProfile?.residenceCountry,
@@ -138,7 +143,7 @@ function UserDetailsForm() {
   }
 
   function handleGenderChange({ value }) {
-    setGenderValue(parseInt(value));
+    setGenderValue(value);
   }
 
   return (
@@ -154,8 +159,12 @@ function UserDetailsForm() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">{PlaceOfBirth()}</div>
-            <div className="flex-1">{Residency()}</div>
+            <div className="flex-1">
+              <PlaceOfBirth />
+            </div>
+            <div className="flex-1">
+              <Residency />
+            </div>
           </div>
           {ProceedButton()}
         </div>
