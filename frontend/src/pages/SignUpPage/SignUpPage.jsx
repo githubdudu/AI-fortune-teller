@@ -25,6 +25,7 @@ import FormTitle from '../../components/FormTitle';
 import { AppContext } from '$/context/AppContextProvider';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
+import { validateEmail } from '$/utils';
 
 const SignUp = () => {
   const { isLoggedIn, login } = useContext(AppContext);
