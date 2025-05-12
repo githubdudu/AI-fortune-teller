@@ -25,6 +25,7 @@ import FormTitle from '../../components/FormTitle';
 import { AppContext } from '$/context/AppContextProvider';
 import { API_CONFIG } from '$/constants/config';
 import axios from 'axios';
+import { validateEmail } from '$/utils';
 
 const SignUp = () => {
   const { isLoggedIn, login } = useContext(AppContext);
@@ -32,8 +33,14 @@ const SignUp = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [usernameErrorMsg, setUsernameErrorMsg] = useState(null);
+  const [emailErrorMsg, setEmailErrorMsg] = useState(null);
+  const [passwordErrorMsg, setPasswordErrorMsg] = useState(null);
+  const [confirmPasswordErrorMsg, setConfirmPasswordErrorMsg] = useState(null);
 
   const navigate = useNavigate();
 
@@ -142,6 +149,15 @@ const SignUp = () => {
           name="username"
           size="lg"
           onChange={handleNameChange}
+          onBlur={(e) => {
+            if (!e.value) {
+              setUsernameErrorMsg('User name is required');
+            } else {
+              setUsernameErrorMsg(null);
+            }
+          }}
+          onFocus={() => setUsernameErrorMsg(null)}
+          errorMessage={usernameErrorMsg}
           value={username}
         />
       </div>
@@ -156,9 +172,13 @@ const SignUp = () => {
           label="Email"
           placeholder="Please enter your email address"
           name="email"
+          type="email"
           size="lg"
           onChange={(e) => setEmail(e.value)}
+          onBlur={validateEmail(setEmailErrorMsg)}
+          onFocus={() => setEmailErrorMsg(null)}
           value={email}
+          errorMessage={emailErrorMsg}
         />
       </div>
     );
@@ -175,7 +195,44 @@ const SignUp = () => {
           size="lg"
           type="password"
           onChange={(e) => setPassword(e.value)}
+          onBlur={(e) => {
+            if (!e.value) {
+              setPasswordErrorMsg('Password is required');
+            } else {
+              setPasswordErrorMsg(null);
+            }
+          }}
+          onFocus={() => setPasswordErrorMsg(null)}
+          errorMessage={passwordErrorMsg}
           value={password}
+        />
+      </div>
+    );
+  }
+
+  function ConfirmPassword() {
+    return (
+      <div>
+        <TextField
+          id="confirmPassword"
+          label="Confirm Password"
+          placeholder="Please confirm your password"
+          name="confirmPassword"
+          size="lg"
+          type="password"
+          onChange={(e) => setConfirmPassword(e.value)}
+          onBlur={(e) => {
+            if (!e.value) {
+              setConfirmPasswordErrorMsg('Confirm password is required');
+            } else if (e.value !== password) {
+              setConfirmPasswordErrorMsg('Passwords do not match');
+            } else {
+              setConfirmPasswordErrorMsg(null);
+            }
+          }}
+          onFocus={() => setConfirmPasswordErrorMsg(null)}
+          errorMessage={confirmPasswordErrorMsg}
+          value={confirmPassword}
         />
       </div>
     );

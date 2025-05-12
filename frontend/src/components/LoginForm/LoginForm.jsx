@@ -21,6 +21,7 @@ import { API_CONFIG } from '$/constants/config';
 import { AppContext } from '$/context/AppContextProvider';
 import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
+import { validateEmail } from '$/utils';
 
 const Login = () => {
   const { login } = useContext(AppContext);
@@ -30,6 +31,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [emailSignInError, setEmailSignInError] = useState(null);
   const [googleSignInError, setGoogleSignInError] = useState(null);
+
+  const [emailErrorMsg, setEmailErrorMsg] = useState(null);
+  const [passwordErrorMsg, setPasswordErrorMsg] = useState(null);
 
   const navigate = useNavigate();
 
@@ -110,9 +114,13 @@ const Login = () => {
           label="Email"
           placeholder="Please enter your email address"
           name="email"
+          type="email"
           size="lg"
           onChange={(e) => setEmail(e.value)}
+          onBlur={validateEmail(setEmailErrorMsg)}
+          onFocus={() => setEmailErrorMsg(null)}
           value={email}
+          errorMessage={emailErrorMsg}
         />
       </div>
     );
@@ -129,6 +137,15 @@ const Login = () => {
           size="lg"
           type="password"
           onChange={(e) => setPassword(e.value)}
+          onBlur={(e) => {
+            if (!e.value) {
+              setPasswordErrorMsg('Password is required');
+            } else {
+              setPasswordErrorMsg(null);
+            }
+          }}
+          onFocus={() => setPasswordErrorMsg(null)}
+          errorMessage={passwordErrorMsg}
           value={password}
         />
       </div>
