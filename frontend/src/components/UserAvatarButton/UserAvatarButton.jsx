@@ -31,6 +31,9 @@ function UserAvatarButton() {
     setOpen(false);
 
     switch (item.value) {
+      case 'home':
+        navigate('/');
+        break;
       case 'profile':
         navigate('/user-info-input');
         break;
@@ -79,6 +82,10 @@ function UserAvatarButton() {
             zIndex={new CompositeZIndex([PAGE_HEADER_ZINDEX])}
             idealDirection="bottom"
           >
+            <Dropdown.Item
+              onSelect={handleSelect}
+              option={{ value: 'home', label: 'Home' }}
+            />
             <Dropdown.Item
               onSelect={handleSelect}
               option={{ value: 'profile', label: 'Profile' }}

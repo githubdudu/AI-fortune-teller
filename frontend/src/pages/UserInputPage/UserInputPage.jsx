@@ -5,7 +5,7 @@ import { useEffect, useState, useContext } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import axios from 'axios';
 import { AppContext } from '$/context/AppContextProvider';
-import DailyFortuneContent from './DailyFortuneContent';
+import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
 import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
