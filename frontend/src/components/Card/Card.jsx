@@ -2,7 +2,7 @@ import './Card.css';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-const Card = ({
+const TarotCard = ({
   frontImage,
   backImage,
   disabled,
@@ -38,7 +38,7 @@ const Card = ({
   );
 };
 
-Card.propTypes = {
+TarotCard.propTypes = {
   frontImage: PropTypes.string,
   backImage: PropTypes.string,
   disabled: PropTypes.bool,
@@ -48,7 +48,7 @@ Card.propTypes = {
   cardNumber: PropTypes.string,
 };
 
-Card.defaultProps = {
+TarotCard.defaultProps = {
   frontImage: null,
   backImage: null,
   disabled: false,
@@ -56,4 +56,4 @@ Card.defaultProps = {
   name: '',
 };
 
-export default Card;
+export default TarotCard;
