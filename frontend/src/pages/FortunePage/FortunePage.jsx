@@ -55,7 +55,9 @@ const FortunePage = () => {
       })
       .catch((error) => {
         console.error('Error fetching cards:', error);
-        setError(error);
+        setError(
+          'Could not fetch cards from server. You can interact with these demo cards but you may not see the reading.',
+        );
         setIsLoading(false);
 
         // Fallback to demo cards if API fails
@@ -317,8 +319,8 @@ const FortunePage = () => {
         <h1 className="selection-title">Select Three Cards for your Reading</h1>
 
         {error && (
-          <div className="error-message">
-            Could not fetch cards from server. Using demo cards instead.
+          <div className="text-red-500 text-center w-2/3 mx-auto mb-4">
+            {error}
           </div>
         )}
 
