@@ -72,6 +72,7 @@ const Login = () => {
       // login
       login(loginResponse.data.user);
     } catch (error) {
+      console.error(error);
       if (error.cause === 'sign_in_with_google') {
         setGoogleSignInError(error);
         setEmailSignInError();
