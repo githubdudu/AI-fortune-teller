@@ -9,6 +9,7 @@ import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
+import { SEO_TITLE } from '$/constants/seo';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -92,17 +93,25 @@ function UserInputPage() {
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
     if (!isLoggedIn) {
-      return <LoginForm />;
+      return (
+        <>
+          <title>{SEO_TITLE.LOGIN}</title>
+          <LoginForm />
+        </>
+      );
     }
 
     // Display the daily fortune content if the user is logged in
     return (
-      <DailyFortuneContent
-        loading={loading}
-        error={error}
-        dailyFortune={dailyFortune}
-        onClick={toggleModalOpen}
-      />
+      <>
+        <title>{SEO_TITLE.DAILY_FORTUNE}</title>
+        <DailyFortuneContent
+          loading={loading}
+          error={error}
+          dailyFortune={dailyFortune}
+          onClick={toggleModalOpen}
+        />
+      </>
     );
   };
 
@@ -120,6 +129,7 @@ function UserInputPage() {
 
   return (
     <>
+      <title>{SEO_TITLE.HOME}</title>
       <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
         <FloatingContent />
       </FloatingPrompt>
