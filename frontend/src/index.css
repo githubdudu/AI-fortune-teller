@@ -94,6 +94,7 @@ button[name="login-button"]:hover>div {
 
 button[name="edit-button"]>div {
   background-color: var(--color-pink-500);
+  transition: background-color 0.3s ease;
 }
 
 button[name="edit-button"]:hover>div {
