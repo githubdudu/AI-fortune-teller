@@ -82,6 +82,10 @@ function UserInputPage() {
     getUserProfile();
   }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched]);
 
+  useEffect(() => {
+    setNoMotionFlag(!isLoggedIn);
+  }, [isLoggedIn]);
+
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
     if (!isLoggedIn) {
