@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
 import { useLocalStorage, useSessionStorage } from 'react-use';
+import { useEffect } from 'react';
 import { useFortuneStream } from '$/hooks/useFortuneStream';
+import { setLogoutHandler } from '$/utils/apiClient';
 
 import { logout as firebaseLogout } from '$/utils/firebase.js';
 
@@ -84,6 +86,17 @@ export function AppContextProvider({ children }) {
     // Clear the modal state
     setIsModalOpen(true);
   };
+
+  // Register logout handler with API client
+  useEffect(() => {
+    // Register the logout function with the API client to handle 401 errors globally
+    setLogoutHandler(logout);
+
+    return () => {
+      // Clean up by unsetting the handler when component unmounts
+      setLogoutHandler(null);
+    };
+  }, [logout]);
 
   return (
     <AppContext.Provider

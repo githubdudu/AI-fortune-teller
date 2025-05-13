@@ -15,7 +15,7 @@ import apiClient from '$/utils/apiClient';
  * @returns
  */
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile } =
+  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile, logout } =
     useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
@@ -54,18 +54,25 @@ function UserInputPage() {
         setLoading(true);
         // Using centralized endpoint from config
         const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER_ME);
-        console.log('data: ', response.data);
         setUserProfile(response.data);
         setProfileFetched(true); // Mark profile as fetched
 
         // If the user is logged in, but the information is missing, showing a form
-        console.log(missingProfileInfo(response.data));
         if (missingProfileInfo(response.data)) {
           navigate('/user-info-input');
           return;
         }
       } catch (err) {
         console.error('Error fetching user profile:', err);
+
+        // If we get a 401 Unauthorized error, log the user out
+        if (err.response && err.response.status === 401) {
+          console.log('Session expired or unauthorized. Logging out user.');
+          logout(); // Log the user out
+          navigate('/'); // Redirect to landing page
+          return;
+        }
+
         setError('Failed to load user profile');
       } finally {
         setLoading(false);

@@ -11,6 +11,14 @@ const apiClient = axios.create({
   },
 });
 
+// Store logout function when it's provided
+let logoutHandler = null;
+
+// Function to set the logout handler from AppContext
+export const setLogoutHandler = (handler) => {
+  logoutHandler = handler;
+};
+
 // Request interceptor for logging or adding dynamic headers
 apiClient.interceptors.request.use(
   (config) => {
@@ -43,6 +51,23 @@ apiClient.interceptors.response.use(
         `API Error ${error.response.status} for ${error.config?.url}:`,
         error.response.data,
       );
+
+      // Handle 401 Unauthorized errors globally
+      if (error.response.status === 401) {
+        console.log('Session expired or unauthorized. Logging out user.');
+
+        // Execute logout if handler is available
+        if (logoutHandler) {
+          logoutHandler();
+
+          // Optionally redirect to login page
+          if (window && window.location && window.location.pathname !== '/') {
+            window.location.href = '/';
+          }
+        } else {
+          console.warn('No logout handler available to handle 401 error');
+        }
+      }
     } else if (error.request) {
       console.error(
         `API Error (No Response) for ${error.config?.url}:`,
@@ -153,6 +178,18 @@ export const tarotCardService = {
     )
       .then((response) => {
         if (!response.ok) {
+          // Handle 401 errors in fetch API
+          if (response.status === 401 && logoutHandler) {
+            console.log(
+              'Session expired or unauthorized (in stream). Logging out user.',
+            );
+            logoutHandler();
+
+            // Optionally redirect to login page
+            if (window && window.location && window.location.pathname !== '/') {
+              window.location.href = '/';
+            }
+          }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
