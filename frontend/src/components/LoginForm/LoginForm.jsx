@@ -22,7 +22,6 @@ import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
 import { validateEmail } from '$/utils';
 import apiClient from '$/utils/apiClient';
-import { validateEmail } from '$/utils';
 
 const Login = () => {
   const { login } = useContext(AppContext);

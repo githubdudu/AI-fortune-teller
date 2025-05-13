@@ -68,6 +68,36 @@ apiClient.interceptors.response.use(
           console.warn('No logout handler available to handle 401 error');
         }
       }
+
+      // Handle 404 errors for user/me endpoint specifically
+      if (
+        error.response.status === 404 &&
+        error.config?.url?.includes('/user/me')
+      ) {
+        console.log(
+          'User not found (404). Logging out user and cleaning cookies.',
+        );
+
+        // Execute logout if handler is available to clean up app state and cookies
+        if (logoutHandler) {
+          logoutHandler();
+
+          // Clear cookies related to authentication
+          document.cookie.split(';').forEach((cookie) => {
+            const [name] = cookie.split('=');
+            document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+          });
+
+          // Optionally redirect to login page
+          if (window && window.location && window.location.pathname !== '/') {
+            window.location.href = '/';
+          }
+        } else {
+          console.warn(
+            'No logout handler available to handle 404 error for user/me',
+          );
+        }
+      }
     } else if (error.request) {
       console.error(
         `API Error (No Response) for ${error.config?.url}:`,
