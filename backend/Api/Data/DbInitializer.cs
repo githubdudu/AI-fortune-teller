@@ -246,7 +246,7 @@ namespace Api.Data
                     {
                         Name = "The Sun",
                         Number = 19,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Sun(XIX).PNG",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.+The+Sun(XIX).png",
                         Description =
                             "The Sun symbolizes key aspects of the human journey. Upright: Positive traits related to the sun. Reversed: Challenges or negative aspects of the sun.",
                         IsMajorArcana = true,
