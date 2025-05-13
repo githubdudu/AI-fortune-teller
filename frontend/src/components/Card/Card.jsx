@@ -32,7 +32,9 @@ const Card = ({
             <p>{description}</p>
           </div>
         </div>
-        {isNumberShow && <div className="card-number">{cardNumber}</div>}
+        {isNumberShow && cardNumber != undefined && (
+          <div className="card-number">{cardNumber}</div>
+        )}
       </div>
     </div>
   );
