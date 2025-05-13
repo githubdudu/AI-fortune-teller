@@ -115,4 +115,32 @@ To generate a JWT token for testing:
 ```bash
 cd backend/Tools/TokenGenerator
 dotnet run
-``` 
+```
+
+## Running in Different Environments
+
+The application is configured with multiple environments (Development and Production). Each environment uses different database configurations:
+
+- **Development**: Uses an in-memory database for local development
+- **Production**: Uses SQL Server with connection string from appsettings.json
+
+### Specifying the Environment
+
+To run the application in a specific environment, use the `--launch-profile` parameter:
+
+```bash
+# Run in Development environment (uses in-memory database)
+cd backend/Api
+dotnet run --launch-profile Development
+
+# Run in Production environment (uses SQL Server)
+cd backend/Api
+dotnet run --launch-profile Production
+```
+
+### Important Notes on Environment Configuration
+
+- The profiles are defined in `backend/Api/Properties/launchSettings.json`
+- Always use `--launch-profile` instead of `--environment` to ensure the environment is correctly applied
+- In Production mode, make sure your SQL Server connection string in `appsettings.json` is correct
+- Migration files are located in `backend/Api/Migrations` folder and will be applied automatically when running in Production mode
