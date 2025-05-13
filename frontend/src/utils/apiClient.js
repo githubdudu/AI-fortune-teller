@@ -95,7 +95,7 @@ export const tarotCardService = {
   },
 
   /**
-   * Get a reading interpretation based on selected cards
+   * Get a reading interpretation based on selected cards (non-streaming)
    * @param {Object} params - Reading request parameters
    * @param {Array<number>} params.cardIds - IDs of selected cards
    * @param {string} [params.question] - Optional user question
@@ -110,6 +110,65 @@ export const tarotCardService = {
         themeId,
       })
       .then((response) => response.data);
+  },
+
+  /**
+   * Get a streaming reading interpretation based on selected cards using SSE
+   * Note: This function doesn't return a Promise, but instead uses callbacks to handle the stream.
+   * Use the AppContext's streaming functionality to consume this properly.
+   *
+   * @param {Object} params - Stream request parameters
+   * @param {Array<number>} params.cardIds - IDs of selected cards
+   * @param {string} [params.question] - Optional user question
+   * @param {number} [params.themeId] - Optional theme ID
+   * @param {AbortSignal} [params.signal] - Optional AbortController signal to cancel the request
+   * @param {Function} [params.onStreamStart] - Callback when stream starts
+   * @param {Function} [params.onStreamError] - Callback when stream errors
+   */
+  streamReading: ({
+    cardIds,
+    question = '',
+    themeId = null,
+    signal = null,
+    onStreamStart = null,
+    onStreamError = null,
+  }) => {
+    // Using native fetch API for better streaming support
+    return fetch(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.FORTUNES_STREAM}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+        },
+        body: JSON.stringify({
+          cardIds,
+          question,
+          themeId,
+        }),
+        credentials: 'include', // Include cookies
+        signal: signal, // For aborting the request
+      },
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        if (onStreamStart) {
+          onStreamStart(response);
+        }
+
+        return response;
+      })
+      .catch((error) => {
+        if (onStreamError) {
+          onStreamError(error);
+        } else {
+          console.error('Streaming error:', error);
+        }
+      });
   },
 };
 
