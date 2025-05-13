@@ -4,7 +4,7 @@ import { API_CONFIG } from '../constants/config';
 // Create a configured instance of axios
 const apiClient = axios.create({
   baseURL: API_CONFIG.BASE_URL,
-  withCredentials: true, // Always include credentials
+  withCredentials: true, // Always include credentials (cookies)
   headers: {
     'Content-Type': 'application/json',
     Accept: '*/*',
@@ -18,10 +18,9 @@ apiClient.interceptors.request.use(
     console.log(`API Request: ${config.method.toUpperCase()} ${config.url}`, {
       withCredentials: config.withCredentials,
       headers: config.headers,
-      cookies: document.cookie,
     });
 
-    // Always ensure withCredentials is true
+    // Always ensure withCredentials is true to send cookies with every request
     config.withCredentials = true;
 
     return config;
@@ -56,10 +55,6 @@ apiClient.interceptors.response.use(
   },
 );
 
-// Temporary auth token for development - in production this would come from an auth service
-const AUTH_TOKEN =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo';
-
 /**
  * Tarot Card API Service
  */
@@ -71,9 +66,7 @@ export const tarotCardService = {
    */
   fetchRandomCards: (limit = 5) => {
     return apiClient
-      .get(`/cards/random?limit=${limit}`, {
-        headers: { Authorization: AUTH_TOKEN },
-      })
+      .get(API_CONFIG.ENDPOINTS.RANDOM_CARDS + `?limit=${limit}`)
       .then((response) => response.data)
       .catch((error) => {
         console.error('Error fetching random cards:', error);
@@ -111,11 +104,11 @@ export const tarotCardService = {
    */
   getReading: ({ cardIds, question = '', themeId = null }) => {
     return apiClient
-      .post(
-        '/Fortunes/ask',
-        { question, cardIds, themeId },
-        { headers: { Authorization: AUTH_TOKEN } },
-      )
+      .post(API_CONFIG.ENDPOINTS.FORTUNES_STREAM, {
+        question,
+        cardIds,
+        themeId,
+      })
       .then((response) => response.data);
   },
 };

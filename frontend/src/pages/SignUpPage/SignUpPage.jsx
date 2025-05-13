@@ -24,8 +24,7 @@ import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
 import { AppContext } from '$/context/AppContextProvider';
 import { API_CONFIG } from '$/constants/config';
-import axios from 'axios';
-import { validateEmail } from '$/utils';
+import apiClient from '$/utils/apiClient';
 
 const SignUp = () => {
   const { isLoggedIn, login } = useContext(AppContext);
@@ -50,7 +49,7 @@ const SignUp = () => {
     if (isLoggedIn) {
       navigate('/');
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
   if (loading) {
@@ -87,25 +86,11 @@ const SignUp = () => {
       if (!user) {
         throw new Error('Error: registering by email and password failed');
       }
-      // Send the user access token to our own backend server.
-      const AUTH_LOGIN_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`;
-      const loginResponse = await axios.post(
-        AUTH_LOGIN_URL,
-        {
-          firebaseToken: user.accessToken,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-            'Access-Control-Allow-Origin': '*',
-          },
-          withCredentials: true,
-        },
-      );
-      if (loginResponse.status !== 200) {
-        throw new Error('Error calling the "auth/login" endpoint');
-      }
+      // Send the user access token to our own backend server using centralized endpoint config
+      const loginResponse = await apiClient.post(API_CONFIG.ENDPOINTS.LOGIN, {
+        firebaseToken: user.accessToken,
+      });
+
       if (!loginResponse.data.user) {
         throw new Error('Error: No user data returned from the server');
       }

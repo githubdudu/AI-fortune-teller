@@ -1,9 +1,9 @@
 import { Flex } from 'gestalt';
 import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
 import { API_CONFIG } from '../../constants/config';
+import apiClient from '../../utils/apiClient';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper modules
 import { Navigation, Pagination } from 'swiper/modules';
@@ -99,8 +99,8 @@ function ThemeView() {
 
       setLoading(true);
       try {
-        const apiUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.THEMES}`;
-        const response = await axios.get(apiUrl);
+        // Using apiClient instead of direct axios calls
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.THEMES);
 
         // Map API response to format compatible with the component
         const apiThemes = response.data.map((theme) => ({

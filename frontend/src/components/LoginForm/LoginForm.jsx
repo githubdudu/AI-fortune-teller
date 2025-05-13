@@ -8,7 +8,6 @@
 
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { TextField, Button } from 'gestalt';
 
 import {
@@ -21,6 +20,7 @@ import { API_CONFIG } from '$/constants/config';
 import { AppContext } from '$/context/AppContextProvider';
 import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
+import apiClient from '$/utils/apiClient';
 import { validateEmail } from '$/utils';
 
 const Login = () => {
@@ -57,25 +57,12 @@ const Login = () => {
         });
       }
 
-      // Send the user access token to our own backend server.
-      const AUTH_LOGIN_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`;
-      const loginResponse = await axios.post(
-        AUTH_LOGIN_URL,
-        {
-          firebaseToken: user.accessToken,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-            'Access-Control-Allow-Origin': '*',
-          },
-          withCredentials: true,
-        },
-      );
-      if (loginResponse.status !== 200) {
-        throw new Error('Error calling the "auth/login" endpoint', { cause });
-      }
+      setLoading(true);
+      // Send the user access token to our own backend server using centralized endpoint config
+      const loginResponse = await apiClient.post(API_CONFIG.ENDPOINTS.LOGIN, {
+        firebaseToken: user.accessToken,
+      });
+
       if (!loginResponse.data.user) {
         throw new Error('Error: No user data returned from the server', {
           cause,
