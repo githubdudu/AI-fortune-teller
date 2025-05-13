@@ -67,7 +67,7 @@
 
 .tarot-card.flipped .tarot-card-front,
 .tarot-card.flipped .tarot-card-back {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 20px var(--color-pink-800);
 }
 
 .tarot-card-front {
