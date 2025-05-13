@@ -2,6 +2,7 @@ import { Button, Fieldset, TextField, SelectList } from 'gestalt';
 import { DatePicker } from 'gestalt-datepicker';
 import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import NationalityInputBox from '$/components/NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ function UserDetailsForm() {
   const [genderValue, setGenderValue] = useState(null);
   const [nationalityValue, setNationalityValue] = useState(null);
   const [POBValue, setPOBValue] = useState(null);
+  const [requestErrorMessage, setRequestErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -97,6 +99,9 @@ function UserDetailsForm() {
       navigate('/');
     } catch (error) {
       console.error('Error putting user request:', error);
+      setRequestErrorMessage(
+        'An error occurred while updating your profile. Please try again later.',
+      );
       return;
     }
   }
@@ -146,11 +151,16 @@ function UserDetailsForm() {
     setGenderValue(value);
   }
 
+  ErrorMessage.propTypes = {
+    message: PropTypes.string,
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
       className="min-w-[400px] max-w-[600px] w-[calc(100vw-4.5rem)]"
     >
+
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
@@ -167,6 +177,7 @@ function UserDetailsForm() {
               <Residency />
             </div>
           </div>
+          <ErrorMessage message={requestErrorMessage} />
           {ProceedButton()}
         </div>
       </Fieldset>
@@ -251,6 +262,16 @@ function UserDetailsForm() {
         errorMessage={POBErrorMessage}
         setErrorMessage={setPOBErrorMessage}
       />
+    );
+  }
+
+  function ErrorMessage({ message }) {
+    return (
+      <div className="flex flex-col gap-4">
+        {message && (
+          <div className="text-red-500 text-sm text-center">{message}</div>
+        )}
+      </div>
     );
   }
 
