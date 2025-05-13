@@ -35,8 +35,6 @@ function UserInputPage() {
   const fetchDailyFortune = async () => {
     setLoading(true);
     try {
-      console.log('bearer: ', BEARER_TOKEN);
-      console.log('HI');
       const response = await axios.get(
         'http://localhost:5000/api/v1/DailyFortunes/me',
         {
