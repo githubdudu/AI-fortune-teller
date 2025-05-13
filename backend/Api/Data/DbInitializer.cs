@@ -147,7 +147,7 @@ namespace Api.Data
                     {
                         Name = "Strength",
                         Number = 8,
-                        ImageSource = "cards/strength.png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.+The+Strength+(VIII).png",
                         Description =
                             "Strength symbolizes key aspects of the human journey. Upright: Positive traits related to strength. Reversed: Challenges or negative aspects of strength.",
                         IsMajorArcana = true,
