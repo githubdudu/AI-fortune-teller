@@ -91,26 +91,25 @@ function UserInputPage() {
     setLoading(false);
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    setNoMotionFlag(!isLoggedIn);
+  }, [isLoggedIn]);
+
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
     if (!isLoggedIn) {
-      setNoMotionFlag(true);
       return <LoginForm />;
     }
 
     // Display the daily fortune content if the user is logged in
-    if (isLoggedIn) {
-      setNoMotionFlag(false);
-
-      return (
-        <DailyFortuneContent
-          loading={loading}
-          error={error}
-          dailyFortune={dailyFortune}
-          onClick={toggleModalOpen}
-        />
-      );
-    }
+    return (
+      <DailyFortuneContent
+        loading={loading}
+        error={error}
+        dailyFortune={dailyFortune}
+        onClick={toggleModalOpen}
+      />
+    );
   };
 
   const missingProfileInfo = (userProfile) => {
