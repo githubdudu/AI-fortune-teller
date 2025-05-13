@@ -62,6 +62,12 @@
   backface-visibility: hidden;
   overflow: hidden;
   border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.tarot-card.flipped .tarot-card-front,
+.tarot-card.flipped .tarot-card-back {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .tarot-card-front {
