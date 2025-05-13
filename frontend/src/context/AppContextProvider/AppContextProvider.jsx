@@ -192,8 +192,7 @@ export function AppContextProvider({ children }) {
                         completeStream();
                         return;
                       }
-                    } catch (error) {
-                      console.error('Error parsing JSON:', error);
+                    } catch {
                       // Not JSON, treat as plain text
                       if (!receivedFirstData) {
                         setStreamLoading(false);
