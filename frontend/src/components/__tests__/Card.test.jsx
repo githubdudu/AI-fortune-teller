@@ -6,7 +6,7 @@ import Card from '../Card/Card';
  * Tests that the card is initially displayed showing the back of the card.
  */
 it('renders correctly with back side showing initially', () => {
-  const { getByAltText, queryByText } = render(
+  const { getByAltText } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
@@ -17,12 +17,6 @@ it('renders correctly with back side showing initially', () => {
 
   // Should show the back image
   expect(getByAltText('Tarot Card Back')).toBeInTheDocument();
-
-  // Should not show the title or description since card is not flipped
-  expect(queryByText('The Fool')).toBeNull();
-  expect(
-    queryByText('The Fool symbolizes key aspects of the human journey.'),
-  ).toBeNull();
 });
 
 /**
@@ -77,54 +71,57 @@ it('shows front side initially when initialFlipped is true', () => {
 });
 
 /**
- * Tests that the card does not flip when disabled.
+ * Tests that the card rendering the number with the correct value.
  */
-it('does not flip when disabled prop is true', () => {
-  const { getByAltText, queryByText, container } = render(
+it('renders the number with correct value when flipped', () => {
+  const { getByText, container, rerender } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
-      disabled={true}
+      isShowFront={false}
+      cardNumber={99}
     />,
   );
 
-  // Click the card to attempt flipping
-  const card = container.querySelector('.tarot-card');
-  fireEvent.click(card);
+  // Initially should not show the card number
+  const card = container.querySelector('.card-number');
+  expect(card).not.toBeInTheDocument();
+  vi.useFakeTimers();
 
-  // Should still show the back image
-  expect(getByAltText('Tarot Card Back')).toBeInTheDocument();
-
-  // Should not show the title or description since card did not flip
-  expect(queryByText('The Fool')).toBeNull();
-  expect(
-    queryByText('The Fool symbolizes key aspects of the human journey.'),
-  ).toBeNull();
-});
-
-/**
- * Tests that the card calls the onCardFlip callback with the correct value.
- */
-it('calls onCardFlip with correct value when flipped', () => {
-  const mockFlipHandler = vi.fn();
-  const { container } = render(
+  // Should show the front image and number
+  rerender(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
-      onCardFlip={mockFlipHandler}
+      isShowFront={true}
+      cardNumber={99}
     />,
   );
+  const cardElement = container.querySelector('.tarot-card');
+  fireEvent.transitionEnd(cardElement);
+  vi.advanceTimersByTime(5000);
+  const flippedCard = container.querySelector('.card-number');
+  expect(flippedCard).toBeInTheDocument();
+  expect(getByText('99')).toBeInTheDocument();
 
-  // Click the card to flip it
-  const card = container.querySelector('.tarot-card');
-  fireEvent.click(card);
-
-  // Should call the flip handler with true (flipped to front)
-  expect(mockFlipHandler).toHaveBeenCalledWith(true);
+  // should not show the card number when flipped without cardNumber
+  rerender(
+    <Card
+      name="The Fool"
+      description="The Fool symbolizes key aspects of the human journey."
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+      isShowFront={true}
+    />,
+  );
+  const cardElement2 = container.querySelector('.tarot-card');
+  fireEvent.transitionEnd(cardElement2);
+  const flippedCard2 = container.querySelector('.card-number');
+  expect(flippedCard2).not.toBeInTheDocument();
 });
 
 /**
@@ -165,6 +162,7 @@ it('applies correct CSS classes based on state', () => {
       name="The Fool"
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
+      isShowFront={false}
     />,
   );
 
@@ -174,9 +172,16 @@ it('applies correct CSS classes based on state', () => {
   expect(cardElement.classList.contains('disabled')).toBe(false);
   expect(cardElement.classList.contains('no-flip-back')).toBe(false);
 
-  // Click to flip
-  fireEvent.click(cardElement);
-
+  // flip
+  rerender(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+      isShowFront={true}
+    />,
+  );
+  cardElement = container.querySelector('.tarot-card');
   // Should now have 'flipped' and 'no-flip-back' classes
   expect(cardElement.classList.contains('flipped')).toBe(true);
   expect(cardElement.classList.contains('no-flip-back')).toBe(true);

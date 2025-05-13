@@ -109,6 +109,7 @@ describe('LoginForm component', () => {
     expect(logInWithEmailAndPassword).toHaveBeenCalledWith(
       'test@example.com',
       'password123',
+      { cause: 'sign_in_with_email' },
     );
 
     // Wait for the API call to complete and the login callback to be called
@@ -178,6 +179,7 @@ describe('LoginForm component', () => {
     expect(logInWithEmailAndPassword).toHaveBeenCalledWith(
       'test@example.com',
       'password123',
+      { cause: 'sign_in_with_email' },
     );
 
     if (resolveFirebaseLogin) resolveFirebaseLogin();

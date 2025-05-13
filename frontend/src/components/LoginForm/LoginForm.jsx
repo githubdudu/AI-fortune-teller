@@ -50,8 +50,11 @@ const Login = () => {
     try {
       setLoading(true);
       const user = await loginFunction(...params);
+      const { cause } = params[params.length - 1];
       if (!user || !user.accessToken) {
-        throw new Error('Could not get user access token from Firebase');
+        throw new Error('Could not get user access token from Firebase', {
+          cause,
+        });
       }
 
       // Send the user access token to our own backend server.
@@ -71,14 +74,17 @@ const Login = () => {
         },
       );
       if (loginResponse.status !== 200) {
-        throw new Error('Error calling the "auth/login" endpoint');
+        throw new Error('Error calling the "auth/login" endpoint', { cause });
       }
       if (!loginResponse.data.user) {
-        throw new Error('Error: No user data returned from the server');
+        throw new Error('Error: No user data returned from the server', {
+          cause,
+        });
       }
       // login
       login(loginResponse.data.user);
     } catch (error) {
+      console.error(error);
       if (error.cause === 'sign_in_with_google') {
         setGoogleSignInError(error);
         setEmailSignInError();
@@ -179,7 +185,9 @@ const Login = () => {
         name="login-button"
         text="Sign in"
         onClick={async () =>
-          handleSignIn(logInWithEmailAndPassword, email, password)
+          handleSignIn(logInWithEmailAndPassword, email, password, {
+            cause: 'sign_in_with_email',
+          })
         }
         size="lg"
         color="red"
@@ -193,7 +201,9 @@ const Login = () => {
         text="Sign in with Google"
         type="button"
         size="lg"
-        onClick={async () => handleSignIn(signInWithGoogle)}
+        onClick={async () =>
+          handleSignIn(signInWithGoogle, { cause: 'sign_in_with_google' })
+        }
       />
     );
   }
