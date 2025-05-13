@@ -156,10 +156,7 @@ function UserDetailsForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="min-w-[400px] max-w-[600px] w-[calc(100vw-4.5rem)]"
-    >
+    <form onSubmit={handleSubmit}>
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
@@ -225,7 +222,7 @@ function UserDetailsForm() {
         placeholder="Please select"
         size="lg"
         onChange={handleGenderChange}
-        value={genderValue === '0' ? '0' : genderValue} // Handle the value '0' as '0', not falsy
+        value={genderValue}
       >
         {GENDER_OPTIONS.map(({ label, value }) => (
           <SelectList.Option key={value} value={value} label={label} />
