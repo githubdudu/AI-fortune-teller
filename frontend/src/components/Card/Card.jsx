@@ -47,17 +47,15 @@ const TarotCard = ({
       onClick={handleCardClick}
     >
       <div className="tarot-card-inner">
-        <div className="tarot-card-front">
-          <img src={frontImage} alt="Tarot Card Front" />
-        </div>
         <div className="tarot-card-back">
           <img src={backImage} alt="Tarot Card Back" />
-          {description && (
-            <div className="tarot-card-description">
-              <h3>{name}</h3>
-              <p>{description}</p>
-            </div>
-          )}
+        </div>
+        <div className="tarot-card-front">
+          <img src={frontImage} alt="Tarot Card Front" />
+          <div className="tarot-card-description">
+            <h3>{name}</h3>
+            <p>{description}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -60,19 +60,18 @@
   height: 100%;
   backface-visibility: hidden;
   overflow: hidden;
+  border-radius: 10px;
 }
 
 .tarot-card-front {
-  z-index: 2;
-  transform: rotateY(0deg);
-  border-radius: 10px;
-  background-color: pink;
+  transform: rotateY(180deg);
+  background-color: rgb(147, 169, 231);
 }
 
 .tarot-card-back {
-  transform: rotateY(180deg);
-  border-radius: 10px;
-  background-color: rgb(147, 169, 231);
+  transform: rotateY(0deg);
+  background-color: pink;
+  z-index: 2;
 }
 
 .tarot-card.disabled::after {
@@ -88,7 +87,7 @@
   pointer-events: none;
 }
 
-.tarot-card-description  {
+.tarot-card-description {
   position: absolute;
   top: 0;
   left: 0;
@@ -109,8 +108,9 @@
   z-index: 5;
 }
 
-.tarot-card:hover .tarot-card-description {
-  opacity: 0.5;
+/* Show description on hover for front side */
+.tarot-card.flipped:hover .tarot-card-description {
+  opacity: 0.9;
 }
 
 .tarot-card-description h3 {
@@ -125,7 +125,7 @@
   line-height: 1.3;
 }
 
-/* 响应式调整 */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .tarot-card-description h3 {
     font-size: 0.9rem;
