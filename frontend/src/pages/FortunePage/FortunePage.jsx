@@ -255,7 +255,7 @@ const FortunePage = () => {
     );
   }
 
-  return <SelectionDisplay />;
+  return SelectionDisplay();
 
   function ReadingInterpretationDisplay() {
     const fullText = contextReadingResult || readingResult;
@@ -322,7 +322,7 @@ const FortunePage = () => {
           </div>
         )}
 
-        <CardsDisplay />
+        {CardsDisplay()}
         {selectedCardsID.length === 3 ? (
           <div>
             <Button
