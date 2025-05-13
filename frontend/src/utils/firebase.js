@@ -11,6 +11,7 @@
  * OAuth configuration parameters can be retrieved from the Firebase project settings.
  */
 
+import { ERROR_CAUSES, ERROR_CODES } from '$/constants/error';
 import { initializeApp } from 'firebase/app';
 
 import {
@@ -24,8 +25,6 @@ import {
 } from 'firebase/auth';
 
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-
-console.log('Loading env vars: ' + JSON.stringify(import.meta.env));
 
 if (!import.meta.env.VITE_FIREBASE_API_KEY) {
   throw new Error('Missing VITE_FIREBASE_API_KEY env var.');
@@ -62,19 +61,15 @@ const config = {
 
 // Initializing the Firebase application.
 const app = initializeApp(config);
-console.log('Firebase app: ' + JSON.stringify(app));
 
 // Initializing the Firestore database connection.
 const db = getFirestore(app);
-console.log('Firebase db: ' + JSON.stringify(db));
 
 // Initializing the Firebase auth provider.
 export const auth = getAuth(app);
-console.log('Firebase auth: ' + JSON.stringify(auth));
 
 // Initializing Google auth provider.
 const googleProvider = new GoogleAuthProvider();
-console.log('Google auth provider: ' + JSON.stringify(googleProvider));
 
 /*
  * Opens a popup to authenticate with a Google account.
@@ -93,8 +88,22 @@ export const signInWithGoogle = async () => {
     const user = res.user;
     return user;
   } catch (err) {
-    console.error('Error signing in with Google: ' + JSON.stringify(err));
-    alert(err.message);
+    /**
+     * Error codes reference:
+     * https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#signinwithpopup
+     */
+    let message = err.message;
+    if (err.code === ERROR_CODES.AUTH_POPUP_CLOSED_BY_USER) {
+      message = 'Login Popup closed by user.';
+    } else if (err.code === ERROR_CODES.AUTH_CANCELLED_POPUP_REQUEST) {
+      message = 'Only one popup request is allowed at a time.';
+    } else if (err.code === ERROR_CODES.AUTH_POPUP_BLOCKED) {
+      message = 'Popup blocked by browser. Please allow popups.';
+    }
+
+    throw new Error('Error signing in with Google. ' + message, {
+      cause: ERROR_CAUSES.SIGN_IN_WITH_GOOGLE,
+    });
   }
 };
 
@@ -176,14 +185,33 @@ export const registerWithEmailAndPassword = async (name, email, password) => {
  */
 export const logInWithEmailAndPassword = async (email, password) => {
   console.log('Authenticating with email and password: ' + email);
+  // Check if the email and password are valid.
+  if (!email || !password) {
+    throw new Error('Email and password are required.', {
+      cause: ERROR_CAUSES.SIGN_IN_WITH_EMAIL,
+    });
+  }
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
     console.log('User authenticated!');
     return res.user;
   } catch (err) {
-    console.error(
-      'Error logging in with email and password: ' + JSON.stringify(err),
-    );
-    alert(err.message);
+    /**
+     * Error codes reference:
+     * https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#signinwithpopup
+     */
+    let message = err.message;
+    if (err.code === ERROR_CODES.AUTH_INVALID_EMAIL) {
+      message = 'Email or password is invalid. Please try again.';
+    } else if (err.code === ERROR_CODES.AUTH_USER_NOT_FOUND) {
+      message = 'User not found.';
+    } else if (err.code === ERROR_CODES.AUTH_WRONG_PASSWORD) {
+      message = 'Email or password is invalid. Please try again.';
+    } else if (err.code === ERROR_CODES.AUTH_USER_DISABLED) {
+      message = 'User account is disabled.';
+    } else if (err.code === ERROR_CODES.AUTH_INVALID_CREDENTIAL) {
+      message = 'Email or password is invalid. Please try again.';
+    }
+    throw new Error(message, { cause: ERROR_CAUSES.SIGN_IN_WITH_EMAIL });
   }
 };

@@ -7,40 +7,20 @@ import { AppContext } from '../../context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
-function ThemeCard({ theme, onHover }) {
+function ThemeCard({ theme, onHover, disabled = false }) {
   const image = IMAGE_BASE_URL + theme.image;
 
-  const {
-    saveUserChosenTheme,
-    clearQuestionAndTheme,
-    userPrompt,
-    userChosenTheme,
-    userChonsenCards,
-    saveUserChosenCards,
-  } = useContext(AppContext);
+  const { saveUserChosenTheme, clearQuestionAndTheme, saveUserChosenCards } =
+    useContext(AppContext);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
+    // If there is a API error at input page, do not allow to click on theme card
+    if (disabled) return;
     // Clear the user question and theme from context
     clearQuestionAndTheme();
-    if (!userPrompt) {
-      console.log('userPrompt is empty');
-    } else {
-      console.log('userPrompt:', userPrompt);
-    }
-    if (!userChosenTheme) {
-      console.log('userChosenTheme is empty');
-    } else {
-      console.log('userChosenTheme:', userChosenTheme);
-    }
     saveUserChosenCards(null);
-    if (!userChonsenCards) {
-      console.log('userChonsenCards is empty');
-    } else {
-      console.log('userChonsenCards:', userChonsenCards);
-    }
-
     // Store the selected theme in context for later use
     saveUserChosenTheme(theme);
 
@@ -52,7 +32,6 @@ function ThemeCard({ theme, onHover }) {
     // Call the onHover prop function with the current theme
     if (onHover) {
       onHover(theme);
-      console.log('Hovered over theme:', theme);
     }
   };
 
@@ -83,6 +62,7 @@ ThemeCard.propTypes = {
     description: PropTypes.string,
   }).isRequired,
   onHover: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default ThemeCard;

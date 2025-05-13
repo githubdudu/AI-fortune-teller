@@ -3,8 +3,8 @@ import arcanaVerseLogo from '../../assets/arcanaVerse.png';
 
 function ArcanaVerseLogo() {
   return (
-    <div>
-      <Link to="/" target="_self">
+    <div title="Go to home page" className="cursor-pointer">
+      <Link to="/" target="_self" aria-label="Go to home page">
         <img
           src={arcanaVerseLogo}
           className="h-35 mx-auto mt-6 transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"

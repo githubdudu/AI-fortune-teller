@@ -35,6 +35,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   flex-direction: column;
+  user-select: none;
 }
 
 @media (prefers-color-scheme: light) {

@@ -10,6 +10,7 @@ import UserProfile from './pages/UserProfile/UserProfile';
 import SignUpPage from './pages/SignUpPage';
 import GalleryPage from './pages/GalleryPage';
 import AuthRoute from './authroute/AuthRoute';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
             />
 
             <Route path="sign-up" element={<SignUpPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
