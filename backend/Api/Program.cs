@@ -6,7 +6,6 @@ using Api.Repositories;
 using Api.Repositories.Interfaces;
 using Api.Services.Implementations;
 using Api.Services.Interfaces;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +18,9 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Print the current environment for debugging
+Console.WriteLine($"Current environment: {builder.Environment.EnvironmentName}");
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -102,19 +104,23 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure SQL Server with Entity Framework Core
-// if (builder.Environment.IsDevelopment())
-// {
-//     // Local debugging → use the in-memory store
-//     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//     options.UseInMemoryDatabase("InMemoryDb")
-// );
-// }
-// else
-// {
-// Production/staging → use the real SQL Server on RDS
-builder.Services.AddDbContext<ApplicationDbContext>(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// }
+if (builder.Environment.IsDevelopment())
+{
+    // Local debugging → use the in-memory store
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("InMemoryDb")
+    );
+    Console.WriteLine("Using In-Memory Database for Development");
+}
+else
+{
+    // Production environment → use the real SQL Server on RDS
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Using SQL Server with connection string: {connectionString}");
+    builder.Services.AddDbContext<ApplicationDbContext>(opts =>
+        opts.UseSqlServer(connectionString)
+    );
+}
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
@@ -283,9 +289,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
-    // db.Database.Migrate();  
     DbInitializer.InitializeData(db); // Changed from DbInitialiser to DbInitializer
 }
-
 
 app.Run();
