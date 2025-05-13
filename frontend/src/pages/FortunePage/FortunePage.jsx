@@ -111,19 +111,19 @@ const FortunePage = () => {
           id: 1,
           name: 'The Fool',
           description: 'New beginnings, innocence, spontaneity',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
         {
           id: 2,
           name: 'The Magician',
           description: 'Manifestation, resourcefulness, power',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
         {
           id: 3,
           name: 'The High Priestess',
           description: 'Intuition, sacred knowledge, divine feminine',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
       ];
 
@@ -299,7 +299,7 @@ const FortunePage = () => {
           <div key={card.id}>
             <div>
               <Card
-                frontImage={card.imageSource || '/defautFrontCard.png'}
+                frontImage={card.imageSource || '/defaultFrontCard.png'}
                 isShowFront={true}
                 name={card.name}
                 description={card.description}
@@ -353,7 +353,7 @@ const FortunePage = () => {
           >
             <Card
               backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
-              frontImage={card.imageSource || '/defautFrontCard.png'}
+              frontImage={card.imageSource || '/defaultFrontCard.png'}
               disabled={isCardDisabled(card.id)}
               isShowFront={selectedCardsID.includes(card.id)}
               name={card.name}
