@@ -1,5 +1,6 @@
 import './Card.css';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
 const TarotCard = ({
   frontImage,
@@ -8,10 +9,17 @@ const TarotCard = ({
   description,
   name,
   isShowFront,
+  cardNumber,
 }) => {
+  const [isNumberShow, setIsNumberShow] = useState(false);
   return (
     <div
       className={`tarot-card ${isShowFront ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
+      onTransitionEnd={() => {
+        if (isShowFront) {
+          setIsNumberShow(true);
+        }
+      }}
     >
       <div className="tarot-card-inner">
         <div className="tarot-card-back">
@@ -24,6 +32,7 @@ const TarotCard = ({
             <p>{description}</p>
           </div>
         </div>
+        {isNumberShow && <div className="card-number">{cardNumber}</div>}
       </div>
     </div>
   );
@@ -36,6 +45,7 @@ TarotCard.propTypes = {
   description: PropTypes.string,
   name: PropTypes.string,
   isShowFront: PropTypes.bool,
+  cardNumber: PropTypes.string,
 };
 
 TarotCard.defaultProps = {

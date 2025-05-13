@@ -358,12 +358,8 @@ const FortunePage = () => {
               isShowFront={selectedCardsID.includes(card.id)}
               name={card.name}
               description={card.description}
+              cardNumber={selectedCardsID.indexOf(card.id) + 1}
             />
-            {selectedCardsID.includes(card.id) && (
-              <div className="card-number">
-                {selectedCardsID.indexOf(card.id) + 1}
-              </div>
-            )}
           </div>
         ))}
       </div>
