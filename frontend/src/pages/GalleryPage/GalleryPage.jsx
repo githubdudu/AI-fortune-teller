@@ -219,8 +219,8 @@ function GalleryPage() {
                 }}
               >
                 <Card
-                  frontImage={card.imageSource || '/defautFrontCard.png'}
-                  backImage="/defaultBackCard.png"
+                  backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+                  frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
                   initialFlipped={animationComplete}
@@ -307,8 +307,8 @@ function GalleryPage() {
                 }}
               >
                 <Card
-                  frontImage={card.imageSource || '/defautFrontCard.png'}
-                  backImage="/defaultBackCard.png"
+                  backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+                  frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
                   initialFlipped={animationComplete}
@@ -434,8 +434,8 @@ function GalleryPage() {
                 }}
               >
                 <Card
-                  frontImage={card.imageSource || '/defautFrontCard.png'}
-                  backImage="/defaultBackCard.png"
+                  backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+                  frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
                   initialFlipped={animationComplete}
@@ -512,8 +512,8 @@ function GalleryPage() {
                 }}
               >
                 <Card
-                  frontImage={card.imageSource || '/defautFrontCard.png'}
-                  backImage="/defaultBackCard.png"
+                  backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+                  frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
                   initialFlipped={animationComplete}
