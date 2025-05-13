@@ -59,19 +59,22 @@ const FortunePage = () => {
 
         // Fallback to demo cards if API fails
         setCards([
-          { id: 1, name: 'The Fool', imageSource: '/defautFrontCard.png' },
           {
-            id: 2,
-            name: 'The Magician',
-            imageSource: '/defautFrontCard.png',
+            imageSource:
+              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20High%20Priestess%20(II).png',
           },
           {
-            id: 3,
-            name: 'The High Priestess',
-            imageSource: '/defautFrontCard.png',
+            id: 4,
+            name: 'The Empress',
+            imageSource:
+              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Empress%20(III).png',
           },
-          { id: 4, name: 'The Empress', imageSource: '/defautFrontCard.png' },
-          { id: 5, name: 'The Emperor', imageSource: '/defautFrontCard.png' },
+          {
+            id: 5,
+            name: 'The Emperor',
+            imageSource:
+              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Hierophant%20(V).png',
+          },
         ]);
       });
   };
@@ -249,13 +252,12 @@ const FortunePage = () => {
   if (showResults) {
     return (
       <div className="results-container">
-        <h1>Your Tarot Reading Results</h1>
+        <h1 className="reading-title"> Your ArcanaVerse Reading </h1>
 
-        <Box>
-          <Text align="center">
-            The cards have revealed your path. Here is your personalized
-            reading.
-          </Text>
+        <Box className="reading-subtitle-wrapper">
+          <p className="reading-subtitle-text">
+            The cards have spoken. Here is your path forward.
+          </p>
         </Box>
 
         <SelectedCardsDisplay />
@@ -269,27 +271,36 @@ const FortunePage = () => {
   return <SelectionDisplay />;
 
   function ReadingInterpretationDisplay() {
+    const fullText = contextReadingResult || readingResult;
+    const [typedText, setTypedText] = useState('');
+    const [isDoneTyping, setIsDoneTyping] = useState(false);
+
+    useEffect(() => {
+      let i = 0;
+      const interval = setInterval(() => {
+        setTypedText((prev) => prev + fullText.charAt(i));
+        i++;
+        if (i >= fullText.length) clearInterval(interval);
+        setIsDoneTyping(true);
+      }, 60);
+      return () => clearInterval(interval);
+    }, [fullText]);
     return (
-      <Box marginTop={8} marginBottom={4}>
-        <Heading size="md" accessibilityLevel={2}>
-          Your Reading Interpretation
-        </Heading>
-        <Box marginTop={2} marginBottom={6}>
-          <Text>{contextReadingResult || readingResult}</Text>
-        </Box>
-      </Box>
+      <div className="interpretation-box">
+        <h2 className="interpretation-title">✦ Interpretation ✦</h2>
+        <p className={`interpretation-text ${isDoneTyping ? '' : 'typing'}`}>
+          {typedText}
+        </p>
+      </div>
     );
   }
 
   function NewReadingButton() {
     return (
-      <Box marginTop={6} display="flex" justifyContent="center">
-        <Button
-          text="Start New Reading"
-          color="blue"
-          onClick={handleNewReading}
-          size="lg"
-        />
+      <Box marginTop={2} display="flex" justifyContent="center">
+        <button className="new-reading-button" onClick={handleNewReading}>
+          Reveal Another Reading
+        </button>
       </Box>
     );
   }
@@ -355,7 +366,7 @@ const FortunePage = () => {
             onClick={() => handleCardSelect(card.id)}
           >
             <Card
-              frontImage="/defautFrontCard.png"
+              frontImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
               backImage={card.imageSource || '/defaultBackCard.png'}
               disabled={isCardDisabled(card.id)}
               onCardFlip={(flipped) => handleCardFlip(card.id, flipped)}
