@@ -149,6 +149,7 @@ const Login = () => {
   function SignInButton() {
     return (
       <Button
+        name="login-button"
         text="Sign in"
         onClick={async () =>
           handleSignIn(logInWithEmailAndPassword, email, password)

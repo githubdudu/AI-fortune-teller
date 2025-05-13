@@ -114,16 +114,22 @@ const SignUp = () => {
     setLoading(false);
   }
   return (
-    <FormContainer>
-      <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
-      <div className="flex flex-col gap-4 min-w-[500px]">
-        {Username()}
-        {Email()}
-        {Password()}
-        {SignUpButton()}
-        {IHaveAnAccountButton()}
+    <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-green-100 rounded-2xl border-2 border-white py-12 px-6 lg:px-8 font-sans">
+      <div className="w-full max-w-screen-xl mx-auto">
+        <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-xl p-10 lg:p-16 w-full">
+          <FormContainer>
+            <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
+            <div className="flex flex-col gap-4 min-w-[500px]">
+              {Username()}
+              {Email()}
+              {Password()}
+              {SignUpButton()}
+              {IHaveAnAccountButton()}
+            </div>
+          </FormContainer>
+        </div>
       </div>
-    </FormContainer>
+    </div>
   );
 
   function Username() {
@@ -179,6 +185,7 @@ const SignUp = () => {
     return (
       <Button
         text="Continue"
+        name="edit-button"
         onClick={() => handleSignUpWithEmail(username, email, password)}
         size="lg"
         color="red"
