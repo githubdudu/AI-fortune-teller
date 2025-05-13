@@ -26,6 +26,14 @@ Console.WriteLine($"Current environment: {builder.Environment.EnvironmentName}")
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Configure Kestrel to allow synchronous I/O operations
+builder.Services.Configure<IISServerOptions>(options => {
+    options.AllowSynchronousIO = true;
+});
+builder.WebHost.ConfigureKestrel(options => {
+    options.AllowSynchronousIO = true;
+});
+
 // Add Authorization services but don't set a fallback policy
 builder.Services.AddAuthorization();
 
