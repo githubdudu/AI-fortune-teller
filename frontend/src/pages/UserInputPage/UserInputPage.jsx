@@ -58,6 +58,7 @@ function UserInputPage() {
         setProfileFetched(true); // Mark profile as fetched
 
         // If the user is logged in, but the information is missing, showing a form
+        console.log(missingProfileInfo(response.data));
         if (missingProfileInfo(response.data)) {
           navigate('/user-info-input');
           return;
