@@ -223,7 +223,7 @@ function GalleryPage() {
                   frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
-                  initialFlipped={animationComplete}
+                  isShowFront={animationComplete}
                 />
                 <div className="card-hover-caption">
                   <Text color="white" weight="bold">
@@ -311,7 +311,7 @@ function GalleryPage() {
                   frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
-                  initialFlipped={animationComplete}
+                  isShowFront={animationComplete}
                 />
                 <div className="card-hover-caption">
                   <Text color="white" weight="bold">
@@ -438,7 +438,7 @@ function GalleryPage() {
                   frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
-                  initialFlipped={animationComplete}
+                  isShowFront={animationComplete}
                 />
                 <div className="card-hover-caption">
                   <Text color="white" weight="bold">
@@ -516,7 +516,7 @@ function GalleryPage() {
                   frontImage={card.imageSource || '/defaultFrontCard.png'}
                   name={card.name}
                   description={card.description}
-                  initialFlipped={animationComplete}
+                  isShowFront={animationComplete}
                 />
                 <div className="card-hover-caption">
                   <Text color="white" weight="bold">
