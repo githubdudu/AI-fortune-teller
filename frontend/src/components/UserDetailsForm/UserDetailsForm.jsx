@@ -160,7 +160,6 @@ function UserDetailsForm() {
       onSubmit={handleSubmit}
       className="min-w-[400px] max-w-[600px] w-[calc(100vw-4.5rem)]"
     >
-
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
@@ -188,7 +187,7 @@ function UserDetailsForm() {
     return (
       <TextField
         id="UserName"
-        label="User Name"
+        label="Name"
         placeholder="Please enter your user name"
         name="username"
         size="lg"

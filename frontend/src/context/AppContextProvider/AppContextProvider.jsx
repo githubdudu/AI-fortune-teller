@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
 import { useLocalStorage, useSessionStorage } from 'react-use';
+import { useEffect } from 'react';
+import { useFortuneStream } from '$/hooks/useFortuneStream';
+import { setLogoutHandler } from '$/utils/apiClient';
 
 import { logout as firebaseLogout } from '$/utils/firebase.js';
 
 export function AppContextProvider({ children }) {
+  // Original state
   const [userPrompt, setUserPrompt] = useSessionStorage('userPrompt', '');
   const [userChosenTheme, setUserChosenTheme] = useSessionStorage(
     'userChosenTheme',
@@ -28,6 +32,24 @@ export function AppContextProvider({ children }) {
 
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
 
+  // Default fallback text when stream fails
+  const fallbackText =
+    'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
+
+  // Use our custom hook for streaming functionality
+  const {
+    streamingText,
+    isStreaming,
+    streamLoading,
+    streamError,
+    startFortuneStream,
+    cleanupStream,
+    clearStreamingText,
+  } = useFortuneStream({
+    onSaveResult: setReadingResult,
+    fallbackText,
+  });
+
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
@@ -35,6 +57,7 @@ export function AppContextProvider({ children }) {
 
   const clearReadingResult = () => {
     setReadingResult(null);
+    clearStreamingText();
   };
 
   const toggleModalOpen = () => {
@@ -64,6 +87,17 @@ export function AppContextProvider({ children }) {
     setIsModalOpen(true);
   };
 
+  // Register logout handler with API client
+  useEffect(() => {
+    // Register the logout function with the API client to handle 401 errors globally
+    setLogoutHandler(logout);
+
+    return () => {
+      // Clean up by unsetting the handler when component unmounts
+      setLogoutHandler(null);
+    };
+  }, [logout]);
+
   return (
     <AppContext.Provider
       value={{
@@ -86,6 +120,13 @@ export function AppContextProvider({ children }) {
         login,
         logout,
         isLoggedIn,
+        // Streaming API from custom hook
+        streamingText,
+        isStreaming,
+        streamLoading,
+        streamError,
+        startFortuneStream,
+        cleanupStream,
       }}
     >
       {children}

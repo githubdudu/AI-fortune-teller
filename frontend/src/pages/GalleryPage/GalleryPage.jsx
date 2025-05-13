@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Box, Heading, Text, Spinner } from 'gestalt';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
 import Card from '../../components/Card/Card';
 import './GalleryPage.css';
 import { API_CONFIG } from '$/constants/config';
+import apiClient from '$/utils/apiClient';
 
 function GalleryPage() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [displayMode, setDisplayMode] = useState('fan'); // 'stack', 'fan', 'pure-stack'
   const cardBoxRef = useRef(null);
@@ -19,19 +19,16 @@ function GalleryPage() {
     const fetchAllCards = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${API_CONFIG.BASE_URL}/Cards`, {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
-          },
-        });
+        // Using apiClient with centralized endpoint config
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.CARDS);
 
         setCards(response.data);
         console.log('Cards fetched:', response.data);
       } catch (err) {
         console.error('Error fetching cards:', err);
-        setError('Unable to load cards. Please try again later.');
-        console.log('Error:', error);
+        setErrorMessage('Unable to load cards. Please try again later.');
+        // Using local variable instead of state to avoid dependency cycle
+        console.log('Error:', err);
 
         // Use demo cards as fallback
         setCards([
@@ -122,6 +119,23 @@ function GalleryPage() {
         <Spinner show accessibilityLabel="Loading cards" />
         <Text align="center" weight="bold" size="lg">
           Preparing your card gallery...
+        </Text>
+      </Box>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <Box
+        padding={4}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        direction="column"
+      >
+        <Text align="center" weight="bold" size="lg" color="red">
+          {errorMessage}
         </Text>
       </Box>
     );

@@ -1,24 +1,269 @@
 import Card from '../../components/Card/Card';
 import './FortunePage.css';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Text, Heading } from 'gestalt';
-import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import { Button, Box } from 'gestalt';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
-
+import ErrorMessage from '../../components/ErrorMessage';
 import { AppContext } from '../../context/AppContextProvider';
+import useCardSelection from '../../hooks/useCardSelection';
+import useFetchTarotCards from '../../hooks/useFetchTarotCards';
 
+// Constants
+const DEFAULT_READING_TEXT =
+  'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
+
+/**
+ * Displays reading interpretation with typing animation
+ */
+const ReadingInterpretationDisplay = ({ readingText }) => {
+  return (
+    <div className="interpretation-box">
+      <h2 className="interpretation-title">✦ Interpretation ✦</h2>
+      <p className="interpretation-text">{readingText}</p>
+    </div>
+  );
+};
+
+ReadingInterpretationDisplay.propTypes = {
+  readingText: PropTypes.string.isRequired,
+};
+
+/**
+ * Button to start a new reading
+ */
+const NewReadingButton = ({ onClick }) => {
+  return (
+    <Box marginTop={2} display="flex" justifyContent="center">
+      <button className="new-reading-button" onClick={onClick}>
+        Reveal Another Reading
+      </button>
+    </Box>
+  );
+};
+
+NewReadingButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
+/**
+ * Displays the cards selected for the reading
+ */
+const SelectedCardsDisplay = ({ cards }) => {
+  return (
+    <div className="selected-cards-display">
+      {cards?.map((card) => (
+        <div key={card.id}>
+          <Card
+            frontImage={card.imageSource || '/defaultFrontCard.png'}
+            isShowFront={true}
+            name={card.name}
+            description={card.description}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+SelectedCardsDisplay.propTypes = {
+  cards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      imageSource: PropTypes.string,
+    }),
+  ),
+};
+
+/**
+ * Displays the card selection interface
+ */
+const CardsDisplay = ({
+  cards,
+  onCardSelect,
+  isCardDisabled,
+  selectedCardsID,
+}) => {
+  return (
+    <div className="card-container">
+      {cards.map((card) => (
+        <div
+          key={card.id}
+          className="card-wrapper"
+          onClick={() => onCardSelect(card.id)}
+        >
+          <Card
+            backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+            frontImage={card.imageSource || '/defaultFrontCard.png'}
+            disabled={isCardDisabled(card.id)}
+            isShowFront={selectedCardsID.includes(card.id)}
+            name={card.name}
+            description={card.description}
+            cardNumber={selectedCardsID.indexOf(card.id) + 1}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+CardsDisplay.propTypes = {
+  cards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      imageSource: PropTypes.string,
+    }),
+  ).isRequired,
+  onCardSelect: PropTypes.func.isRequired,
+  isCardDisabled: PropTypes.func.isRequired,
+  selectedCardsID: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ).isRequired,
+};
+
+/**
+ * Card selection screen
+ */
+const SelectionDisplay = ({
+  cards,
+  error,
+  errorMessage,
+  selectedCardsID,
+  handleCardSelect,
+  isCardDisabled,
+  handleReadButton,
+}) => {
+  // Local click handler without event parameter
+  const onReadButtonClick = () => {
+    console.log('Read button clicked with selected cards:', selectedCardsID);
+    handleReadButton();
+  };
+
+  return (
+    <div className="selection-container">
+      <h1 className="selection-title">Select Three Cards for your Reading</h1>
+
+      {error && (
+        <ErrorMessage
+          message="Could not fetch cards from server. Using demo cards instead."
+          type="warning"
+        />
+      )}
+
+      {errorMessage && <ErrorMessage message={errorMessage} type="error" />}
+
+      <CardsDisplay
+        cards={cards}
+        onCardSelect={handleCardSelect}
+        isCardDisabled={isCardDisabled}
+        selectedCardsID={selectedCardsID}
+      />
+
+      <div className="action-container">
+        {selectedCardsID.length === 3 ? (
+          <Button
+            text="See Your Reading"
+            color="blue"
+            onClick={onReadButtonClick}
+            size="lg"
+            accessibilityLabel="Get your tarot reading"
+            disabled={selectedCardsID.length !== 3}
+          />
+        ) : (
+          <div className="cards-remaining">
+            <span>{3 - selectedCardsID.length} cards remaining</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+SelectionDisplay.propTypes = {
+  cards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      imageSource: PropTypes.string,
+    }),
+  ).isRequired,
+  error: PropTypes.object,
+  errorMessage: PropTypes.string,
+  selectedCardsID: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ).isRequired,
+  handleCardSelect: PropTypes.func.isRequired,
+  isCardDisabled: PropTypes.func.isRequired,
+  handleReadButton: PropTypes.func.isRequired,
+};
+
+/**
+ * Reading results screen
+ */
+const ResultsDisplay = ({
+  readingResult,
+  userChosenCards,
+  onNewReading,
+  isLoading,
+}) => {
+  return (
+    <div className="results-container">
+      <h1 className="reading-title"> Your ArcanaVerse Reading </h1>
+
+      <Box className="reading-subtitle-wrapper">
+        <p className="reading-subtitle-text">
+          The cards have spoken. Here is your path forward.
+        </p>
+      </Box>
+
+      <SelectedCardsDisplay cards={userChosenCards} />
+
+      {isLoading && (
+        <div className="loading-wrapper">
+          <LoadingAnimation />
+        </div>
+      )}
+
+      {!isLoading && (
+        <ReadingInterpretationDisplay readingText={readingResult} />
+      )}
+
+      <NewReadingButton onClick={onNewReading} />
+    </div>
+  );
+};
+
+ResultsDisplay.propTypes = {
+  readingResult: PropTypes.string.isRequired,
+  userChosenCards: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      imageSource: PropTypes.string,
+    }),
+  ),
+  onNewReading: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+};
+
+/**
+ * Main FortunePage component
+ */
 const FortunePage = () => {
-  const [selectedCardsID, setSelectedCardsID] = useState([]);
-
-  const [cards, setCards] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [readingResult, setReadingResult] = useState(null);
-  const [showResults, setShowResults] = useState(false);
-  const [error, setError] = useState(null);
-  const [isSelectDisabled, setIsSelectDisabled] = useState(false);
   const navigate = useNavigate();
+  const [showResults, setShowResults] = useState(false);
+  const [readingResult, setReadingResult] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
+  // AppContext provides user theme, prompt, and methods to save/clear reading results
   const {
     saveUserChosenCards,
     saveReadingResult,
@@ -28,86 +273,63 @@ const FortunePage = () => {
     clearQuestionAndTheme,
     readingResult: contextReadingResult,
     userChosenCards,
+    streamingText,
+    isLoading: isStreamLoading,
+    streamError,
+    startFortuneStream,
+    cleanupStream,
   } = useContext(AppContext);
 
-  useEffect(() => {
-    fetchCards();
+  // Use custom hooks for cards and selection
+  const { cards, isLoading, error, fetchCards } = useFetchTarotCards(5);
+  const { selectedCardsID, handleCardSelect, isCardDisabled, resetSelection } =
+    useCardSelection(3);
+
+  /**
+   * Get details for selected cards
+   */
+  const getSelectedCardDetails = useCallback(
+    (selectedIds) => {
+      return selectedIds.map((id) => {
+        const card = cards.find((c) => c.id === id);
+        return card || { id };
+      });
+    },
+    [cards],
+  );
+
+  /**
+   * Generate appropriate error message based on error response
+   */
+  const generateErrorMessage = useCallback((error) => {
+    let errorMsg = 'Unable to fetch your reading. Please try again later.';
+    if (error.response && error.response.data) {
+      if (error.response.data.includes('Failed to generate text from OpenAI')) {
+        errorMsg =
+          'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
+      } else {
+        errorMsg = `Server error: ${error.response.data}`;
+      }
+    }
+    return errorMsg;
   }, []);
 
-  const fetchCards = () => {
-    setIsLoading(true);
+  /**
+   * Handle reading button click
+   */
+  const handleReadButton = useCallback(async () => {
+    // Prevent multiple submissions
+    if (isSubmitting) return;
 
-    axios
-      .get('http://localhost:5000/api/v1/cards/random?limit=5', {
-        headers: {
-          Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
-        },
-      })
-      .then((response) => {
-        setCards(response.data || []);
-        console.log('Cards fetched:', response.data);
+    // Set submitting state
+    setIsSubmitting(true);
+    setErrorMessage(null);
 
-        // Add a 2-second delay before fetching cards
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
-      })
-      .catch((error) => {
-        console.error('Error fetching cards:', error);
-        setError(
-          'Could not fetch cards from server. You can interact with these demo cards but you may not see the reading.',
-        );
-        setIsLoading(false);
+    console.log('Read button clicked - processing reading request');
 
-        // Fallback to demo cards if API fails
-        setCards([
-          {
-            id: 3,
-            name: 'The High Priestess',
-            imageSource:
-              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20High%20Priestess%20(II).png',
-          },
-          {
-            id: 4,
-            name: 'The Empress',
-            imageSource:
-              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Empress%20(III).png',
-          },
-          {
-            id: 5,
-            name: 'The Emperor',
-            imageSource:
-              'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Hierophant%20(V).png',
-          },
-        ]);
-      });
-  };
-
-  useEffect(() => {
-    setIsSelectDisabled(selectedCardsID.length >= 3);
-  }, [selectedCardsID]);
-
-  const handleCardSelect = (cardId) => {
-    // Prevent selection if already have 3 cards selected and this card has been selected
-    if (isSelectDisabled || selectedCardsID.includes(cardId)) {
-      return;
-    }
-
-    setSelectedCardsID((cards) => [...cards, cardId]);
-  };
-
-  // Function to get selected card details
-  // This function will return the card details for the selected IDs
-  const getSelectedCardDetails = (selectedIds) => {
-    return selectedIds.map((id) => {
-      const card = cards.find((c) => c.id === id);
-      return card || { id };
-    });
-  };
-
-  const handleReadButton = (cardsIds = selectedCardsID) => {
-    if (!cardsIds?.length) {
+    // Handle case when no cards are selected (fallback to defaults)
+    if (!selectedCardsID?.length) {
+      // Call the function directly instead of inside a hook
       const defaultCards = [
         {
           id: 1,
@@ -129,108 +351,112 @@ const FortunePage = () => {
         },
       ];
 
-      const defaultResult =
-        'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
-
-      setReadingResult(defaultResult);
+      setReadingResult(DEFAULT_READING_TEXT);
       saveUserChosenCards(defaultCards);
-      saveReadingResult(defaultResult);
+      saveReadingResult(DEFAULT_READING_TEXT);
       setShowResults(true);
+      setIsSubmitting(false);
       return;
     }
 
-    const question = userPrompt || '';
-    const themeId = userChosenTheme ? userChosenTheme.id : null;
+    try {
+      // Save the selected cards to context first (before streaming starts)
+      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
+      saveUserChosenCards(selectedCardDetails);
 
-    setIsLoading(true);
+      // Switch to results view immediately with loading state
+      setShowResults(true);
 
-    axios
-      .post(
-        'http://localhost:5000/api/v1/Fortunes/ask',
-        {
-          question: question || '',
-          cardIds: cardsIds,
-          themeId: themeId || null,
-        },
-        {
-          headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo',
-          },
-        },
-      )
-      .then((response) => {
-        const { result, cardsIds: returnedCardIds } = response.data;
-        setReadingResult(result);
-        setError(null);
-        setIsLoading(false);
+      // Store current selection data for async callback
+      const currentCardIds = [...selectedCardsID];
+      const currentPrompt = userPrompt || '';
+      const currentTheme = userChosenTheme?.id || null;
 
-        const selectedCardDetails = getSelectedCardDetails(
-          returnedCardIds || cardsIds,
-        );
-        saveUserChosenCards(selectedCardDetails);
-        saveReadingResult(result);
+      // Add a small delay to ensure state updates complete before starting stream
+      // This helps prevent the "Component unmounted" issue during navigation
+      setTimeout(() => {
+        // Only start stream if component is still mounted
+        console.log('Component is mounted, starting stream');
+        startFortuneStream({
+          cardIds: currentCardIds,
+          question: currentPrompt,
+          themeId: currentTheme,
+        });
+      }, 150);
+    } catch (error) {
+      // Handle error directly instead of using a hook
+      console.error('Error fetching reading result:', error);
+      setIsSubmitting(false);
 
-        setShowResults(true);
+      // Generate appropriate error message
+      const errorMsg = generateErrorMessage(error);
+      setErrorMessage(errorMsg);
 
-        console.log('Reading result fetched successfully');
-        console.log('API response:', response.data);
-        console.log('Reading result:', result);
-        console.log('Cards IDs:', returnedCardIds);
-      })
-      .catch((error) => {
-        console.error('Error fetching reading result:', error);
+      // Use fallback with direct function calls instead of a hook
+      setReadingResult(DEFAULT_READING_TEXT);
 
-        let errorMessage =
-          'Unable to fetch your reading. Please try again later.';
+      // Save fallback data to context
+      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
+      saveUserChosenCards(selectedCardDetails);
+      saveReadingResult(DEFAULT_READING_TEXT);
 
-        if (error.response && error.response.data) {
-          // If it's an OpenAI API error, display more specific information
-          if (
-            error.response.data.includes('Failed to generate text from OpenAI')
-          ) {
-            errorMessage =
-              'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
-          } else {
-            errorMessage = `Server error: ${error.response.data}`;
-          }
-        }
+      // Switch to results view even with the error
+      setShowResults(true);
+    }
+  }, [
+    isSubmitting,
+    selectedCardsID,
+    userPrompt,
+    userChosenTheme,
+    getSelectedCardDetails,
+    saveUserChosenCards,
+    saveReadingResult,
+    generateErrorMessage,
+    startFortuneStream,
+  ]);
 
-        setError(errorMessage);
+  /**
+   * Reset all state for a new reading
+   */
+  const handleNewReading = useCallback(() => {
+    // Cleanup any active streams
+    cleanupStream();
 
-        // Use default reading text when request fails
-        const defaultResult =
-          'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
-        setReadingResult(defaultResult);
-
-        // Save fallback data to context
-        const selectedCardDetails = getSelectedCardDetails(cardsIds);
-        saveUserChosenCards(selectedCardDetails);
-        saveReadingResult(defaultResult);
-
-        // Switch to results view even with the error
-        setShowResults(true);
-        setIsLoading(false);
-      });
-  };
-
-  const handleNewReading = () => {
-    // Reset everything for a new reading
+    // Reset context
     clearQuestionAndTheme();
     clearReadingResult();
     saveUserChosenCards(null);
-    setSelectedCardsID([]);
+
+    // Reset component state
+    resetSelection();
     setReadingResult(null);
     setShowResults(false);
+    setErrorMessage(null);
+
+    // Get new cards
     fetchCards();
+
+    // Navigate back to landing page
     navigate('/');
-  };
+  }, [
+    clearQuestionAndTheme,
+    clearReadingResult,
+    saveUserChosenCards,
+    resetSelection,
+    fetchCards,
+    navigate,
+    cleanupStream,
+  ]);
 
-  const isCardDisabled = (cardId) => {
-    return isSelectDisabled && !selectedCardsID.includes(cardId);
-  };
+  // Clean up any streams on unmount
+  useEffect(() => {
+    return () => {
+      cleanupStream();
+    };
+  }, [cleanupStream]);
 
-  if (isLoading) {
+  // Show loading animation when fetching cards or submitting reading request
+  if (isLoading || (isSubmitting && !showResults)) {
     return (
       <div className="selection-container">
         <LoadingAnimation />
@@ -238,140 +464,32 @@ const FortunePage = () => {
     );
   }
 
+  // Show results after reading is complete
   if (showResults) {
     return (
-      <div className="results-container">
-        <h1 className="reading-title"> Your ArcanaVerse Reading </h1>
-
-        <Box className="reading-subtitle-wrapper">
-          <p className="reading-subtitle-text">
-            The cards have spoken. Here is your path forward.
-          </p>
-        </Box>
-
-        <SelectedCardsDisplay />
-        <ReadingInterpretationDisplay />
-
-        <NewReadingButton />
-      </div>
+      <ResultsDisplay
+        readingResult={
+          streamingText || contextReadingResult || readingResult || ''
+        }
+        userChosenCards={userChosenCards}
+        onNewReading={handleNewReading}
+        isLoading={isStreamLoading}
+      />
     );
   }
 
-  return SelectionDisplay();
-
-  function ReadingInterpretationDisplay() {
-    const fullText = contextReadingResult || readingResult;
-    const [typedText, setTypedText] = useState('');
-    const [isDoneTyping, setIsDoneTyping] = useState(false);
-
-    useEffect(() => {
-      let i = 0;
-      const interval = setInterval(() => {
-        setTypedText((prev) => prev + fullText.charAt(i));
-        i++;
-        if (i >= fullText.length) clearInterval(interval);
-        setIsDoneTyping(true);
-      }, 60);
-      return () => clearInterval(interval);
-    }, [fullText]);
-    return (
-      <div className="interpretation-box">
-        <h2 className="interpretation-title">✦ Interpretation ✦</h2>
-        <p className={`interpretation-text ${isDoneTyping ? '' : 'typing'}`}>
-          {typedText}
-        </p>
-      </div>
-    );
-  }
-
-  function NewReadingButton() {
-    return (
-      <Box marginTop={2} display="flex" justifyContent="center">
-        <Button
-          text="Reveal Another Reading"
-          name="edit-button"
-          onClick={handleNewReading}
-          size="lg"
-          color="red"
-        />
-      </Box>
-    );
-  }
-
-  function SelectedCardsDisplay() {
-    return (
-      <div className="selected-cards-display">
-        {userChosenCards?.map((card) => (
-          <div key={card.id}>
-            <div>
-              <Card
-                frontImage={card.imageSource || '/defaultFrontCard.png'}
-                isShowFront={true}
-                name={card.name}
-                description={card.description}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  function SelectionDisplay() {
-    return (
-      <div className="selection-container">
-        <h1 className="selection-title">Select Three Cards for your Reading</h1>
-
-        {error && (
-          <div className="text-red-500 text-center w-2/3 mx-auto mb-4">
-            {error}
-          </div>
-        )}
-
-        {CardsDisplay()}
-        {selectedCardsID.length === 3 ? (
-          <div>
-            <Button
-              text="See Your Reading"
-              name="edit-button"
-              color="blue"
-              onClick={() => handleReadButton()}
-              size="lg"
-            />
-          </div>
-        ) : (
-          <div className="cards-remaining">
-            <span>{3 - selectedCardsID.length} cards remaining</span>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  function CardsDisplay() {
-    return (
-      <div className="card-container">
-        {cards.map((card) => (
-          // Check if the card is already selected
-          <div
-            key={card.id}
-            className="card-wrapper"
-            onClick={() => handleCardSelect(card.id)}
-          >
-            <Card
-              backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
-              frontImage={card.imageSource || '/defaultFrontCard.png'}
-              disabled={isCardDisabled(card.id)}
-              isShowFront={selectedCardsID.includes(card.id)}
-              name={card.name}
-              description={card.description}
-              cardNumber={selectedCardsID.indexOf(card.id) + 1}
-            />
-          </div>
-        ))}
-      </div>
-    );
-  }
+  // Show card selection
+  return (
+    <SelectionDisplay
+      cards={cards}
+      error={error}
+      errorMessage={errorMessage || streamError}
+      selectedCardsID={selectedCardsID}
+      handleCardSelect={handleCardSelect}
+      isCardDisabled={isCardDisabled}
+      handleReadButton={handleReadButton}
+    />
+  );
 };
 
 export default FortunePage;

@@ -3,46 +3,35 @@ import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
 import { useEffect, useState, useContext } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
-import axios from 'axios';
 import { AppContext } from '$/context/AppContextProvider';
 import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
 import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
+import apiClient from '$/utils/apiClient';
 import { SEO_TITLE } from '$/constants/seo';
 
-const BEARER_TOKEN =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo';
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
  * @returns
  */
-
 function UserInputPage() {
-  const {
-    isModalOpen,
-    toggleModalOpen,
-    isLoggedIn,
-    userProfile,
-    setUserProfile,
-  } = useContext(AppContext);
+  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile, logout } =
+    useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileFetched, setProfileFetched] = useState(false);
 
   const navigate = useNavigate();
 
   const fetchDailyFortune = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        'http://localhost:5000/api/v1/DailyFortunes/me',
-        {
-          headers: {
-            Authorization: BEARER_TOKEN,
-          },
-        },
+      // Using centralized endpoint from config
+      const response = await apiClient.get(
+        API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
       );
       setDailyFortune(response.data);
     } catch (err) {
@@ -58,39 +47,44 @@ function UserInputPage() {
   }, []);
 
   useEffect(() => {
-    // do user me request
-    if (!isLoggedIn) return;
+    // Only fetch user profile once when logged in and not already fetched
+    if (!isLoggedIn || loading || profileFetched) return;
+
     const getUserProfile = async () => {
-      const response = await axios.get(
-        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
-        {
-          headers: {
-            Authorization: BEARER_TOKEN,
-          },
-          withCredentials: true,
-        },
-      );
-      if (response.status !== 200) {
-        throw new Error('Failed to fetch user profile');
+      try {
+        setLoading(true);
+        // Using centralized endpoint from config
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER_ME);
+        setUserProfile(response.data);
+        setProfileFetched(true); // Mark profile as fetched
+
+        // If the user is logged in, but the information is missing, showing a form
+        if (missingProfileInfo(response.data)) {
+          navigate('/user-info-input');
+          return;
+        }
+      } catch (err) {
+        console.error('Error fetching user profile:', err);
+
+        // If we get a 401 Unauthorized error, log the user out
+        if (
+          (err.response && err.response.status === 401) ||
+          err.response.status === 404
+        ) {
+          console.log('Session expired or unauthorized. Logging out user.');
+          logout(); // Log the user out
+          navigate('/'); // Redirect to landing page
+          return;
+        }
+
+        setError('Failed to load user profile');
+      } finally {
+        setLoading(false);
       }
-      console.log('data: ', response.data);
-      setUserProfile(response.data);
     };
 
-    try {
-      setLoading(true);
-      getUserProfile();
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      setError('Failed to load user profile');
-    }
-    // If the user is logged in, but the information is missing, showing a form
-    if (isLoggedIn && missingProfileInfo(userProfile)) {
-      navigate('/user-info-input');
-      return;
-    }
-    setLoading(false);
-  }, [isLoggedIn]);
+    getUserProfile();
+  }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched]);
 
   useEffect(() => {
     setNoMotionFlag(!isLoggedIn);

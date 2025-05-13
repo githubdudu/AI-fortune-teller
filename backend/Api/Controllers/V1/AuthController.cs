@@ -107,25 +107,22 @@ namespace Api.Controllers.V1
         private void SetTokenCookie(string token)
         {
             // Check if we're in development environment
-            bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            
-            // In development, configure cookies for cross-origin requests
+            bool isDevelopment =
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
+            // Configure cookies based on environment
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = isDevelopment ? false : bool.TryParse(_configuration["JwtSettings:CookieSecure"], out var secure) && secure,
-                SameSite = isDevelopment ? SameSiteMode.None : _configuration["JwtSettings:CookieSameSite"]?.ToLower() switch
-                {
-                    "strict" => SameSiteMode.Strict,
-                    "lax" => SameSiteMode.Lax,
-                    "none" => SameSiteMode.None,
-                    _ => SameSiteMode.Lax  // Default to Lax
-                },
+                // For development: no secure flag, for production: use secure flag
+                Secure = !isDevelopment,
+                // For development: SameSite=Lax, for production: SameSite=None
+                SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(
                     Convert.ToDouble(_configuration["JwtSettings:ExpiryInMinutes"] ?? "60")
-                )
+                ),
             };
-            
+
             Response.Cookies.Append("auth_token", token, cookieOptions);
         }
 
@@ -133,22 +130,19 @@ namespace Api.Controllers.V1
         public IActionResult Logout()
         {
             // Check if we're in development environment
-            bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            
+            bool isDevelopment =
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
             // Clear the auth cookie with same settings as when it was created
             Response.Cookies.Delete(
                 "auth_token",
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = isDevelopment ? false : bool.TryParse(_configuration["JwtSettings:CookieSecure"], out var secure) && secure,
-                    SameSite = isDevelopment ? SameSiteMode.None : _configuration["JwtSettings:CookieSameSite"]?.ToLower() switch
-                    {
-                        "strict" => SameSiteMode.Strict,
-                        "lax" => SameSiteMode.Lax,
-                        "none" => SameSiteMode.None,
-                        _ => SameSiteMode.Lax,
-                    }
+                    // For development: no secure flag, for production: use secure flag
+                    Secure = !isDevelopment,
+                    // For development: SameSite=Lax, for production: SameSite=None
+                    SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None,
                 }
             );
 
