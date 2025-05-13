@@ -36,7 +36,7 @@ const hardcodedThemes = [
     description:
       'Evaluate your financial habits with an eye on long-term security, and consider how ambition and stability align.',
   },
-  /*   {
+  {
     id: 4,
     name: 'career',
     image: 'icons/career.png',
@@ -62,7 +62,7 @@ const hardcodedThemes = [
     name: 'decisions',
     image: 'icons/decisions.png',
     description:
-      'Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.',
+      "Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.",
   },
   {
     id: 8,
@@ -70,7 +70,7 @@ const hardcodedThemes = [
     image: 'icons/travel.png',
     description:
       'Explore new environments and shifting paths, and reflect on how movement and change inspire transformation.',
-  }, */
+  },
 ];
 
 function ThemeView() {
