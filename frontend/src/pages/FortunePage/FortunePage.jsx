@@ -287,9 +287,13 @@ const FortunePage = () => {
   function NewReadingButton() {
     return (
       <Box marginTop={2} display="flex" justifyContent="center">
-        <button className="new-reading-button" onClick={handleNewReading}>
-          Reveal Another Reading
-        </button>
+        <Button
+          text="Reveal Another Reading"
+          name="edit-button"
+          onClick={handleNewReading}
+          size="lg"
+          color="red"
+        />
       </Box>
     );
   }
@@ -329,6 +333,7 @@ const FortunePage = () => {
           <div>
             <Button
               text="See Your Reading"
+              name="edit-button"
               color="blue"
               onClick={() => handleReadButton()}
               size="lg"

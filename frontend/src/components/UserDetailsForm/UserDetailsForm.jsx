@@ -156,7 +156,11 @@ function UserDetailsForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      className="min-w-[400px] max-w-[600px] w-[calc(100vw-4.5rem)]"
+    >
+
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
