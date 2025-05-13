@@ -9,6 +9,7 @@ import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortu
 import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
+import { SEO_TITLE } from '$/constants/seo';
 
 const BEARER_TOKEN =
   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZmNmYjk2Ny02ZmJmLTRkYWItOWRiMi1mNWMzMDQ2YzM1YzEiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzQ1NjQxNDAzLCJleHAiOjIwNjExNzQyMDMsImlhdCI6MTc0NTY0MTQwMywiaXNzIjoieW91ci1pc3N1ZXIiLCJhdWQiOiJ5b3VyLWF1ZGllbmNlIn0.q4vXBQp1JmjLfNUvEzFBgdTPrw_AGRAKRRoQ1ryoDoo';
@@ -98,17 +99,25 @@ function UserInputPage() {
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
     if (!isLoggedIn) {
-      return <LoginForm />;
+      return (
+        <>
+          <title>{SEO_TITLE.LOGIN}</title>
+          <LoginForm />
+        </>
+      );
     }
 
     // Display the daily fortune content if the user is logged in
     return (
-      <DailyFortuneContent
-        loading={loading}
-        error={error}
-        dailyFortune={dailyFortune}
-        onClick={toggleModalOpen}
-      />
+      <>
+        <title>{SEO_TITLE.DAILY_FORTUNE}</title>
+        <DailyFortuneContent
+          loading={loading}
+          error={error}
+          dailyFortune={dailyFortune}
+          onClick={toggleModalOpen}
+        />
+      </>
     );
   };
 
@@ -126,6 +135,7 @@ function UserInputPage() {
 
   return (
     <>
+      <title>{SEO_TITLE.HOME}</title>
       <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
         <FloatingContent />
       </FloatingPrompt>
