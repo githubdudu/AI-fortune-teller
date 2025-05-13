@@ -346,11 +346,7 @@ const FortunePage = () => {
       <div className="card-container">
         {cards.map((card) => (
           // Check if the card is already selected
-          <div
-            key={card.id}
-            className={`card-wrapper ${selectedCardsID.includes(card.id) ? 'selected' : ''}`}
-            onClick={() => handleCardSelect(card.id)}
-          >
+          <div key={card.id} onClick={() => handleCardSelect(card.id)}>
             <Card
               backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
               frontImage={card.imageSource || '/defaultFrontCard.png'}

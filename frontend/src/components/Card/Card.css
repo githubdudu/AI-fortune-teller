@@ -20,6 +20,7 @@
   perspective: 1000px;
   cursor: pointer;
   position: relative;
+  transition: transform 0.4s ease, filter 0.4s ease;
 }
 
 .tarot-card.disabled {
@@ -50,7 +51,7 @@
 }
 
 .tarot-card.flipped .tarot-card-inner {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg)  translateY(-35px);
 }
 
 .tarot-card-front,
