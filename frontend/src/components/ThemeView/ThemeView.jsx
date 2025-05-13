@@ -113,9 +113,7 @@ function ThemeView() {
         setError(null);
       } catch (err) {
         console.error('Error fetching themes:', err);
-        setError(
-          'Failed to load themes from API. Using hardcoded themes instead.',
-        );
+        setError('Service is not available. Please try again later.');
         setThemes(hardcodedThemes);
       } finally {
         setLoading(false);
@@ -164,7 +162,11 @@ function ThemeView() {
                 key={theme.id}
                 className="flex items-center justify-center"
               >
-                <ThemeCard theme={theme} onHover={handleThemeHover} />
+                <ThemeCard
+                  theme={theme}
+                  onHover={handleThemeHover}
+                  disabled={!!error}
+                />
               </SwiperSlide>
             ))}
           </Swiper>

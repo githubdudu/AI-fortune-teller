@@ -7,7 +7,7 @@ import { AppContext } from '../../context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
-function ThemeCard({ theme, onHover }) {
+function ThemeCard({ theme, onHover, disabled = false }) {
   const image = IMAGE_BASE_URL + theme.image;
 
   const { saveUserChosenTheme, clearQuestionAndTheme, saveUserChosenCards } =
@@ -16,6 +16,8 @@ function ThemeCard({ theme, onHover }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    // If there is a API error at input page, do not allow to click on theme card
+    if (disabled) return;
     // Clear the user question and theme from context
     clearQuestionAndTheme();
     saveUserChosenCards(null);
@@ -60,6 +62,7 @@ ThemeCard.propTypes = {
     description: PropTypes.string,
   }).isRequired,
   onHover: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default ThemeCard;
