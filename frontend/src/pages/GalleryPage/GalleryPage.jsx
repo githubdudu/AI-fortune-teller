@@ -148,7 +148,7 @@ function GalleryPage() {
           position: 'relative',
           width: '100%',
           maxWidth: '1200px',
-          margin: '0 auto',
+          margin: '50px auto',
           padding: '20px',
           display: 'flex',
           justifyContent: 'center',
@@ -357,10 +357,9 @@ function GalleryPage() {
           position: 'relative',
           width: '100%',
           maxWidth: '1200px',
-          margin: '0 auto',
+          margin: '0 200px 0 0',
           padding: '20px',
           display: 'flex',
-          marginRight: '200px',
           justifyContent: 'center',
         }}
       >
