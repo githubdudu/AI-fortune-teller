@@ -21,6 +21,7 @@ function UserInputPage() {
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profileFetched, setProfileFetched] = useState(false);
 
   const navigate = useNavigate();
 
@@ -45,18 +46,20 @@ function UserInputPage() {
   }, []);
 
   useEffect(() => {
-    // Only fetch user profile once when logged in
-    if (!isLoggedIn || loading) return;
+    // Only fetch user profile once when logged in and not already fetched
+    if (!isLoggedIn || loading || profileFetched) return;
 
     const getUserProfile = async () => {
       try {
         setLoading(true);
         // Using centralized endpoint from config
-        const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER);
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER_ME);
         console.log('data: ', response.data);
         setUserProfile(response.data);
+        setProfileFetched(true); // Mark profile as fetched
 
         // If the user is logged in, but the information is missing, showing a form
+        console.log(missingProfileInfo(response.data));
         if (missingProfileInfo(response.data)) {
           navigate('/user-info-input');
           return;
@@ -70,7 +73,7 @@ function UserInputPage() {
     };
 
     getUserProfile();
-  }, [isLoggedIn, loading, navigate, setUserProfile]); // Remove userProfile from dependencies
+  }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched]);
 
   const FloatingContent = () => {
     // If the user is not logged in, display the login form

@@ -188,7 +188,7 @@ function UserDetailsForm() {
     return (
       <TextField
         id="UserName"
-        label="User Name"
+        label="Name"
         placeholder="Please enter your user name"
         name="username"
         size="lg"
