@@ -15,13 +15,8 @@ import apiClient from '$/utils/apiClient';
  * @returns
  */
 function UserInputPage() {
-  const {
-    isModalOpen,
-    toggleModalOpen,
-    isLoggedIn,
-    userProfile,
-    setUserProfile,
-  } = useContext(AppContext);
+  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile } =
+    useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,32 +45,32 @@ function UserInputPage() {
   }, []);
 
   useEffect(() => {
-    // do user me request
-    if (!isLoggedIn) return;
+    // Only fetch user profile once when logged in
+    if (!isLoggedIn || loading) return;
+
     const getUserProfile = async () => {
       try {
+        setLoading(true);
         // Using centralized endpoint from config
-        const response = await apiClient.get(
-          `${API_CONFIG.ENDPOINTS.USER}${userProfile?.id ? `/${userProfile.id}` : ''}`,
-        );
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER);
         console.log('data: ', response.data);
         setUserProfile(response.data);
+
+        // If the user is logged in, but the information is missing, showing a form
+        if (missingProfileInfo(response.data)) {
+          navigate('/user-info-input');
+          return;
+        }
       } catch (err) {
         console.error('Error fetching user profile:', err);
         setError('Failed to load user profile');
+      } finally {
+        setLoading(false);
       }
     };
 
-    setLoading(true);
     getUserProfile();
-
-    // If the user is logged in, but the information is missing, showing a form
-    if (isLoggedIn && missingProfileInfo(userProfile)) {
-      navigate('/user-info-input');
-      return;
-    }
-    setLoading(false);
-  }, [isLoggedIn, navigate, setUserProfile, userProfile]);
+  }, [isLoggedIn, loading, navigate, setUserProfile]); // Remove userProfile from dependencies
 
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
