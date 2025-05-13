@@ -9,13 +9,14 @@ import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation
 import { AppContext } from '../../context/AppContextProvider';
 
 const FortunePage = () => {
-  const [selectedCards, setSelectedCards] = useState([]);
-  const [flippedCards, setFlippedCards] = useState([]);
+  const [selectedCardsID, setSelectedCardsID] = useState([]);
+
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [readingResult, setReadingResult] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState(null);
+  const [isSelectDisabled, setIsSelectDisabled] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -60,6 +61,8 @@ const FortunePage = () => {
         // Fallback to demo cards if API fails
         setCards([
           {
+            id: 3,
+            name: 'The High Priestess',
             imageSource:
               'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20High%20Priestess%20(II).png',
           },
@@ -79,32 +82,17 @@ const FortunePage = () => {
       });
   };
 
+  useEffect(() => {
+    setIsSelectDisabled(selectedCardsID.length >= 3);
+  }, [selectedCardsID]);
+
   const handleCardSelect = (cardId) => {
-    // Prevent selection if already have 3 cards selected and this card is not selected
-    if (selectedCards.length >= 3 && !selectedCards.includes(cardId)) {
+    // Prevent selection if already have 3 cards selected and this card has been selected
+    if (isSelectDisabled || selectedCardsID.includes(cardId)) {
       return;
     }
 
-    // Only allow adding cards, not removing them
-    if (!selectedCards.includes(cardId) && selectedCards.length < 3) {
-      const newSelectedCards = [...selectedCards, cardId];
-      setSelectedCards(newSelectedCards);
-
-      // If 3 cards are selected, automatically navigate to the results page
-      if (newSelectedCards.length === 4) {
-        setTimeout(() => {
-          handleReadButton(newSelectedCards);
-        }, 1000); // Delay for 1 second to let the user see the third card being selected
-      }
-    }
-  };
-
-  const handleCardFlip = (cardId, isFlipped) => {
-    if (isFlipped) {
-      setFlippedCards([...flippedCards, cardId]);
-    } else {
-      setFlippedCards(flippedCards.filter((id) => id !== cardId));
-    }
+    setSelectedCardsID((cards) => [...cards, cardId]);
   };
 
   // Function to get selected card details
@@ -116,26 +104,26 @@ const FortunePage = () => {
     });
   };
 
-  const handleReadButton = (cardsIds = selectedCards) => {
+  const handleReadButton = (cardsIds = selectedCardsID) => {
     if (!cardsIds?.length) {
       const defaultCards = [
         {
           id: 1,
           name: 'The Fool',
           description: 'New beginnings, innocence, spontaneity',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
         {
           id: 2,
           name: 'The Magician',
           description: 'Manifestation, resourcefulness, power',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
         {
           id: 3,
           name: 'The High Priestess',
           description: 'Intuition, sacred knowledge, divine feminine',
-          imageSource: '/defautFrontCard.png',
+          imageSource: '/defaultFrontCard.png',
         },
       ];
 
@@ -229,8 +217,7 @@ const FortunePage = () => {
     clearQuestionAndTheme();
     clearReadingResult();
     saveUserChosenCards(null);
-    setSelectedCards([]);
-    setFlippedCards([]);
+    setSelectedCardsID([]);
     setReadingResult(null);
     setShowResults(false);
     fetchCards();
@@ -238,7 +225,7 @@ const FortunePage = () => {
   };
 
   const isCardDisabled = (cardId) => {
-    return selectedCards.length >= 3 && !selectedCards.includes(cardId);
+    return isSelectDisabled && !selectedCardsID.includes(cardId);
   };
 
   if (isLoading) {
@@ -268,7 +255,7 @@ const FortunePage = () => {
     );
   }
 
-  return <SelectionDisplay />;
+  return SelectionDisplay();
 
   function ReadingInterpretationDisplay() {
     const fullText = contextReadingResult || readingResult;
@@ -312,9 +299,8 @@ const FortunePage = () => {
           <div key={card.id}>
             <div>
               <Card
-                frontImage={card.imageSource || '/defautFrontCard.png'}
-                backImage={card.imageSource || '/defaultBackCard.png'}
-                initialFlipped={true}
+                frontImage={card.imageSource || '/defaultFrontCard.png'}
+                isShowFront={true}
                 name={card.name}
                 description={card.description}
               />
@@ -336,8 +322,8 @@ const FortunePage = () => {
           </div>
         )}
 
-        <CardsDisplay />
-        {selectedCards.length === 3 ? (
+        {CardsDisplay()}
+        {selectedCardsID.length === 3 ? (
           <div>
             <Button
               text="See Your Reading"
@@ -348,7 +334,7 @@ const FortunePage = () => {
           </div>
         ) : (
           <div className="cards-remaining">
-            <span>{3 - selectedCards.length} cards remaining</span>
+            <span>{3 - selectedCardsID.length} cards remaining</span>
           </div>
         )}
       </div>
@@ -362,22 +348,18 @@ const FortunePage = () => {
           // Check if the card is already selected
           <div
             key={card.id}
-            className={`card-wrapper ${selectedCards.includes(card.id) ? 'selected' : ''}`}
+            className="card-wrapper"
             onClick={() => handleCardSelect(card.id)}
           >
             <Card
-              frontImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
-              backImage={card.imageSource || '/defaultBackCard.png'}
+              backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+              frontImage={card.imageSource || '/defaultFrontCard.png'}
               disabled={isCardDisabled(card.id)}
-              onCardFlip={(flipped) => handleCardFlip(card.id, flipped)}
+              isShowFront={selectedCardsID.includes(card.id)}
               name={card.name}
               description={card.description}
+              cardNumber={selectedCardsID.indexOf(card.id) + 1}
             />
-            {selectedCards.includes(card.id) && (
-              <div className="card-number">
-                {selectedCards.indexOf(card.id) + 1}
-              </div>
-            )}
           </div>
         ))}
       </div>

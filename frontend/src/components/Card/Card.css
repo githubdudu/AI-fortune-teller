@@ -20,6 +20,7 @@
   perspective: 1000px;
   cursor: pointer;
   position: relative;
+  transition: transform 0.4s ease, filter 0.4s ease;
 }
 
 .tarot-card.disabled {
@@ -50,7 +51,7 @@
 }
 
 .tarot-card.flipped .tarot-card-inner {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg)  translateY(-35px);
 }
 
 .tarot-card-front,
@@ -61,6 +62,12 @@
   backface-visibility: hidden;
   overflow: hidden;
   border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.tarot-card.flipped .tarot-card-front,
+.tarot-card.flipped .tarot-card-back {
+  box-shadow: 0 0 20px var(--color-pink-800);
 }
 
 .tarot-card-front {
@@ -98,7 +105,7 @@
   padding: 15px;
   border-radius: 10px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 2s ease-in;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -134,4 +141,23 @@
   .tarot-card-description p {
     font-size: 0.7rem;
   }
+}
+
+.card-number {
+  position: absolute;
+  left: -10px;
+  top: -5px;
+  width: 35px;
+  height: 35px;
+  background-color: var(--color-pink-600);
+  color: var(--figma-yellow);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(38, 16, 96, 0.7);
+  z-index: 3;
+  transition: all 0.3s ease;
+  transform: rotateY(180deg);
 }

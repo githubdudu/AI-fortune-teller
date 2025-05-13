@@ -19,6 +19,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --figma-pink: #F4CAE0;
+  --figma-red: #FFAE8B;
+  --figma-yellow: #FFE1AD;
+  --figma-grass: #EEF8B6;
+  --figma-green: #C7F3DD;
 }
 
 /* Global styles that might still be needed */
