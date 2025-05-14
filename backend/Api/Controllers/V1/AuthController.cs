@@ -110,14 +110,18 @@ namespace Api.Controllers.V1
             bool isDevelopment =
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
-            // Configure cookies based on environment
+            // Configure SameSite attribute based on environment
+            var sameSiteMode = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None;
+
+            // The Secure flag MUST be set when SameSite=None (required by browsers)
+            // In development, use Secure=true if SameSite=None, otherwise false
+            var isSecure = sameSiteMode == SameSiteMode.None || !isDevelopment;
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                // For development: no secure flag, for production: use secure flag
-                Secure = !isDevelopment,
-                // For development: SameSite=Lax, for production: SameSite=None
-                SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None,
+                Secure = isSecure,
+                SameSite = sameSiteMode,
                 Expires = DateTime.UtcNow.AddMinutes(
                     Convert.ToDouble(_configuration["JwtSettings:ExpiryInMinutes"] ?? "60")
                 ),
@@ -133,16 +137,21 @@ namespace Api.Controllers.V1
             bool isDevelopment =
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
+            // Configure SameSite attribute based on environment
+            var sameSiteMode = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None;
+
+            // The Secure flag MUST be set when SameSite=None (required by browsers)
+            // In development, use Secure=true if SameSite=None, otherwise false
+            var isSecure = sameSiteMode == SameSiteMode.None || !isDevelopment;
+
             // Clear the auth cookie with same settings as when it was created
             Response.Cookies.Delete(
                 "auth_token",
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    // For development: no secure flag, for production: use secure flag
-                    Secure = !isDevelopment,
-                    // For development: SameSite=Lax, for production: SameSite=None
-                    SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None,
+                    Secure = isSecure,
+                    SameSite = sameSiteMode,
                 }
             );
 

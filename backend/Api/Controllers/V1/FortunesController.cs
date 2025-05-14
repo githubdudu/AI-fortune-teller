@@ -41,7 +41,7 @@ namespace Api.Controllers.V1
                         "Request must include either a question or theme ID, and 1-3 cards"
                     );
 
-                var userEmail = User.FindFirstValue(ClaimTypes.Email);
+                var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 if (string.IsNullOrEmpty(userEmail))
                 {
@@ -74,6 +74,37 @@ namespace Api.Controllers.V1
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await Response.WriteAsync("Invalid request data", cancellationToken);
                 return;
+            }
+
+            if (request == null)
+            {
+                await Response.WriteAsync("Request cannot be null", cancellationToken);
+
+                return;
+            }
+
+            if (!request.IsValid())
+            {
+                await Response.WriteAsync(
+                    "Request must include either a question or theme ID, and 1-3 cards",
+                    cancellationToken
+                );
+                return;
+            }
+
+            var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                await Response.WriteAsync(
+                    "User must be logged in to get a fortune reading",
+                    cancellationToken
+                );
+                return;
+            }
+            else
+            {
+                request.UserEmail = userEmail;
             }
 
             Response.ContentType = "text/event-stream";
