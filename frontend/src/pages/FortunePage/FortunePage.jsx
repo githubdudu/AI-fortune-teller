@@ -36,9 +36,13 @@ ReadingInterpretationDisplay.propTypes = {
 const NewReadingButton = ({ onClick }) => {
   return (
     <Box marginTop={2} display="flex" justifyContent="center">
-      <button className="new-reading-button" onClick={onClick}>
-        Reveal Another Reading
-      </button>
+      <Button
+        text="Reveal Another Reading"
+        name="edit-button"
+        onClick={onClick}
+        size="lg"
+        color="red"
+      />
     </Box>
   );
 };
@@ -168,6 +172,7 @@ const SelectionDisplay = ({
         {selectedCardsID.length === 3 ? (
           <Button
             text="See Your Reading"
+            name="edit-button"
             color="blue"
             onClick={onReadButtonClick}
             size="lg"
