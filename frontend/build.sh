@@ -65,8 +65,8 @@ fi
 
 # Set default API base URL for k8s if not provided
 if [ -z "$VITE_API_BASE_URL" ]; then
-  echo "VITE_API_BASE_URL not set, defaulting to https://170.64.246.207.nip.io/api/v1"
-  export VITE_API_BASE_URL="https://170.64.246.207.nip.io/api/v1"
+  echo "VITE_API_BASE_URL not set, defaulting to https://arcanaverse.xyz/api/v1"
+  export VITE_API_BASE_URL="https://arcanaverse.xyz/api/v1"
 fi
 
 # Build the Docker image with all required build args
