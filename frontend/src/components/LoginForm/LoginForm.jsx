@@ -9,6 +9,7 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button } from 'gestalt';
+import PropTypes from 'prop-types';
 
 import {
   logInWithEmailAndPassword,
@@ -23,12 +24,11 @@ import FormTitle from '../../components/FormTitle';
 import { validateEmail } from '$/utils';
 import apiClient from '$/utils/apiClient';
 
-const Login = () => {
+const Login = ({ loginLoading = false, setLoginLoading }) => {
   const { login } = useContext(AppContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [emailSignInError, setEmailSignInError] = useState(null);
   const [googleSignInError, setGoogleSignInError] = useState(null);
 
@@ -38,7 +38,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   // While Firebase is trying to load the existing session, this shows a loadding message.
-  if (loading) {
+  if (loginLoading) {
     return (
       <div className="View">
         <Loading />
@@ -48,7 +48,7 @@ const Login = () => {
 
   async function handleSignIn(loginFunction, ...params) {
     try {
-      setLoading(true);
+      setLoginLoading(true);
       const user = await loginFunction(...params);
       const { cause } = params[params.length - 1];
       if (!user || !user.accessToken) {
@@ -57,7 +57,7 @@ const Login = () => {
         });
       }
 
-      setLoading(true);
+      setLoginLoading(true);
       // Send the user access token to our own backend server using centralized endpoint config
       const loginResponse = await apiClient.post(API_CONFIG.ENDPOINTS.LOGIN, {
         firebaseToken: user.accessToken,
@@ -79,8 +79,10 @@ const Login = () => {
         setEmailSignInError(error);
         setGoogleSignInError();
       }
+      // In a normal flow if there is no error, the loading state won't be set to false.
+      // The "getUserProfile" function will set it to false.
+      setLoginLoading(false);
     }
-    setLoading(false);
   }
 
   return (
@@ -205,6 +207,11 @@ const Login = () => {
       />
     );
   }
+};
+
+Login.propTypes = {
+  loginLoading: PropTypes.bool.isRequired,
+  setLoginLoading: PropTypes.func.isRequired,
 };
 
 export default Login;

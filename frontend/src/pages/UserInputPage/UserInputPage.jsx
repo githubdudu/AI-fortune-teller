@@ -21,7 +21,13 @@ function UserInputPage() {
     useContext(AppContext);
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
-  const [loading, setLoading] = useState(true);
+  /**
+   * One loading state for login and another for daily fortune.
+   * login has an internal loading state that will replace all the login forms.
+   * Daily fortune has a loading state only displayed as a message.
+   */
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [dailyFortuneLoading, setDailyFortuneLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profileFetched, setProfileFetched] = useState(false);
   const fortuneFetchedRef = useRef(false);
@@ -31,7 +37,7 @@ function UserInputPage() {
   const fetchDailyFortune = async () => {
     if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
 
-    setLoading(true);
+    setDailyFortuneLoading(true);
     try {
       // Using the FORTUNES endpoint which is available
       // For non-authenticated users, we'll use the general FORTUNES endpoint
@@ -45,7 +51,7 @@ function UserInputPage() {
       setError('Failed to load your daily fortune');
     } finally {
       fortuneFetchedRef.current = true; // Mark as fetched
-      setLoading(false);
+      setDailyFortuneLoading(false);
     }
   };
 
@@ -55,21 +61,23 @@ function UserInputPage() {
 
   useEffect(() => {
     // Only fetch user profile once when logged in and not already fetched
-    if (!isLoggedIn || loading || profileFetched) return;
+    if (!isLoggedIn || profileFetched) return;
 
     const getUserProfile = async () => {
       try {
-        setLoading(true);
+        setLoginLoading(true);
         // Using centralized endpoint from config
         const response = await apiClient.get(API_CONFIG.ENDPOINTS.USER_ME);
         setUserProfile(response.data);
-        setProfileFetched(true); // Mark profile as fetched
 
         // If the user is logged in, but the information is missing, showing a form
         if (missingProfileInfo(response.data)) {
           navigate('/user-info-input');
           return;
         }
+
+        // Put this setting after the navigation to avoid flickering
+        setProfileFetched(true); // Mark profile as fetched
       } catch (err) {
         console.error('Error fetching user profile:', err);
 
@@ -85,13 +93,20 @@ function UserInputPage() {
         }
 
         setError('Failed to load user profile');
-      } finally {
-        setLoading(false);
       }
+      // Put this setting out of the finally block to avoid flickering
+      setLoginLoading(false);
     };
 
     getUserProfile();
-  }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched, logout]);
+  }, [
+    isLoggedIn,
+    dailyFortuneLoading,
+    navigate,
+    setUserProfile,
+    profileFetched,
+    logout,
+  ]);
 
   useEffect(() => {
     setNoMotionFlag(!isLoggedIn);
@@ -99,11 +114,15 @@ function UserInputPage() {
 
   const FloatingContent = () => {
     // If the user is not logged in, display the login form
-    if (!isLoggedIn) {
+    // the fetching of user profile process uses the loginLoading state too.
+    if (!isLoggedIn || !profileFetched) {
       return (
         <>
           <title>{SEO_TITLE.LOGIN}</title>
-          <LoginForm />
+          <LoginForm
+            loginLoading={loginLoading}
+            setLoginLoading={setLoginLoading}
+          />
         </>
       );
     }
@@ -113,7 +132,7 @@ function UserInputPage() {
       <>
         <title>{SEO_TITLE.DAILY_FORTUNE}</title>
         <DailyFortuneContent
-          loading={loading}
+          loading={dailyFortuneLoading}
           error={error}
           dailyFortune={dailyFortune}
           onClick={toggleModalOpen}
