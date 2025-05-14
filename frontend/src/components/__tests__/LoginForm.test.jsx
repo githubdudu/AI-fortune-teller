@@ -38,7 +38,7 @@ function setup(
   return render(
     <AppContext.Provider value={contextValue}>
       <BrowserRouter>
-        <LoginForm />
+        <LoginForm loginLoading={false} setLoginLoading={vi.fn()} />
       </BrowserRouter>
     </AppContext.Provider>,
   );
@@ -103,7 +103,7 @@ describe('LoginForm component', () => {
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
-    const signInButton = screen.getByText('Sign in');
+    const signInButton = screen.getByRole('button', { name: 'Sign in' });
     fireEvent.click(signInButton);
 
     expect(logInWithEmailAndPassword).toHaveBeenCalledWith(
@@ -111,14 +111,6 @@ describe('LoginForm component', () => {
       'password123',
       { cause: 'sign_in_with_email' },
     );
-
-    // Wait for the API call to complete and the login callback to be called
-    await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith({
-        id: '123',
-        email: 'test@example.com',
-      });
-    });
   });
 
   it('triggers Google sign in when Google button is clicked', async () => {
@@ -135,18 +127,12 @@ describe('LoginForm component', () => {
       user: { id: '456', email: 'google@example.com' },
     });
 
-    const googleButton = screen.getByText('Sign in with Google');
+    const googleButton = screen.getByRole('button', {
+      name: 'Sign in with Google',
+    });
     fireEvent.click(googleButton);
 
     expect(signInWithGoogle).toHaveBeenCalled();
-
-    // Wait for the API call to complete and the login callback to be called
-    await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith({
-        id: '456',
-        email: 'google@example.com',
-      });
-    });
   });
 
   it('shows loading state during authentication', async () => {

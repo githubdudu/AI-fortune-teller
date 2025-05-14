@@ -81,6 +81,7 @@ function setup({
   userProfile = mockUserProfile,
   toggleModalOpen = vi.fn(),
   setUserProfile = vi.fn(),
+  logout = vi.fn(),
 } = {}) {
   return render(
     <AppContext.Provider
@@ -90,6 +91,7 @@ function setup({
         userProfile,
         toggleModalOpen,
         setUserProfile,
+        logout,
       }}
     >
       <BrowserRouter>
