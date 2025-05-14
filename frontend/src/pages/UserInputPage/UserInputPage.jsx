@@ -17,8 +17,16 @@ import './UserInputPage.css';
  * @returns
  */
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile, logout } =
-    useContext(AppContext);
+  const {
+    isModalOpen,
+    toggleModalOpen,
+    isLoggedIn,
+    setUserProfile,
+    logout,
+    profileFetched,
+    setProfileFetched,
+  } = useContext(AppContext);
+
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   /**
@@ -29,7 +37,6 @@ function UserInputPage() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [dailyFortuneLoading, setDailyFortuneLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profileFetched, setProfileFetched] = useState(false);
   const fortuneFetchedRef = useRef(false);
 
   const navigate = useNavigate();
@@ -105,6 +112,7 @@ function UserInputPage() {
     navigate,
     setUserProfile,
     profileFetched,
+    setProfileFetched,
     logout,
   ]);
 
