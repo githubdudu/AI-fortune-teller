@@ -13,7 +13,7 @@ function RootLayoutPage() {
       height="100vh"
     >
       <UserAvatarButton />
-      <Box marginBottom={10}>
+      <Box marginBottom={5}>
         <ArcanaVerseLogo />
       </Box>
       <Flex alignItems="center" justifyContent="start" direction="column">
