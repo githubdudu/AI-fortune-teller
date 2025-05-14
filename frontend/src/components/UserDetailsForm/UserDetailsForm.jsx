@@ -58,6 +58,9 @@ function UserDetailsForm() {
 
     if (!FNValue) {
       setFNErrorMessage('This field is required');
+    } else if (FNValue.length < 6) {
+      setFNErrorMessage('Your name must be at least 6 characters');
+      return;
     } else {
       setFNErrorMessage('');
     }

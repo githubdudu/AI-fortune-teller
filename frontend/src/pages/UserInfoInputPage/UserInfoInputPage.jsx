@@ -4,8 +4,8 @@ import FormContainer from '$/components/FormContainer';
 import { SEO_TITLE } from '$/constants/seo';
 
 function UserInfoInputPage() {
-  const HEADER_TITLE = 'Enter your details';
-  const HEADER_SUBTITLE = 'These help us tailor your cosmic reading experience';
+  const HEADER_TITLE = 'Your Fortune Profile';
+  const HEADER_SUBTITLE = 'To tailor your fortune just for you.';
   return (
     <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-green-100 rounded-2xl border-2 border-white py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
