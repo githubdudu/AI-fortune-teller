@@ -5,7 +5,7 @@
 // API Configuration
 export const API_CONFIG = {
   USE_API_THEMES: true, // Set to false to use hardcoded themes
-  BASE_URL: 'http://localhost:5000/api/v1', // Base API URL
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1', // Base API URL
   ENDPOINTS: {
     // Authentication endpoints
     LOGIN: '/auth/login',
