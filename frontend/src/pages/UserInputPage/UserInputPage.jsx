@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
 import { SEO_TITLE } from '$/constants/seo';
+import './UserInputPage.css';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -143,11 +144,9 @@ function UserInputPage() {
         <UserQuestionInput />
       </div>
       <Box marginBottom={2} />
-      <h2 className="text-[#261060] text-2xl font-bold text-center mb-7">
-        - or -
-      </h2>
+      <h2 className="divider-text">- or -</h2>
       <Box marginBottom={2} />
-      <h2 className="text-[#261060] text-4xl font-bold text-center mb-7">
+      <h2 className="theme-instruction-text">
         Select a theme to let fate speak first.
       </h2>
       <div className="w-250">
