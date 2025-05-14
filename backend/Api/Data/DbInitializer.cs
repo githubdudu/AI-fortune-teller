@@ -553,7 +553,7 @@ namespace Api.Data
                     {
                         Name = "1 of Swords",
                         Number = 1,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Ace+of+swords(Ace).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Ace+of+swords(Ace).png",
                         Description =
                             "1 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 1 of swords. Reversed: Challenges or negative aspects of 1 of swords.",
                         IsMajorArcana = false,
@@ -563,7 +563,7 @@ namespace Api.Data
                     {
                         Name = "2 of Swords",
                         Number = 2,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Two+of+swords(II).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Two+of+swords(II).png",
                         Description =
                             "2 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 2 of swords. Reversed: Challenges or negative aspects of 2 of swords.",
                         IsMajorArcana = false,
@@ -573,7 +573,7 @@ namespace Api.Data
                     {
                         Name = "3 of Swords",
                         Number = 3,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Three+of+swords(III).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Three+of+swords(III).png",
                         Description =
                             "3 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 3 of swords. Reversed: Challenges or negative aspects of 3 of swords.",
                         IsMajorArcana = false,
@@ -583,7 +583,7 @@ namespace Api.Data
                     {
                         Name = "4 of Swords",
                         Number = 4,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Four+of+swords(IV).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Four+of+swords(IV).png",
                         Description =
                             "4 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 4 of swords. Reversed: Challenges or negative aspects of 4 of swords.",
                         IsMajorArcana = false,
@@ -593,7 +593,7 @@ namespace Api.Data
                     {
                         Name = "5 of Swords",
                         Number = 5,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Five+of+sowrds(V).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Five+of+sowrds(V).png",
                         Description =
                             "5 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 5 of swords. Reversed: Challenges or negative aspects of 5 of swords.",
                         IsMajorArcana = false,
@@ -603,7 +603,7 @@ namespace Api.Data
                     {
                         Name = "6 of Swords",
                         Number = 6,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Six+of+swords(VI).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Six+of+swords(VI).png",
                         Description =
                             "6 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 6 of swords. Reversed: Challenges or negative aspects of 6 of swords.",
                         IsMajorArcana = false,
@@ -613,7 +613,7 @@ namespace Api.Data
                     {
                         Name = "7 of Swords",
                         Number = 7,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Seven+of+swords(VII).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Seven+of+swords(VII).png",
                         Description =
                             "7 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 7 of swords. Reversed: Challenges or negative aspects of 7 of swords.",
                         IsMajorArcana = false,
@@ -623,7 +623,7 @@ namespace Api.Data
                     {
                         Name = "8 of Swords",
                         Number = 8,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Eight+of+swords(VIII).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Eight+of+swords(VIII).png",
                         Description =
                             "8 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 8 of swords. Reversed: Challenges or negative aspects of 8 of swords.",
                         IsMajorArcana = false,
@@ -633,7 +633,7 @@ namespace Api.Data
                     {
                         Name = "9 of Swords",
                         Number = 9,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Nine+of+swords(IX).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Nine+of+swords(IX).png",
                         Description =
                             "9 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 9 of swords. Reversed: Challenges or negative aspects of 9 of swords.",
                         IsMajorArcana = false,
@@ -643,7 +643,7 @@ namespace Api.Data
                     {
                         Name = "10 of Swords",
                         Number = 10,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Ten+of+swords(X).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Ten+of+swords(X).png",
                         Description =
                             "10 of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to 10 of swords. Reversed: Challenges or negative aspects of 10 of swords.",
                         IsMajorArcana = false,
@@ -653,7 +653,7 @@ namespace Api.Data
                     {
                         Name = "Page of Swords",
                         Number = 11,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Page+of+swordsXI).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Page+of+swordsXI).png",
                         Description =
                             "Page of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to page of swords. Reversed: Challenges or negative aspects of page of swords.",
                         IsMajorArcana = false,
@@ -663,7 +663,7 @@ namespace Api.Data
                     {
                         Name = "Knight of Swords",
                         Number = 12,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Knight+of+swords(XII).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Knight+of+swords(XII).png",
                         Description =
                             "Knight of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to knight of swords. Reversed: Challenges or negative aspects of knight of swords.",
                         IsMajorArcana = false,
@@ -673,7 +673,7 @@ namespace Api.Data
                     {
                         Name = "Queen of Swords",
                         Number = 13,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/Queen+of+swords(XIII).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/Queen+of+swords(XIII).png",
                         Description =
                             "Queen of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to queen of swords. Reversed: Challenges or negative aspects of queen of swords.",
                         IsMajorArcana = false,
@@ -683,7 +683,7 @@ namespace Api.Data
                     {
                         Name = "King of Swords",
                         Number = 14,
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/MInor_Sowrds/King+of+swords(XIV).png",
+                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Sowrds/King+of+swords(XIV).png",
                         Description =
                             "King of Swords symbolizes key aspects of the human journey. Upright: Positive traits related to king of swords. Reversed: Challenges or negative aspects of king of swords.",
                         IsMajorArcana = false,
