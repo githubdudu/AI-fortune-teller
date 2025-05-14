@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
 import { useEffect, useRef, useState, useContext } from 'react';
 import { AppContext } from '../../context/AppContextProvider';
+import './UserQuestionInput.css';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
@@ -88,9 +89,7 @@ function UserQuestionInput() {
     <>
       <div className="w-full max-w-2xl mx-auto">
         {/* TODO: Font to be changed later */}
-        <h2 className="text-[#261060] text-5xl font-bold text-center mb-7">
-          What answer do you seek?
-        </h2>
+        <h2 className="title">What answer do you seek?</h2>
         <div className="relative mb-1">
           <textarea
             id="text-area-user-prompt"

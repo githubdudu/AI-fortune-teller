@@ -46,6 +46,7 @@
   text-shadow: 0 0 15px rgba(255, 221, 247, 0.7);
   position: relative;
   z-index: 2;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 .cards-remaining {
@@ -94,7 +95,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 0 auto;
   width: 100%;
 }
 .result-card {
@@ -180,15 +181,17 @@
 }
 
 .reading-title {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
   color: #4b2e83;
-  letter-spacing: 0.05em;
+  letter-spacing: -0.01em;
   text-align: center;
 }
 
 .reading-subtitle-text {
+  margin-top: 5px;
+  margin-bottom: 60px;
   font-size: 1.25rem;
   font-family: 'Cormorant Garamond', serif;
   color: #6b46c1;
@@ -210,7 +213,8 @@
 .interpretation-box {
   background: rgba(255, 255, 255, 0.7);
   padding: 1.5rem;
-  margin: 1.5rem auto;
+  margin: 0 auto;
+  margin-bottom: 0.5rem;
   width: 700px;
   border-radius: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
@@ -279,18 +283,21 @@
 }
 
 .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
   color: #4b2e83;
   font-weight: 600;
 }
 
-.markdown-content h3 { font-size: 1.35rem; }
+.markdown-content h3 { 
+  font-size: 1.35rem; 
+  margin-top: 0.5rem;
+
+}
 .markdown-content h4 { font-size: 1.2rem; }
 .markdown-content h5 { font-size: 1.1rem; }
 
 .markdown-content p {
   margin-bottom: 1rem;
+  font-size: 1.2rem;
 }
 
 .markdown-content strong {
