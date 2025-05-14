@@ -144,53 +144,129 @@ export function useFortuneStream({ onSaveResult, fallbackText }) {
                 const chunk = decoder.decode(value, { stream: true });
                 buffer += chunk;
 
-                let startIndex = 0;
-                let endIndex;
+                // Process any complete events (terminate with double newlines)
+                const events = [];
+                let currentEvent = [];
+                let lines = buffer.split('\n');
+                let remainingLines = [];
 
-                while ((endIndex = buffer.indexOf('\n', startIndex)) !== -1) {
-                  const line = buffer.substring(startIndex, endIndex).trim();
-                  startIndex = endIndex + 1;
+                // Group lines into events based on empty line separator
+                for (let i = 0; i < lines.length; i++) {
+                  const line = lines[i];
 
-                  if (line && line.startsWith('data:')) {
-                    // Handle space after "data:" prefix without removing spaces from content
-                    console.log('Received line:', line);
-                    const textContent = line.replace(/^data:\s?/, '');
-                    console.log('Parsed text content:', textContent);
+                  if (line === '') {
+                    // Empty line marks end of an event
+                    if (currentEvent.length > 0) {
+                      events.push(currentEvent);
+                      currentEvent = [];
+                    }
+                  } else if (line.startsWith('data:')) {
+                    // Add data line to current event
+                    currentEvent.push(line);
+                  } else {
+                    // Incomplete line, keep for next buffer
+                    remainingLines = lines.slice(i);
+                    break;
+                  }
+                }
 
-                    try {
-                      const data = JSON.parse(textContent);
-                      if (data.content) {
-                        if (!receivedFirstData) {
-                          setStreamLoading(false);
-                          receivedFirstData = true;
-                        }
+                // Add the last event if it's not empty and we processed all lines
+                if (currentEvent.length > 0 && remainingLines.length === 0) {
+                  events.push(currentEvent);
+                }
 
-                        // Ensure line breaks in the content are preserved
-                        setStreamingText((prev) => {
-                          // If data.content contains \n characters, they will be preserved
-                          const newText = prev + data.content;
-                          return newText;
-                        });
-                      }
+                // Update buffer with remaining incomplete lines
+                buffer = remainingLines.join('\n');
+                if (currentEvent.length > 0 && remainingLines.length > 0) {
+                  // Keep the last incomplete event
+                  buffer = currentEvent.join('\n') + '\n' + buffer;
+                }
 
-                      if (data.type === 'complete') {
-                        completeStream();
-                        return;
-                      }
-                    } catch {
-                      // Not JSON, treat as plain text
+                // Process each complete event
+                events.forEach(processEvent);
+
+                function processEvent(eventLines) {
+                  // Extract content directly as strings
+                  let contents = eventLines.map((line) => {
+                    if (line.startsWith('data:')) {
+                      // Get everything after "data:" preserving all values
+                      const content = line.substring(5);
+                      // Only trim the standard SSE space if it exists
+                      return content.startsWith(' ')
+                        ? content.substring(1)
+                        : content;
+                    }
+                    return '';
+                  });
+
+                  // Log for debugging
+                  console.log(
+                    'Processing event lines:',
+                    JSON.stringify(eventLines),
+                  );
+                  console.log('Extracted contents:', JSON.stringify(contents));
+
+                  // Special handling for "---" horizontal rule and empty "data:" lines
+                  for (let i = 0; i < contents.length; i++) {
+                    if (contents[i] === '---') {
+                      // Add line breaks before and after "---"
+                      contents[i] = '\n---\n';
+                    } else if (contents[i] === '') {
+                      // Insert a new line when seeing empty "data:" lines
+                      contents[i] = '\n';
+                    }
+                  }
+
+                  // Each "data:" line should start a new line in the output
+                  // Join with newlines to preserve the line structure
+                  const rawContent = contents.join('\n');
+
+                  console.log(
+                    'Raw combined content with newlines:',
+                    JSON.stringify(rawContent),
+                  );
+
+                  try {
+                    // Try to parse as JSON first
+                    const data = JSON.parse(rawContent);
+
+                    // Handle numeric values by converting them to string
+                    if (typeof data === 'number') {
                       if (!receivedFirstData) {
                         setStreamLoading(false);
                         receivedFirstData = true;
                       }
-
-                      // Ensure line breaks in plain text are preserved
-                      setStreamingText((prev) => prev + textContent);
+                      setStreamingText((prev) => prev + String(data));
+                      return;
                     }
+
+                    if (data.content) {
+                      if (!receivedFirstData) {
+                        setStreamLoading(false);
+                        receivedFirstData = true;
+                      }
+                      setStreamingText((prev) => prev + data.content);
+                    }
+
+                    if (data.type === 'complete') {
+                      completeStream();
+                      return;
+                    }
+                  } catch {
+                    // Not JSON, treat as plain text
+                    if (!receivedFirstData) {
+                      setStreamLoading(false);
+                      receivedFirstData = true;
+                    }
+
+                    // Log previous content for comparison
+                    setStreamingText((prev) => {
+                      const newContent = prev + rawContent;
+                      return newContent;
+                    });
                   }
                 }
 
-                buffer = buffer.substring(startIndex);
                 return processStream();
               })
               .catch((error) => {

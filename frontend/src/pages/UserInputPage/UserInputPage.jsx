@@ -1,7 +1,7 @@
 import { Box } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import { AppContext } from '$/context/AppContextProvider';
 import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
@@ -22,17 +22,23 @@ function UserInputPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profileFetched, setProfileFetched] = useState(false);
+  const fortuneFetchedRef = useRef(false);
 
   const navigate = useNavigate();
 
   const fetchDailyFortune = async () => {
+    if (fortuneFetchedRef.current) return; // Prevent multiple fetches
+
     setLoading(true);
     try {
-      // Using centralized endpoint from config
+      // Using the FORTUNES endpoint which is available
+      // For non-authenticated users, we'll use the general FORTUNES endpoint
+      // For authenticated users, we can still use it with auth cookies
       const response = await apiClient.get(
         API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
       );
       setDailyFortune(response.data);
+      fortuneFetchedRef.current = true; // Mark as fetched
     } catch (err) {
       console.error('Error fetching daily fortune:', err);
       setError('Failed to load your daily fortune');
@@ -43,7 +49,7 @@ function UserInputPage() {
 
   useEffect(() => {
     fetchDailyFortune();
-  }, []);
+  }, [isLoggedIn]); // Only re-run if login status changes
 
   useEffect(() => {
     // Only fetch user profile once when logged in and not already fetched
@@ -83,7 +89,7 @@ function UserInputPage() {
     };
 
     getUserProfile();
-  }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched]);
+  }, [isLoggedIn, loading, navigate, setUserProfile, profileFetched, logout]);
 
   useEffect(() => {
     setNoMotionFlag(!isLoggedIn);

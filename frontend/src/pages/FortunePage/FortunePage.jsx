@@ -9,19 +9,26 @@ import ErrorMessage from '../../components/ErrorMessage';
 import { AppContext } from '../../context/AppContextProvider';
 import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';
+import { markdownToHtml, createMarkup } from '../../utils/markdownUtils';
 
 // Constants
 const DEFAULT_READING_TEXT =
   'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
 
 /**
- * Displays reading interpretation with typing animation
+ * Displays reading interpretation with markdown formatting
  */
 const ReadingInterpretationDisplay = ({ readingText }) => {
+  // Convert markdown text to HTML
+  const htmlContent = markdownToHtml(readingText);
+
   return (
     <div className="interpretation-box">
       <h2 className="interpretation-title">✦ Interpretation ✦</h2>
-      <p className="interpretation-text">{readingText}</p>
+      <div
+        className="interpretation-text markdown-content"
+        dangerouslySetInnerHTML={createMarkup(htmlContent)}
+      />
     </div>
   );
 };
