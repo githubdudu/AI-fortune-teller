@@ -36,9 +36,6 @@ ReadingInterpretationDisplay.propTypes = {
 const NewReadingButton = ({ onClick }) => {
   return (
     <Box marginTop={2} display="flex" justifyContent="center">
-      {/* <button className="new-reading-button" onClick={onClick}>
-        Reveal Another Reading
-      </button> */}
       <Button
         text="Reveal Another Reading"
         name="edit-button"
@@ -176,9 +173,9 @@ const SelectionDisplay = ({
           <Button
             text="See Your Reading"
             name="edit-button"
+            color="blue"
             onClick={onReadButtonClick}
             size="lg"
-            color="red"
             accessibilityLabel="Get your tarot reading"
             disabled={selectedCardsID.length !== 3}
           />

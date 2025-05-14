@@ -195,7 +195,7 @@
   font-size: 0.9rem;
   color: #666;
 }
-/* 修改Card组件在结果页面的样式 */
+/* the styling of Card component when displaying the fortune reading result */
 .result-card .tarot-card {
   width: 200px;
   height: 300px;
@@ -233,116 +233,6 @@
 .results-container {
   padding: 2rem;
   text-align: center;
-  /* background: linear-gradient(to bottom right, #fff1e6, #e6f0ff); */
-  min-height: 100vh;
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.reading-title {
-  font-size: 2.5rem;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 600;
-  color: #4b2e83;
-  letter-spacing: 0.05em;
-  text-align: center;
-}
-
-.reading-subtitle-text {
-  font-size: 1.25rem;
-  font-family: 'Cormorant Garamond', serif;
-  color: #6b46c1;
-  text-shadow: 0 1px 3px rgba(106, 90, 205, 0.7);
-  line-height: 1.6;
-  background: linear-gradient(to right, #a78bfa, #fbcfe8);
-  -webkit-background-clip: text;
-  display: inline-block;
-}
-
-.selected-cards-display {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
-.card-display-wrapper {
-  transition: transform 0.3s ease;
-}
-
-.card-display-wrapper:hover {
-  transform: scale(1.05);
-}
-
-.interpretation-box {
-  background: rgba(255, 255, 255, 0.7);
-  padding: 1.5rem;
-  margin: 1.5rem auto;
-  width: 700px;
-  border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  min-height: 160px;
-}
-
-.interpretation-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #2d3748;
-  margin-bottom: 0.75rem;
-}
-
-.interpretation-text {
-  font-size: 1rem;
-  color: #333;
-  line-height: 1.6;
-}
-
-.typing {
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  border-right: 2px solid #333;
-  animation: blink-caret 0.90s step-end infinite;
-}
-
-.typing::after {
-  content: '|';
-  animation: blink-caret 0.90s step-end infinite;
-}
-
-@keyframes blink-caret {
-
-  from,
-  to {
-    border-color: transparent;
-  }
-
-  50% {
-    border-color: #333;
-  }
-}
-
-.new-reading-button {
-  background-color: #f59eb5;
-  color: white;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(245, 158, 181, 0.4);
-  transition: background-color 0.3s ease;
-}
-
-.new-reading-button:hover {
-  background-color: #f06c96;
-}
-
-.results-container {
-  padding: 2rem;
-  text-align: center;
-  /* background: linear-gradient(to bottom right, #fff1e6, #e6f0ff); */
   min-height: 100vh;
   font-family: 'Cormorant Garamond', serif;
 }
