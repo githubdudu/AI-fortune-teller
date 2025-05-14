@@ -88,7 +88,20 @@ namespace Api.Services.Implementations
                     string promptFormat =
                         request.Question != string.Empty
                             ? "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's question. Repeat this for each card, only return the formatted reading. Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence"
-                            : "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's chosen theme.  Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence";
+                            : @"Return the fortune reading in the following markdown structure:
+
+### CardName
+
+Interpretation: (Write a poetic, intuitive, and emotionally resonant reading of nearly 3 sentences. Speak in a mystical tone, rich with symbolic meaning and spiritual insight. Give emotional guidance and tie the interpretation deeply to the user’s chosen theme. Personalize the message using the user’s name, gender, age, place of birth, and place of residence. Speak directly to them as a person receiving a private reading. Avoid generic statements — be specific and immersive.)
+
+---
+
+Repeat the above section for each of the three cards, separating them with the following markdown divider:
+
+---
+
+At the end, return a mystical summary paragraph that gently brings together the message of all three cards.
+This summary should offer overall insight, clarity, and guidance, leaving the user with a sense of closure and wonder.";
 
                     string prompt =
                         request.Question != string.Empty
@@ -163,6 +176,7 @@ namespace Api.Services.Implementations
 
                 UserDto? user = null;
                 string userDetail = "";
+                Console.WriteLine($"Fetching user details for email: {request.UserEmail}");
 
                 if (!string.IsNullOrEmpty(request.UserEmail))
                 {
@@ -175,6 +189,7 @@ namespace Api.Services.Implementations
 
                         userDetail =
                             $"The reading is for {user.DisplayName}, born on {birthDate}, born in {user.BornCountry}, currently living in {user.ResidenceCountry} and who's gender is {user.Gender}";
+                        Console.WriteLine($"User details fetched: {userDetail}");
                     }
                 }
 
@@ -199,7 +214,25 @@ namespace Api.Services.Implementations
                 string promptFormat =
                     request.Question != string.Empty
                         ? "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's question. Repeat this for each card, only return the formatted reading. Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence"
-                        : "Return a fortune reading using the following structure: CardName: This should be the tarot card name used for this section. Interpretation: Nearly a 20 sentence reading, poetic and wise in tone, include symbolic insight and emotional guidance, tie it back to the user's chosen theme.  Don't respond to my question like Certainly I can do that for you! kind of response. I only want the fortune reading result. Include a person to person fortune telling style, using the given user's first name, and be specific with the result using the user's gender, age, place of birth, and place of residence";
+                        : @"Return the fortune reading in the following markdown structure:
+
+'# CardName
+
+**Interpretation:** (Write a poetic, intuitive, and emotionally resonant reading of just 1 sentence. Speak in a mystical tone, rich with symbolic meaning and spiritual insight. Give emotional guidance and tie the interpretation deeply to the user’s chosen theme. Personalize the message using the user’s name, gender, age, place of birth, and place of residence. Speak directly to them as a person receiving a private reading. Avoid generic statements — be specific and immersive.)
+
+---
+'
+
+Repeat the above section for each of the three cards, separating them with the markdown divider.
+
+At the end, return a mystical summary paragraph that gently brings together the message of all three cards.
+This summary should offer overall insight, clarity, and guidance, leaving the user with a sense of closure and wonder following the format below.
+
+# Summary
+
+Content
+
+---";
 
                 string prompt =
                     request.Question != string.Empty
