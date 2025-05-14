@@ -95,8 +95,10 @@ button[name="login-button"]:hover>div {
 button[name="edit-button"]>div {
   background-color: var(--color-pink-500);
   transition: background-color 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 button[name="edit-button"]:hover>div {
   background-color: var(--color-pink-600);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
