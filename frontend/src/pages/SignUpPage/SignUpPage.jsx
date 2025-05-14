@@ -118,6 +118,7 @@ const SignUp = () => {
               {Username()}
               {Email()}
               {Password()}
+              {ConfirmPassword()}
               {SignUpButton()}
               {IHaveAnAccountButton()}
             </div>
@@ -132,8 +133,8 @@ const SignUp = () => {
       <div>
         <TextField
           id="username"
-          label="User Name"
-          placeholder="Please create your user name"
+          label="Name"
+          placeholder="Please enter your name"
           name="username"
           size="lg"
           onChange={handleNameChange}
