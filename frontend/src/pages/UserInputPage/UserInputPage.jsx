@@ -29,7 +29,7 @@ function UserInputPage() {
   const navigate = useNavigate();
 
   const fetchDailyFortune = async () => {
-    if (fortuneFetchedRef.current) return; // Prevent multiple fetches
+    if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
 
     setLoading(true);
     try {
@@ -40,11 +40,11 @@ function UserInputPage() {
         API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
       );
       setDailyFortune(response.data);
-      fortuneFetchedRef.current = true; // Mark as fetched
     } catch (err) {
       console.error('Error fetching daily fortune:', err);
       setError('Failed to load your daily fortune');
     } finally {
+      fortuneFetchedRef.current = true; // Mark as fetched
       setLoading(false);
     }
   };
