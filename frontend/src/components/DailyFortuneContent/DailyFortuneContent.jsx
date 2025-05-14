@@ -31,7 +31,7 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
 
       {loading && <p>Loading themes...</p>}
       {error ? (
-        <p className="prompt-text error">{error}</p>
+        <p className="error text-red-500 font-medium ">{error}</p>
       ) : dailyFortune ? (
         <div className="fortune-card">
           <div className="fortune-main">

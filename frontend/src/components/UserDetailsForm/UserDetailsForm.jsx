@@ -212,6 +212,7 @@ function UserDetailsForm() {
         maxDate={new Date()}
         errorMessage={DOBErrorMessage}
         value={DOBValue}
+        selectLists={['month', 'year']}
       />
     );
   }
