@@ -57,7 +57,7 @@ namespace Api.Tests.Services
         {
             var themeId = Guid.NewGuid();
 
-            _mockThemeRepository.Setup(repo => repo.GetByIdAsync(themeId)).ReturnsAsync((Theme)null);
+            _mockThemeRepository.Setup(repo => repo.GetByIdAsync(themeId)).ReturnsAsync((Theme?)null);
 
             var result = await _themeService.GetThemeByIdAsync(themeId);
 
