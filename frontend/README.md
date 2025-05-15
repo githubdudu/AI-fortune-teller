@@ -2,6 +2,8 @@
 
 A React-based frontend application for the ArcanaVerse project built with Vite, offering an interactive UI for fortune telling and tarot card readings.
 
+**Visit our live site: [ArcanaVerse](https://arcanaverse.xyz/home)**
+
 ## 🚀 Features
 
 - Firebase Authentication (Google Sign-in and Email/Password)

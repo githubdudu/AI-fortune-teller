@@ -4,6 +4,10 @@
 
 Welcome to ArcanaVerse, a fortune telling and tarot card reading application developed as part of the CS732 project. This repository contains both frontend and backend components of the application.
 
+**Visit our live site: [ArcanaVerse](https://arcanaverse.xyz/home)**
+
+![ArcanaVerse Homepage](./homepage.png)
+
 Our team members are:
 - Ching-Yuan Chien _(cchi496@aucklanduni.ac.nz)_
 - Katie Zhao _(szha992@aucklanduni.ac.nz)_
