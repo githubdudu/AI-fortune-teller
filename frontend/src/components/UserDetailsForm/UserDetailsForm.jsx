@@ -11,7 +11,7 @@ import { API_CONFIG } from '../../constants/config';
 import { COUNTRY_LIST } from '../../constants/nationality';
 
 function UserDetailsForm() {
-  const { userProfile } = useContext(AppContext);
+  const { userProfile, setUserProfile } = useContext(AppContext);
 
   /**
    * options {label: string, value: string}[]
@@ -99,6 +99,15 @@ function UserDetailsForm() {
 
     try {
       await putUserRequest(requestBody);
+      // Update context so form remains prefilled
+      setUserProfile({
+        ...userProfile,
+        displayName: FNValue,
+        dateOfBirth: DOBValue,
+        gender: parseInt(genderValue, 10),
+        residenceCountry: nationalityValue.label,
+        bornCountry: POBValue.label,
+      });
       navigate('/');
     } catch (error) {
       console.error('Error putting user request:', error);
