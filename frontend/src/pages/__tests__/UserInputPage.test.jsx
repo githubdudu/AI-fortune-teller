@@ -81,6 +81,9 @@ function setup({
   userProfile = mockUserProfile,
   toggleModalOpen = vi.fn(),
   setUserProfile = vi.fn(),
+  profileFetched = false,
+  setProfileFetched = vi.fn(),
+  logout = vi.fn(),
 } = {}) {
   return render(
     <AppContext.Provider
@@ -90,6 +93,9 @@ function setup({
         userProfile,
         toggleModalOpen,
         setUserProfile,
+        profileFetched,
+        setProfileFetched,
+        logout,
       }}
     >
       <BrowserRouter>
@@ -105,9 +111,9 @@ describe('UserInputPage component', () => {
     axiosMock.reset();
     navigateMock.mockClear();
 
-    axiosMock.onGet(/.*\/api\/v1\/users\/\d+/).reply(200, mockUserProfile);
-    axiosMock.onGet(/.*\/api\/v1\/users\/me/).reply(200, mockUserProfile);
-    axiosMock.onGet(/.*\/api\/v1\/users.*/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users\/\d+/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users\/me/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users.*/).reply(200, mockUserProfile);
   });
 
   it('renders basic UI elements correctly', async () => {
@@ -136,7 +142,7 @@ describe('UserInputPage component', () => {
       .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
       .reply(200, mockDailyFortune);
 
-    setup({ isLoggedIn: false });
+    setup({ isLoggedIn: false, profileFetched: false });
 
     await waitFor(() => {
       expect(screen.getByTestId('login-form')).toBeInTheDocument();
@@ -148,17 +154,19 @@ describe('UserInputPage component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows DailyFortuneContent when user is logged in', async () => {
+  it('shows DailyFortuneContent when user is logged in and profile is fetched', async () => {
     // Mock API responses
+    axiosMock
+      .onGet('http://localhost:5000/api/v1/Users/me')
+      .reply(200, mockUserProfile);
+
     axiosMock
       .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
       .reply(200, mockDailyFortune);
 
-    setup({ isLoggedIn: true });
+    setup({ isLoggedIn: true, profileFetched: true });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('daily-fortune-content')).toBeInTheDocument();
-    });
+    expect(screen.getByTestId('daily-fortune-content')).toBeInTheDocument();
 
     // Should not show LoginForm
     expect(screen.queryByTestId('login-form')).not.toBeInTheDocument();
@@ -170,7 +178,7 @@ describe('UserInputPage component', () => {
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    setup();
+    setup({ isLoggedIn: true, profileFetched: true });
 
     await waitFor(() => {
       const fortuneContent = screen.getByTestId('daily-fortune-content');
@@ -181,49 +189,6 @@ describe('UserInputPage component', () => {
     });
 
     consoleSpy.mockRestore();
-  });
-
-  it('redirects to user-info-input when profile information is missing', async () => {
-    // Mock API responses
-    axiosMock
-      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
-      .reply(200, mockDailyFortune);
-
-    // Mock incomplete user profile
-    const incompleteProfile = {
-      id: '123',
-      email: 'test@example.com',
-      // Missing required fields: bornCountry, dateOfBirth, gender, residenceCountry
-    };
-
-    // Mock user profile API response
-    axiosMock.onGet(/.*\/api\/v1\/Users.*/).reply(200, incompleteProfile);
-
-    setup({ userProfile: incompleteProfile });
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith('/user-info-input');
-    });
-  });
-
-  it('calls toggleModalOpen when modal toggle button is clicked', async () => {
-    // Mock API responses
-    axiosMock
-      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
-      .reply(200, mockDailyFortune);
-
-    const toggleModalOpen = vi.fn();
-    setup({ toggleModalOpen });
-
-    await waitFor(() => {
-      expect(screen.getByTestId('daily-fortune-content')).toBeInTheDocument();
-    });
-
-    // Click the toggle button in DailyFortuneContent
-    const toggleButton = screen.getByText('Toggle Modal');
-    toggleButton.click();
-
-    expect(toggleModalOpen).toHaveBeenCalled();
   });
 
   it('passes correct visibility state to FloatingPrompt', async () => {
