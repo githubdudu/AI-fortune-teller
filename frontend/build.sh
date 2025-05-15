@@ -10,6 +10,8 @@ set -e
 # Default values
 VERSION=${1:-"1.0.1"}
 OUTPUT_ARG=""
+REGISTRY="docker.io/henrycyc"
+IMAGE_NAME="fortune-frontend"
 
 # Check if --push flag is provided
 if [[ "$*" == *--push* ]]; then
@@ -56,7 +58,8 @@ if [ $MISSING_VARS -eq 1 ]; then
   exit 1
 fi
 
-echo "Building Docker image henrycyc/frontend:$VERSION"
+FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME:$VERSION"
+echo "Building Docker image $FULL_IMAGE_NAME"
 
 # Set platform argument for multi-platform builds when pushing
 if [[ "$OUTPUT_ARG" == "--push" ]]; then
@@ -78,8 +81,8 @@ docker buildx build $PLATFORM_ARG \
   --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID="$VITE_FIREBASE_MESSAGING_SENDER_ID" \
   --build-arg VITE_FIREBASE_APP_ID="$VITE_FIREBASE_APP_ID" \
   --build-arg VITE_API_BASE_URL="$VITE_API_BASE_URL" \
-  -t henrycyc/frontend:$VERSION \
-  -t henrycyc/frontend:latest \
+  -t $FULL_IMAGE_NAME \
+  -t $REGISTRY/$IMAGE_NAME:latest \
   $OUTPUT_ARG .
 
 echo "Build completed!"

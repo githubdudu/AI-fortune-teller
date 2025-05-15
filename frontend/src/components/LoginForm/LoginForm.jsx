@@ -37,11 +37,11 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
 
   const navigate = useNavigate();
 
-  // While Firebase is trying to load the existing session, this shows a loadding message.
+  // While Firebase is trying to load the existing session, this shows a loading message.
   if (loginLoading) {
     return (
-      <div className="View">
-        <Loading />
+      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+        <Loading text="Logging in..." />
       </div>
     );
   }
@@ -88,7 +88,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   return (
     <FormContainer withBackground={false}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
-      <div className="flex flex-col gap-4 min-w-[500px]">
+      <div className="flex flex-col gap-4 sm:min-w-[500px] w-full">
         {Email()}
         {Password()}
         {ErrorMessage(emailSignInError)}

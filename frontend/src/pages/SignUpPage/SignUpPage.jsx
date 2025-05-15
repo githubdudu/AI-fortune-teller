@@ -53,11 +53,11 @@ const SignUp = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  // While Firebase is trying to load the existing session, this shows a loadding message.
+  // While Firebase is trying to load the existing session, this shows a loading message.
   if (loading) {
     return (
       <div className="View">
-        <Loading />
+        <Loading text="Creating your account..." />
       </div>
     );
   }
@@ -79,11 +79,18 @@ const SignUp = () => {
   async function handleSignUpWithEmail(userName, email, password) {
     setLoading(true);
     try {
+      // Creates a user in Firebase Authentication, not User DB
       const user = await registerWithEmailAndPassword(
         userName,
         email,
         password,
       );
+
+      // Creates a user in User DB (UsersController -> UserService)
+      await apiClient.post(API_CONFIG.ENDPOINTS.USER, {
+        email,
+        displayName: userName,
+      });
 
       if (!user) {
         throw new Error('Error: registering by email and password failed');
@@ -107,6 +114,19 @@ const SignUp = () => {
     }
     setLoading(false);
   }
+
+  const isDisabled =
+    !username.trim() ||
+    !email.trim() ||
+    !password ||
+    !confirmPassword ||
+    Boolean(
+      usernameErrorMsg ||
+        emailErrorMsg ||
+        passwordErrorMsg ||
+        confirmPasswordErrorMsg,
+    );
+
   return (
     <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-green-100 rounded-2xl border-2 border-white py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
@@ -141,6 +161,8 @@ const SignUp = () => {
           onBlur={(e) => {
             if (!e.value) {
               setUsernameErrorMsg('User name is required');
+            } else if (e.value.length < 6) {
+              setUsernameErrorMsg('User name must be at least 6 characters');
             } else {
               setUsernameErrorMsg(null);
             }
@@ -235,6 +257,7 @@ const SignUp = () => {
         onClick={() => handleSignUpWithEmail(username, email, password)}
         size="lg"
         color="red"
+        disabled={isDisabled}
       />
     );
   }

@@ -17,8 +17,18 @@ import './UserInputPage.css';
  * @returns
  */
 function UserInputPage() {
-  const { isModalOpen, toggleModalOpen, isLoggedIn, setUserProfile, logout } =
-    useContext(AppContext);
+  const {
+    isModalOpen,
+    toggleModalOpen,
+    isLoggedIn,
+    setUserProfile,
+    logout,
+    profileFetched,
+    setProfileFetched,
+    loginLoading,
+    setLoginLoading,
+  } = useContext(AppContext);
+
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   /**
@@ -26,36 +36,34 @@ function UserInputPage() {
    * login has an internal loading state that will replace all the login forms.
    * Daily fortune has a loading state only displayed as a message.
    */
-  const [loginLoading, setLoginLoading] = useState(false);
   const [dailyFortuneLoading, setDailyFortuneLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profileFetched, setProfileFetched] = useState(false);
   const fortuneFetchedRef = useRef(false);
 
   const navigate = useNavigate();
 
-  const fetchDailyFortune = async () => {
-    if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
-
-    setDailyFortuneLoading(true);
-    try {
-      // Using the FORTUNES endpoint which is available
-      // For non-authenticated users, we'll use the general FORTUNES endpoint
-      // For authenticated users, we can still use it with auth cookies
-      const response = await apiClient.get(
-        API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
-      );
-      setDailyFortune(response.data);
-    } catch (err) {
-      console.error('Error fetching daily fortune:', err);
-      setError('Failed to load your daily fortune');
-    } finally {
-      fortuneFetchedRef.current = true; // Mark as fetched
-      setDailyFortuneLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchDailyFortune = async () => {
+      if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
+
+      setDailyFortuneLoading(true);
+      try {
+        // Using the FORTUNES endpoint which is available
+        // For non-authenticated users, we'll use the general FORTUNES endpoint
+        // For authenticated users, we can still use it with auth cookies
+        const response = await apiClient.get(
+          API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
+        );
+        setDailyFortune(response.data);
+      } catch (err) {
+        console.error('Error fetching daily fortune:', err);
+        setError('Failed to load your daily fortune');
+      } finally {
+        fortuneFetchedRef.current = true; // Mark as fetched
+        setDailyFortuneLoading(false);
+      }
+    };
+
     fetchDailyFortune();
   }, [isLoggedIn]); // Only re-run if login status changes
 
@@ -84,7 +92,7 @@ function UserInputPage() {
         // If we get a 401 Unauthorized error, log the user out
         if (
           (err.response && err.response.status === 401) ||
-          err.response.status === 404
+          (err.response && err.response.status === 404)
         ) {
           console.log('Session expired or unauthorized. Logging out user.');
           logout(); // Log the user out
@@ -105,7 +113,9 @@ function UserInputPage() {
     navigate,
     setUserProfile,
     profileFetched,
+    setProfileFetched,
     logout,
+    setLoginLoading,
   ]);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import './LoadingAnimation.css';
+import PropTypes from 'prop-types';
 
 const loadingText = {
   initial: { opacity: 0.3 },
@@ -13,7 +14,7 @@ const loadingText = {
   },
 };
 
-function LoadingAnimation() {
+function LoadingAnimation({ text = 'Shuffling your destiny...' }) {
   return (
     <div className="loading-wrapper">
       <motion.div
@@ -32,10 +33,14 @@ function LoadingAnimation() {
         initial="initial"
         animate="animate"
       >
-        Shuffling your destiny...
+        {text}
       </motion.p>
     </div>
   );
 }
+
+LoadingAnimation.propTypes = {
+  text: PropTypes.string,
+};
 
 export default LoadingAnimation;

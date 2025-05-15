@@ -14,10 +14,5 @@ namespace Api.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
         }
-
-        // public async Task<User?> GetByUsernameAsync(string username)
-        // {
-        //     return await _dbSet.FirstOrDefaultAsync(u => u.Username == username);
-        // }
     }
 }
