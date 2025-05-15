@@ -33,12 +33,6 @@ namespace Api.Services.Implementations
             return user != null ? MapUserToDto(user) : null;
         }
 
-        // public async Task<UserDto?> GetUserByUsernameAsync(string username)
-        // {
-        //     var user = await _userRepository.GetByUsernameAsync(username);
-        //     return user != null ? MapUserToDto(user) : null;
-        // }
-
         public async Task<UserDto> CreateUserAsync(CreateUserRequest request)
         {
             // Business validation could be added here
@@ -49,12 +43,6 @@ namespace Api.Services.Implementations
                 throw new InvalidOperationException(
                     $"A user with email {request.Email} already exists."
                 );
-
-            // var existingUserByUsername = await _userRepository.GetByUsernameAsync(request.Username);
-            // if (existingUserByUsername != null)
-            //     throw new InvalidOperationException(
-            //         $"A user with username {request.Username} already exists."
-            //     );
 
             var user = new User
             {
@@ -76,15 +64,6 @@ namespace Api.Services.Implementations
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
                 throw new KeyNotFoundException($"User with ID {id} not found.");
-
-            // // Check if another user already has the requested username
-            // var existingUserWithUsername = await _userRepository.GetByUsernameAsync(
-            //     request.Username
-            // );
-            // if (existingUserWithUsername != null && existingUserWithUsername.Id != id)
-            //     throw new InvalidOperationException(
-            //         $"Username {request.Username} is already taken."
-            //     );
 
             // Check if another user already has the requested email
             var existingUserWithEmail = await _userRepository.GetByEmailAsync(request.Email);

@@ -79,11 +79,18 @@ const SignUp = () => {
   async function handleSignUpWithEmail(userName, email, password) {
     setLoading(true);
     try {
+      // Creates a user in Firebase Authentication, not User DB
       const user = await registerWithEmailAndPassword(
         userName,
         email,
         password,
       );
+
+      // Creates a user in User DB (UsersController -> UserService)
+      await apiClient.post(API_CONFIG.ENDPOINTS.USER, {
+        email,
+        displayName: userName,
+      });
 
       if (!user) {
         throw new Error('Error: registering by email and password failed');
