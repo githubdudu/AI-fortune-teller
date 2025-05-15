@@ -16,8 +16,8 @@ env:
   VERSION: 1.0.${{ github.run_number }}
 
 jobs:
-  test:
-    name: Test on node ${{ matrix.node_version }} 
+  frontend-test:
+    name: Frontend Test on node ${{ matrix.node_version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,17 +26,42 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: npm install and eslint test
-      run: |
-        cd frontend
-        npm install
-        npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: npm install and eslint test
+        run: |
+          cd frontend
+          npm install
+          npm test
+
+  backend-test:
+    name: Backend Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./backend
+
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: ./backend
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+        working-directory: ./backend
+
   build-and-deploy:
     name: Build and Deploy
     # This ensures the job only runs when a PR is merged into main
@@ -45,82 +70,83 @@ jobs:
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     environment: CICD
-    
+    needs: [frontend-test, backend-test]
+
     permissions:
       contents: read
       id-token: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Build and push Frontend image
-      env:
-        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-        VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-      run: |
-        cd frontend
-        chmod +x build.sh
-        ./build.sh ${{ env.VERSION }} --push
-        
-    - name: Build and push Backend image
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: |
-        cd backend
-        chmod +x build.sh
-        ./build.sh ${{ env.VERSION }} --push
-        
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v3
-      
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        
-    - name: Save DigitalOcean kubeconfig
-      run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
-        
-    - name: Update Kubernetes secrets
-      run: |
-        # Create a temporary secrets file
-        cat << EOF > kubernetes/secrets.yaml
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: backend-secrets
-        type: Opaque
-        stringData:
-          db-connection-string: "${{ secrets.DB_CONNECTION_STRING }}"
-          openai-api-key: "${{ secrets.OPENAI_API_KEY }}"
-        EOF
-        
-        # Apply the secrets file
-        kubectl apply -f kubernetes/secrets.yaml
-        
-        # Remove the temporary file to avoid committing sensitive information
-        rm kubernetes/secrets.yaml
-        
-    - name: Deploy to Kubernetes
-      run: |
-        # Update image tags in Kubernetes manifests
-        sed -i "s|image: .*fortune-frontend:.*|image: ${{ env.FRONTEND_IMAGE }}:${{ env.VERSION }}|g" kubernetes/frontend-deployment.yaml
-        sed -i "s|image: .*fortune-backend:.*|image: ${{ env.BACKEND_IMAGE }}:${{ env.VERSION }}|g" kubernetes/backend-deployment.yaml
-        
-        # Apply Kubernetes manifests
-        kubectl apply -f kubernetes/
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Frontend image
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: |
+          cd frontend
+          chmod +x build.sh
+          ./build.sh ${{ env.VERSION }} --push
+
+      - name: Build and push Backend image
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          cd backend
+          chmod +x build.sh
+          ./build.sh ${{ env.VERSION }} --push
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
+
+      - name: Update Kubernetes secrets
+        run: |
+          # Create a temporary secrets file
+          cat << EOF > kubernetes/secrets.yaml
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: backend-secrets
+          type: Opaque
+          stringData:
+            db-connection-string: "${{ secrets.DB_CONNECTION_STRING }}"
+            openai-api-key: "${{ secrets.OPENAI_API_KEY }}"
+          EOF
+
+          # Apply the secrets file
+          kubectl apply -f kubernetes/secrets.yaml
+
+          # Remove the temporary file to avoid committing sensitive information
+          rm kubernetes/secrets.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          # Update image tags in Kubernetes manifests
+          sed -i "s|image: .*fortune-frontend:.*|image: ${{ env.FRONTEND_IMAGE }}:${{ env.VERSION }}|g" kubernetes/frontend-deployment.yaml
+          sed -i "s|image: .*fortune-backend:.*|image: ${{ env.BACKEND_IMAGE }}:${{ env.VERSION }}|g" kubernetes/backend-deployment.yaml
+
+          # Apply Kubernetes manifests
+          kubectl apply -f kubernetes/
