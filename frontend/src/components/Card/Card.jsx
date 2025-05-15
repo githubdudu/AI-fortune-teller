@@ -1,67 +1,61 @@
-import React, { useState } from 'react';
 import './Card.css';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 
-const TarotCard = ({
+const Card = ({
   frontImage,
   backImage,
   disabled,
-  onCardFlip,
   description,
   name,
+  isShowFront,
+  cardNumber,
 }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  const handleCardClick = () => {
-    if (disabled) return;
-
-    const newFlipped = !isFlipped;
-    setIsFlipped(newFlipped);
-
-    if (onCardFlip) {
-      onCardFlip(newFlipped);
-    }
-  };
-
+  const [isNumberShow, setIsNumberShow] = useState(false);
   return (
     <div
-      className={`tarot-card ${isFlipped ? 'flipped' : ''} ${disabled ? 'disabled' : ''}`}
-      onClick={handleCardClick}
+      className={`tarot-card ${isShowFront ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
+      onTransitionEnd={() => {
+        if (isShowFront) {
+          setIsNumberShow(true);
+        }
+      }}
     >
       <div className="tarot-card-inner">
-        <div className="tarot-card-front">
-          <img src={frontImage} alt="Tarot Card Front" />
-        </div>
         <div className="tarot-card-back">
           <img src={backImage} alt="Tarot Card Back" />
-          {description && (
-            <div className="tarot-card-description">
-              <h3>{name}</h3>
-              <p>{description}</p>
-            </div>
-          )}
         </div>
+        <div className="tarot-card-front">
+          <img src={frontImage} alt="Tarot Card Front" />
+          <div className="tarot-card-description">
+            <h3>{name}</h3>
+            <p>{description}</p>
+          </div>
+        </div>
+        {isNumberShow && cardNumber != undefined && (
+          <div className="card-number">{cardNumber}</div>
+        )}
       </div>
     </div>
   );
 };
 
-TarotCard.propTypes = {
+Card.propTypes = {
   frontImage: PropTypes.string,
   backImage: PropTypes.string,
   disabled: PropTypes.bool,
-  onCardFlip: PropTypes.func,
   description: PropTypes.string,
   name: PropTypes.string,
+  isShowFront: PropTypes.bool,
+  cardNumber: PropTypes.string,
 };
 
-TarotCard.defaultProps = {
+Card.defaultProps = {
   frontImage: null,
   backImage: null,
   disabled: false,
-  onCardFlip: null,
   description: '',
   name: '',
 };
 
-export default TarotCard;
+export default Card;

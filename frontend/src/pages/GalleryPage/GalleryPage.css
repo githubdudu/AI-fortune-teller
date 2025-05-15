@@ -1,0 +1,218 @@
+/* Card Gallery Page Styling */
+.gallery-container {
+  min-height: 100vh;
+  padding: 20px;
+  color: white;
+}
+
+.card-display-area {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* Card Box Styling */
+.card-box {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 400px;
+  z-index: 10;
+}
+
+
+
+/* Gallery Grid Layout */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(39, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Improve hover effects, add delayed in but quick exit */
+.gallery-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: all 0.1s ease-out, z-index 0s; /* quick exit */
+}
+
+.gallery-card-wrapper:hover {
+  transform: translateY(-15px) scale(1.1) !important;
+  z-index: 100 !important;
+  filter: brightness(1.2);
+  transition: all 0.4s ease 0.1s, z-index 0s; /* delayed entry into hover state */
+}
+
+.card-caption {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.gallery-card-wrapper:hover .card-caption {
+  opacity: 1;
+}
+
+/* Mystical background elements */
+.gallery-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, transparent 60%, rgba(103, 58, 183, 0.1));
+  pointer-events: none;
+}
+
+/* Improve card stacking effect */
+.card-stack {
+  position: relative;
+  width: 13rem;
+  height: 19.5rem;
+  margin: 3rem auto;
+}
+
+.card-stack .gallery-card-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+/* Improve card fan out effect */
+.card-fan {
+  position: relative;
+  width: 50rem;
+  height: 25rem;
+  margin: 2rem auto;
+  perspective: 1000px;
+}
+
+.card-fan .gallery-card-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform-origin: bottom center;
+  transition: all 0.5s ease;
+}
+
+/* Improve hover effect for fan mode */
+.card-fan .gallery-card-wrapper:hover {
+  transform: translateY(-30px) scale(1.2) !important;
+  z-index: 100 !important;
+  filter: brightness(1.3) drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+  transition: all 0.4s ease 0.1s, z-index 0s; /* delayed entry into hover state */
+}
+
+/* Improve card grid display stacking effect */
+.stacked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 40px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stacked-grid .gallery-card-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.stacked-card {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.stacked-card:hover {
+  z-index: 10;
+  transform: translateY(-10px) scale(1.05);
+}
+
+/* show part of the card below */
+.stacked-card + .stacked-card {
+  margin-top: -80%;  /* negative margin to make cards overlap */
+}
+
+/* overlapping card container */
+.overlapping-cards {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.card-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.card-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+/* card stacking style */
+.card-stack-item {
+  margin-top: -140px; /* adjust overlap degree */
+  transition: transform 0.3s ease;
+}
+
+.card-stack-item:first-child {
+  margin-top: 0;
+}
+
+.card-stack-item:hover {
+  transform: translateY(-20px);
+  z-index: 10;
+}
+
+/* card title displayed on hover, also quick exit */
+.card-hover-caption {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 5px 10px;
+  border-radius: 20px;
+  text-align: center;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.1s ease-out; /*hide quickly*/
+}
+
+.gallery-card-wrapper:hover .card-hover-caption {
+  opacity: 1;
+  transition: opacity 0.3s ease 0.15s; /* display with delay */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+  
+  .card-stack-item {
+    margin-top: -100px; /* reduce overlap on small screens */
+  }
+}

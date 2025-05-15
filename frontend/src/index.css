@@ -5,6 +5,7 @@
 
 @import 'gestalt/dist/gestalt.css';
 @import 'gestalt-datepicker/dist/gestalt-datepicker.css';
+
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -19,6 +20,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --figma-pink: #F4CAE0;
+  --figma-red: #FFAE8B;
+  --figma-yellow: #FFE1AD;
+  --figma-grass: #EEF8B6;
+  --figma-green: #C7F3DD;
 }
 
 /* Global styles that might still be needed */
@@ -29,12 +35,14 @@ body {
   min-width: 320px;
   min-height: 100vh;
   flex-direction: column;
+  user-select: none;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-image: url('/assets/Background_Cloud.png');
+    background-attachment: fixed;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -50,6 +58,7 @@ body {
   :root {
     color: #213547;
     background-image: url('/assets/Background_Cloud.png');
+    background-attachment: fixed;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -59,4 +68,37 @@ body {
   a:hover {
     color: #747bff;
   }
+}
+
+/* Hack to fix height inconsistent of Gestalt input box */
+
+select#gender {
+  height: 52px;
+}
+
+/* Hack to DropDown of Gestalt */
+#user-dropdown {
+  min-width: 115px;
+}
+
+button[name="login-button"]>div {
+  background-color: #FFAE8B !important;
+}
+
+button[name="login-button"]:hover>div {
+  background-color: #FF9E6B !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+button[name="edit-button"]>div {
+  background-color: var(--color-pink-500);
+  transition: background-color 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+button[name="edit-button"]:hover>div {
+  background-color: var(--color-pink-600);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

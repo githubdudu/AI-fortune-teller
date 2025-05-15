@@ -1,10 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
+import { AppContext } from '../../context/AppContextProvider';
+import './UserQuestionInput.css';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
+  // Context state
+  const {
+    saveUserPrompt,
+    clearQuestionAndTheme,
+    userChosenTheme,
+    userPrompt,
+    userChosenCards,
+    saveUserChosenCards,
+  } = useContext(AppContext);
+  // internal state
   const [input, setInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [textAreaHeight, setTextAreaHeight] = useState(0);
@@ -31,6 +43,27 @@ function UserQuestionInput() {
   }, [errorMessage]);
 
   const handleSubmit = () => {
+    clearQuestionAndTheme();
+    // Clear the user question and theme from context
+    if (!userPrompt) {
+      console.log('userPrompt is empty');
+    } else {
+      console.log('userPrompt:', userPrompt);
+    }
+    if (!userChosenTheme) {
+      console.log('userChosenTheme is empty');
+    } else {
+      console.log('userChosenTheme:', userChosenTheme);
+    }
+
+    // Clear the user chosen cards from context
+    saveUserChosenCards(null);
+    if (!userChosenCards) {
+      console.log('userChosenCards is empty');
+    } else {
+      console.log('userChosenCards:', userChosenCards);
+    }
+
     const trimmedInput = input.trim();
     const wordCount = trimmedInput.split(/\s+/).length;
 
@@ -42,10 +75,10 @@ function UserQuestionInput() {
       return;
     }
 
-    // TODO: Post API call to come here
-
+    // TODO: Save the input as user prompt in the context for later use
+    saveUserPrompt(trimmedInput);
     // TODO: change route accordingly
-    navigate('/user-info-input');
+    navigate('/fortune');
   };
 
   const handleDismiss = () => {
@@ -54,40 +87,13 @@ function UserQuestionInput() {
 
   return (
     <>
-      {/* Gestalt */}
-      {/* <Text size="600" weight="bold" align="center">
-        What answer do you seek?
-      </Text>
-      <Box marginBottom={6} />
-      <TextArea
-        id="text-area-user-prompt"
-        label="User input"
-        labelDisplay="hidden"
-        onChange={({ value }) => setInput(value)}
-        placeholder="Select a category or type a question"
-        rows={1}
-        maxLength={{
-          characterCount: 280,
-          errorAccessibilityLabel:
-            'Limit reached. You can only use 280 characters in this field.',
-        }}
-        value={input}
-        disabled={false}
-      />
-      <Flex alignItems="center" justifyContent="center">
-        <Button text="Tell a Fortune" onClick={handleSubmit} size="sm" />
-      </Flex> */}
-
-      {/* Tailwind */}
       <div className="w-full max-w-2xl mx-auto">
         {/* TODO: Font to be changed later */}
-        <h2 className="text-[#261060] text-5xl font-bold text-center mb-7">
-          What answer do you seek?
-        </h2>
+        <h2 className="title">What answer do you seek?</h2>
         <div className="relative mb-1">
           <textarea
             id="text-area-user-prompt"
-            placeholder="Select a category or type a question"
+            placeholder="Type a question you'd like to seek from the cards"
             value={input}
             onChange={handleChange}
             rows={1}

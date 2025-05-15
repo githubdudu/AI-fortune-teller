@@ -1,9 +1,17 @@
 import { Flex } from 'gestalt';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
 import ThemeCard from '../ThemeCard';
 import ThemeDescription from '../ThemeDescription/ThemeDescription';
 import { API_CONFIG } from '../../constants/config';
+import apiClient from '../../utils/apiClient';
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper modules
+import { Navigation, Pagination } from 'swiper/modules';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import './ThemeView.css';
 
 // Hardcoded themes as fallback
 const hardcodedThemes = [
@@ -28,7 +36,7 @@ const hardcodedThemes = [
     description:
       'Evaluate your financial habits with an eye on long-term security, and consider how ambition and stability align.',
   },
-  /*   {
+  {
     id: 4,
     name: 'career',
     image: 'icons/career.png',
@@ -54,7 +62,7 @@ const hardcodedThemes = [
     name: 'decisions',
     image: 'icons/decisions.png',
     description:
-      'Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.',
+      "Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.",
   },
   {
     id: 8,
@@ -62,13 +70,25 @@ const hardcodedThemes = [
     image: 'icons/travel.png',
     description:
       'Explore new environments and shifting paths, and reflect on how movement and change inspire transformation.',
-  }, */
+  },
 ];
 
 function ThemeView() {
+  const defaultTheme = {
+    id: 0,
+    name: 'Explore the themes',
+    image: null,
+    description: 'Hover over any theme card for its explanation.',
+  };
+
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedTheme, setSelectedTheme] = useState(defaultTheme);
+
+  const handleThemeHover = useCallback((theme) => {
+    setSelectedTheme(theme);
+  }, []);
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -79,8 +99,8 @@ function ThemeView() {
 
       setLoading(true);
       try {
-        const apiUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.THEMES}`;
-        const response = await axios.get(apiUrl);
+        // Using apiClient instead of direct axios calls
+        const response = await apiClient.get(API_CONFIG.ENDPOINTS.THEMES);
 
         // Map API response to format compatible with the component
         const apiThemes = response.data.map((theme) => ({
@@ -93,9 +113,7 @@ function ThemeView() {
         setError(null);
       } catch (err) {
         console.error('Error fetching themes:', err);
-        setError(
-          'Failed to load themes from API. Using hardcoded themes instead.',
-        );
+        setError('Service is not available. Please try again later.');
         setThemes(hardcodedThemes);
       } finally {
         setLoading(false);
@@ -109,7 +127,7 @@ function ThemeView() {
     <>
       <Flex
         alignItems="center"
-        justifyContent="start"
+        justifyContent="center"
         direction="column"
         gap={6}
       >
@@ -117,19 +135,44 @@ function ThemeView() {
         {loading && <p>Loading themes...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {/* TODO: Add buttons (right & left) and animation to scroll through the theme cards, and prevent Theme cards overflowing & getting squashed */}
-        <Flex
-          alignItems="center"
-          justifyContent="start"
-          direction="row"
-          gap={6}
-        >
-          {themes.map((theme) => (
-            <ThemeCard key={theme.id} theme={theme} />
-          ))}
-        </Flex>
-        {/* Show description only if a card is clicked */}
-        <ThemeDescription />
+        {/* Fixed className typo (removed space after md:) */}
+        <div className="swiper-container w-full md:max-w-[880px] lg:max-w-[1100px] px-4">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation={true}
+            pagination={{ clickable: true }}
+            slidesPerView={1}
+            spaceBetween={10}
+            loop={true}
+            initialSlide={0}
+            className="py-4"
+            breakpoints={{
+              768: {
+                slidesPerView: 4,
+                spaceBetween: 5,
+              },
+              1024: {
+                slidesPerView: 5,
+                spaceBetween: 10,
+              },
+            }}
+          >
+            {themes.map((theme) => (
+              <SwiperSlide
+                key={theme.id}
+                className="flex items-center justify-center"
+              >
+                <ThemeCard
+                  theme={theme}
+                  onHover={handleThemeHover}
+                  disabled={!!error}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        {/* Show description for the currently selected or hovered theme */}
+        <ThemeDescription theme={selectedTheme} />
       </Flex>
     </>
   );

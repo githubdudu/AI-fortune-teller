@@ -11,6 +11,8 @@ namespace Api.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Theme> Themes { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<Fortune> Fortunes { get; set; }
+        public DbSet<DailyFortune> DailyFortunes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,8 +21,9 @@ namespace Api.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
+                // entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).IsRequired();
             });
 

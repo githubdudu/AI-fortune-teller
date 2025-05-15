@@ -19,9 +19,20 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Print the current environment for debugging
+Console.WriteLine($"Current environment: {builder.Environment.EnvironmentName}");
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Kestrel to allow synchronous I/O operations
+builder.Services.Configure<IISServerOptions>(options => {
+    options.AllowSynchronousIO = true;
+});
+builder.WebHost.ConfigureKestrel(options => {
+    options.AllowSynchronousIO = true;
+});
 
 // Add Authorization services but don't set a fallback policy
 builder.Services.AddAuthorization();
@@ -101,20 +112,42 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure SQL Server with Entity Framework Core
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb")
-);
+if (builder.Environment.IsDevelopment())
+{
+    // Local debugging → use the in-memory store
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("InMemoryDb")
+    );
+    Console.WriteLine("Using In-Memory Database for Development");
+}
+else
+{
+    // Production environment → use the real SQL Server on RDS
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Using SQL Server with connection string: {connectionString}");
+    builder.Services.AddDbContext<ApplicationDbContext>(opts =>
+        opts.UseSqlServer(connectionString)
+    );
+}
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
+builder.Services.AddScoped<IFortuneRepository, FortuneRepository>();
+builder.Services.AddScoped<IDailyFortuneRepository, DailyFortuneRepository>();
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
+builder.Services.AddScoped<IFortuneService, FortuneService>();
+builder.Services.AddScoped<IDailyFortuneService, DailyFortuneService>();
+builder.Services.AddSingleton<IOpenAIClient, OpenAIClient>();
+
+// Register Firebase Auth Service
+builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
 
 // Configure JWT Authentication
 builder
@@ -136,6 +169,16 @@ builder
                     context.Token = null;
                     return Task.CompletedTask;
                 }
+
+                // Check for token in cookies
+                if (
+                    string.IsNullOrEmpty(context.Token)
+                    && context.Request.Cookies.TryGetValue("auth_token", out var token)
+                )
+                {
+                    context.Token = token;
+                }
+
                 return Task.CompletedTask;
             },
             OnChallenge = context =>
@@ -174,16 +217,27 @@ builder
 // Configure CORS
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins =
+        builder.Configuration.GetSection("CorsPolicy:AllowedOrigins").Get<string[]>()
+        ?? new[] { "http://localhost:3000" };
+
     options.AddPolicy(
         "AllowAll",
-        builder =>
+        corsBuilder =>
         {
-            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            corsBuilder
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials(); // This is needed for cookies
         }
     );
 });
 
 var app = builder.Build();
+
+// IMPORTANT: Position CORS middleware at the beginning of the pipeline
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -225,9 +279,6 @@ else
 
 // Add global exception handling middleware
 app.UseGlobalExceptionMiddleware();
-
-// IMPORTANT: Use AllowAll CORS policy instead of AllowFrontend
-app.UseCors("AllowAll");
 
 // Only use HTTPS redirection in production
 if (!app.Environment.IsDevelopment())
