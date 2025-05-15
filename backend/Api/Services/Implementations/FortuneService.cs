@@ -85,7 +85,8 @@ namespace Api.Services.Implementations
 
                     var cardNames = string.Join(", ", cards.Select(c => c.Name));
 
-                    string promptFormat = @"Return the fortune reading in the following markdown structure:
+                    string promptFormat =
+                        @"Return the fortune reading in the following markdown structure:
 
 '# CardName
 
@@ -213,30 +214,33 @@ Content
 
                 var cardNames = string.Join(", ", cards.Select(c => c.Name));
 
-                string promptFormat = @"Return the fortune reading in the following markdown structure:
+                string promptFormat =
+                    @"Return the fortune reading in the following markdown structure:
 
 '# CardName
 
-**Interpretation:** (Write a poetic, intuitive, and emotionally resonant reading of just 1 sentence. Speak in a mystical tone, rich with symbolic meaning and spiritual insight. Give emotional guidance and tie the interpretation deeply to the user’s chosen theme. Personalize the message using the user’s name, gender, age, place of birth, and place of residence. Speak directly to them as a person receiving a private reading. Avoid generic statements — be specific and immersive.)
+**Interpretation:** (Write in a poetic and mystical tone, but ensure the message is clear, grounded, and personal. Each interpretation should contain two parts:  
+1. A symbolic, intuitive insight tied to the user's theme.  
+2. A direct yet gentle piece of guidance or reflection — something the user can *feel*, *do*, or *realize* in daily life.  
+Address the user by name and include references to their gender, age, birthplace, and current residence to deepen intimacy. Avoid vague phrases or abstract generalizations — speak vividly and give emotionally resonant but specific advice.)
 
 ---
-'
+';
 
-Repeat the above section for each of the three cards, separating them with the markdown divider.
+Repeat this for each of the three cards, using the markdown divider between them.
 
-At the end, return a mystical summary paragraph that gently brings together the message of all three cards.
-This summary should offer overall insight, clarity, and guidance, leaving the user with a sense of closure and wonder following the format below.
+Then, provide a final reflection in this format:
 
 # Summary
 
-Content
+(Weave the meanings of the three cards into a cohesive message. End with a grounded spiritual takeaway and a practical suggestion or mantra the user can carry forward today. Let the user feel seen and gently guided.)
 
 ---";
 
                 string prompt =
                     request.Question != string.Empty
-                        ? $"You are a tarot oracle with a supernatural reputation — your clients pay millions because your readings are always on point, intuitive, and uncannily accurate. {userDetail}. Based on the question: '{request.Question}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading. {promptFormat}"
-                        : $"You are a tarot oracle with a supernatural reputation — your clients pay millions because your readings are always on point, intuitive, and uncannily accurate. {userDetail}. For the theme of '{chosenTheme}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading. {promptFormat}";
+                        ? $"You are a gifted tarot oracle with a mystical reputation for delivering specific, personal, and accurate guidance. Your readings are known for translating deep symbolism into real-world clarity. {userDetail}. Based on the question: '{request.Question}', and using these cards: {cardNames}, provide a tarot reading that is emotionally rich, intuitively deep, and practically helpful. Use the structure below: {promptFormat}"
+                        : $"You are a gifted tarot oracle with a mystical reputation for delivering specific, personal, and accurate guidance. Your readings are known for translating deep symbolism into real-world clarity. {userDetail}. For the theme of '{chosenTheme}', and using these cards: {cardNames}, provide a tarot reading that is emotionally rich, intuitively deep, and practically helpful. Use the structure below: {promptFormat}";
 
                 Console.WriteLine($"Sending streaming prompt to OpenAI: {prompt}");
                 return prompt;
