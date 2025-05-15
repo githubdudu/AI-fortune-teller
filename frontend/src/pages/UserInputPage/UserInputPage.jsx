@@ -19,6 +19,7 @@ import './UserInputPage.css';
 function UserInputPage() {
   const {
     isModalOpen,
+    setIsModalOpen,
     toggleModalOpen,
     isLoggedIn,
     setUserProfile,
@@ -71,6 +72,7 @@ function UserInputPage() {
     // Only fetch user profile once when logged in and not already fetched
     if (!isLoggedIn || profileFetched) return;
 
+    setIsModalOpen(false);
     const getUserProfile = async () => {
       try {
         setLoginLoading(true);
@@ -81,11 +83,13 @@ function UserInputPage() {
         // If the user is logged in, but the information is missing, showing a form
         if (missingProfileInfo(response.data)) {
           navigate('/user-info-input');
+          setIsModalOpen(true);
           return;
         }
 
         // Put this setting after the navigation to avoid flickering
         setProfileFetched(true); // Mark profile as fetched
+        setIsModalOpen(true);
       } catch (err) {
         console.error('Error fetching user profile:', err);
 
