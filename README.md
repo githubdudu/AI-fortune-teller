@@ -143,30 +143,6 @@ dotnet test
 
 ## 📋 Coding Standards
 
-### Frontend Architecture
-
-1. **Component Organization**:
-   - Components live in the `components` folder
-   - One component per subfolder with its own directory
-   - Use `index.js` files for clean imports:
-   ```javascript
-   // In component folder: index.js
-   export { default } from './ComponentName.jsx'
-   
-   // Usage in other files
-   import ComponentName from 'components/ComponentName'
-   ```
-
-2. **Naming Conventions**:
-   - PascalCase for component files and directories
-   - camelCase for utility files
-   - Descriptive, purpose-oriented names
-
-3. **Code Structure**:
-   - One responsibility per file
-   - Extract reusable logic into custom hooks
-   - Use Context API for state that spans multiple components
-
 ### Technology Stack
 
 1. **UI Framework**: React with Vite for fast building
