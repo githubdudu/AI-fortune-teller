@@ -114,6 +114,19 @@ const SignUp = () => {
     }
     setLoading(false);
   }
+
+  const isDisabled =
+    !username.trim() ||
+    !email.trim() ||
+    !password ||
+    !confirmPassword ||
+    Boolean(
+      usernameErrorMsg ||
+        emailErrorMsg ||
+        passwordErrorMsg ||
+        confirmPasswordErrorMsg,
+    );
+
   return (
     <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-green-100 rounded-2xl border-2 border-white py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
@@ -148,6 +161,8 @@ const SignUp = () => {
           onBlur={(e) => {
             if (!e.value) {
               setUsernameErrorMsg('User name is required');
+            } else if (e.value.length < 6) {
+              setUsernameErrorMsg('User name must be at least 6 characters');
             } else {
               setUsernameErrorMsg(null);
             }
@@ -242,6 +257,7 @@ const SignUp = () => {
         onClick={() => handleSignUpWithEmail(username, email, password)}
         size="lg"
         color="red"
+        disabled={isDisabled}
       />
     );
   }
