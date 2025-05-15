@@ -4,9 +4,9 @@
 set -e
 
 # Configuration
-IMAGE_NAME="fortune-backend"
+IMAGE_NAME="backend"
 VERSION="1.0.0"  # Default version
-REGISTRY="ghcr.io/uoa-cs732-s1-2025/group-project-42"
+REGISTRY="henrycyc"  # DockerHub username
 
 # Parse command line arguments
 PUSH=false
@@ -36,20 +36,39 @@ done
 # Full image name with tag
 FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME:$VERSION"
 
-# Build the Docker image
-if [ "$BUILD" = true ]; then
-  echo "Building Docker image: $FULL_IMAGE_NAME"
-  docker build -t "$FULL_IMAGE_NAME" -f Dockerfile .
-  echo "Build completed successfully"
-else
-  echo "Skipping build as requested"
+# Setup buildx builder for multi-platform builds if not already set up
+if ! docker buildx inspect multi-platform-builder > /dev/null 2>&1; then
+  echo "Creating new buildx builder for multi-platform builds..."
+  docker buildx create --name multi-platform-builder --driver docker-container --use
 fi
 
-# Push the image if requested
-if [ "$PUSH" = true ]; then
-  echo "Pushing Docker image to registry: $FULL_IMAGE_NAME"
-  docker push "$FULL_IMAGE_NAME"
-  echo "Push completed successfully"
+# Select the builder
+docker buildx use multi-platform-builder
+
+# Build the Docker image (and optionally push)
+if [ "$BUILD" = true ]; then
+  echo "Building multi-architecture Docker image: $FULL_IMAGE_NAME"
+  
+  BUILDX_ARGS="--platform linux/amd64,linux/arm64 -t $FULL_IMAGE_NAME -f Dockerfile ."
+  
+  if [ "$PUSH" = true ]; then
+    # If pushing, we build and push in one step
+    docker buildx build --push $BUILDX_ARGS
+    echo "Build and push completed successfully"
+  else
+    # Just build locally
+    docker buildx build --load $BUILDX_ARGS
+    echo "Build completed successfully"
+  fi
+else
+  echo "Skipping build as requested"
+  
+  # Push the image if requested without building
+  if [ "$PUSH" = true ]; then
+    echo "Pushing Docker image to registry: $FULL_IMAGE_NAME"
+    docker push "$FULL_IMAGE_NAME"
+    echo "Push completed successfully"
+  fi
 fi
 
 echo "Script completed"
