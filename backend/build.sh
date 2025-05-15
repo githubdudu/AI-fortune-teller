@@ -6,7 +6,7 @@ set -e
 # Configuration
 IMAGE_NAME="backend"
 VERSION="1.0.0"  # Default version
-REGISTRY="henrycyc"  # DockerHub username
+REGISTRY="docker.io/henrycyc"
 
 # Parse command line arguments
 PUSH=false
@@ -47,28 +47,19 @@ docker buildx use multi-platform-builder
 
 # Build the Docker image (and optionally push)
 if [ "$BUILD" = true ]; then
-  echo "Building multi-architecture Docker image: $FULL_IMAGE_NAME"
-  
-  BUILDX_ARGS="--platform linux/amd64,linux/arm64 -t $FULL_IMAGE_NAME -f Dockerfile ."
-  
-  if [ "$PUSH" = true ]; then
-    # If pushing, we build and push in one step
-    docker buildx build --push $BUILDX_ARGS
-    echo "Build and push completed successfully"
-  else
-    # Just build locally
-    docker buildx build --load $BUILDX_ARGS
-    echo "Build completed successfully"
-  fi
+  echo "Building Docker image: $FULL_IMAGE_NAME"
+  docker build -t "$FULL_IMAGE_NAME" -t "$REGISTRY/$IMAGE_NAME:latest" -f Dockerfile .
+  echo "Build completed successfully"
 else
   echo "Skipping build as requested"
-  
-  # Push the image if requested without building
-  if [ "$PUSH" = true ]; then
-    echo "Pushing Docker image to registry: $FULL_IMAGE_NAME"
-    docker push "$FULL_IMAGE_NAME"
-    echo "Push completed successfully"
-  fi
+fi
+
+# Push the image if requested
+if [ "$PUSH" = true ]; then
+  echo "Pushing Docker image to registry: $FULL_IMAGE_NAME"
+  docker push "$FULL_IMAGE_NAME"
+  docker push "$REGISTRY/$IMAGE_NAME:latest"
+  echo "Push completed successfully"
 fi
 
 echo "Script completed"
