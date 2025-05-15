@@ -12,18 +12,81 @@ function GalleryPage() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [displayMode, setDisplayMode] = useState('fan'); // 'stack', 'fan', 'pure-stack'
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [loadedImagesCount, setLoadedImagesCount] = useState(0);
   const cardBoxRef = useRef(null);
+
+  // Function to preload all card images
+  const preloadImages = (cardsData) => {
+    // Reset counter when starting to load a new set of images
+    setLoadedImagesCount(0);
+
+    if (!cardsData || cardsData.length === 0) {
+      setImagesLoaded(true);
+      return;
+    }
+
+    const totalImages = cardsData.length;
+    let loadedCount = 0;
+
+    // Preload the common back card image first
+    const backCardImage = new Image();
+    backCardImage.src =
+      'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png';
+
+    backCardImage.onload = () => {
+      // After back card is loaded, start loading all front card images
+      cardsData.forEach((card) => {
+        const img = new Image();
+        img.src = card.imageSource || '/defaultFrontCard.png';
+
+        img.onload = () => {
+          loadedCount++;
+          setLoadedImagesCount(loadedCount);
+
+          // When all images are loaded, set the imagesLoaded flag
+          if (loadedCount === totalImages) {
+            console.log('All card images loaded successfully');
+            setImagesLoaded(true);
+          }
+        };
+
+        img.onerror = () => {
+          console.error(
+            `Failed to load image: ${card.imageSource || '/defaultFrontCard.png'}`,
+          );
+          loadedCount++;
+          setLoadedImagesCount(loadedCount);
+
+          // Even if some images fail, continue with the ones that loaded
+          if (loadedCount === totalImages) {
+            setImagesLoaded(true);
+          }
+        };
+      });
+    };
+
+    backCardImage.onerror = () => {
+      console.error('Failed to load back card image');
+      // Continue with front images even if back image fails
+      setImagesLoaded(true);
+    };
+  };
 
   // Fetch all cards from the API
   useEffect(() => {
     const fetchAllCards = async () => {
       setLoading(true);
+      setImagesLoaded(false); // Reset images loaded state
       try {
         // Using apiClient with centralized endpoint config
         const response = await apiClient.get(API_CONFIG.ENDPOINTS.CARDS);
 
         setCards(response.data);
         console.log('Cards fetched:', response.data);
+
+        // Start preloading images after cards data is fetched
+        preloadImages(response.data);
       } catch (err) {
         console.error('Error fetching cards:', err);
         setErrorMessage('Unable to load cards. Please try again later.');
@@ -31,7 +94,7 @@ function GalleryPage() {
         console.log('Error:', err);
 
         // Use demo cards as fallback
-        setCards([
+        const demoCards = [
           {
             id: 1,
             name: 'The Fool',
@@ -80,17 +143,27 @@ function GalleryPage() {
             description: 'Direction, control, willpower',
             imageSource: '/defautFrontCard.png',
           },
-        ]);
-      } finally {
-        // Small delay to ensure card box is rendered
-        setTimeout(() => {
-          setLoading(false);
-        }, 1500);
+        ];
+
+        setCards(demoCards);
+
+        // Start preloading demo card images if API fails
+        preloadImages(demoCards);
       }
     };
 
     fetchAllCards();
   }, []);
+
+  // Only finish loading when both cards data is fetched and images are loaded
+  useEffect(() => {
+    if (cards.length > 0 && imagesLoaded) {
+      // Small delay to ensure card box is rendered
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }
+  }, [cards, imagesLoaded]);
 
   // Start cards animation after loading is complete
   useEffect(() => {
@@ -115,11 +188,34 @@ function GalleryPage() {
         alignItems="center"
         height="100vh"
         direction="column"
+        gap={4}
       >
         <Spinner show accessibilityLabel="Loading cards" />
         <Text align="center" weight="bold" size="lg">
           Preparing your card gallery...
         </Text>
+        {cards.length > 0 && !imagesLoaded && (
+          <Box padding={2}>
+            <Text align="center">
+              Loading card images: {loadedImagesCount}/{cards.length}
+            </Text>
+            <Box
+              padding={2}
+              marginTop={2}
+              color="lightGray"
+              rounding={2}
+              width={300}
+              height={10}
+            >
+              <Box
+                color="purple"
+                height="100%"
+                width={`${(loadedImagesCount / cards.length) * 100}%`}
+                rounding={2}
+              />
+            </Box>
+          </Box>
+        )}
       </Box>
     );
   }
@@ -561,10 +657,10 @@ function GalleryPage() {
   const renderDisplayModeButtons = () => {
     return (
       <Box
-        padding={3}
+        padding={20}
         display="flex"
         justifyContent="center"
-        gap={4}
+        gap={2}
         margin={0}
       >
         <button
@@ -577,6 +673,7 @@ function GalleryPage() {
             border: 'none',
             borderRadius: '20px',
             cursor: 'pointer',
+            marginRight: '10px',
           }}
         >
           Fan Display
@@ -591,6 +688,7 @@ function GalleryPage() {
             border: 'none',
             borderRadius: '20px',
             cursor: 'pointer',
+            marginRight: '10px',
           }}
         >
           Grid Stack
@@ -605,6 +703,7 @@ function GalleryPage() {
             border: 'none',
             borderRadius: '20px',
             cursor: 'pointer',
+            marginRight: '10px',
           }}
         >
           Pure Stack
