@@ -69,10 +69,13 @@ jobs:
     - name: Install kubectl
       uses: azure/setup-kubectl@v3
       
-    - name: Set Kubernetes context
-      uses: azure/k8s-set-context@v3
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
         
     - name: Update Kubernetes secrets
       run: |
