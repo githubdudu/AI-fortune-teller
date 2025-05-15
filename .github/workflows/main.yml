@@ -1,7 +1,10 @@
-#Good
 name: CI/CD Pipeline
 
 on:
+  push:
+    branches:
+      - main
+      - sprint-3
   pull_request:
     types: [closed]
     branches:
