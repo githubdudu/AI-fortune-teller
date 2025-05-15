@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
 import { useLocalStorage, useSessionStorage } from 'react-use';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useFortuneStream } from '$/hooks/useFortuneStream';
 import { setLogoutHandler } from '$/utils/apiClient';
 
@@ -34,6 +34,11 @@ export function AppContextProvider({ children }) {
 
   const [profileFetched, setProfileFetched] = useSessionStorage(
     'profileFetched',
+    false,
+  );
+
+  const [loginLoading, setLoginLoading] = useSessionStorage(
+    'loginLoading',
     false,
   );
 
@@ -77,7 +82,7 @@ export function AppContextProvider({ children }) {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     // Clear the local storage
     setIsLoggedIn(false);
     // Log out from Firebase
@@ -90,11 +95,24 @@ export function AppContextProvider({ children }) {
     setUserPrompt('');
     setUserChosenTheme(null);
     setReadingResult(null);
+
     setProfileFetched(false);
+    setLoginLoading(false);
 
     // Clear the modal state
     setIsModalOpen(true);
-  };
+  }, [
+    setIsLoggedIn,
+    setUserProfile,
+    setUserInfo,
+    setUserChosenCards,
+    setUserPrompt,
+    setUserChosenTheme,
+    setReadingResult,
+    setProfileFetched,
+    setLoginLoading,
+    setIsModalOpen,
+  ]);
 
   // Register logout handler with API client
   useEffect(() => {
@@ -132,6 +150,8 @@ export function AppContextProvider({ children }) {
         isLoggedIn,
         profileFetched,
         setProfileFetched,
+        loginLoading,
+        setLoginLoading,
         // Streaming API from custom hook
         streamingText,
         isStreaming,

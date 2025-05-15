@@ -53,11 +53,11 @@ const SignUp = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  // While Firebase is trying to load the existing session, this shows a loadding message.
+  // While Firebase is trying to load the existing session, this shows a loading message.
   if (loading) {
     return (
       <div className="View">
-        <Loading />
+        <Loading text="Creating your account..." />
       </div>
     );
   }
