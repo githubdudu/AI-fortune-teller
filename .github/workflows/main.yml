@@ -21,7 +21,9 @@ jobs:
   build-and-deploy:
     name: Build and Deploy
     # This ensures the job only runs when a PR is merged into main
-    if: github.event.pull_request.merged == true
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     environment: CICD
     
