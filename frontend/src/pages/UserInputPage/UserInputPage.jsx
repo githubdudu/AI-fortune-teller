@@ -126,35 +126,6 @@ function UserInputPage() {
     setNoMotionFlag(!isLoggedIn);
   }, [isLoggedIn]);
 
-  const FloatingContent = () => {
-    // If the user is not logged in, display the login form
-    // the fetching of user profile process uses the loginLoading state too.
-    if (!isLoggedIn || !profileFetched) {
-      return (
-        <>
-          <title>{SEO_TITLE.LOGIN}</title>
-          <LoginForm
-            loginLoading={loginLoading}
-            setLoginLoading={setLoginLoading}
-          />
-        </>
-      );
-    }
-
-    // Display the daily fortune content if the user is logged in
-    return (
-      <>
-        <title>{SEO_TITLE.DAILY_FORTUNE}</title>
-        <DailyFortuneContent
-          loading={dailyFortuneLoading}
-          error={error}
-          dailyFortune={dailyFortune}
-          onClick={toggleModalOpen}
-        />
-      </>
-    );
-  };
-
   const missingProfileInfo = (userProfile) => {
     // Check if any of the required fields are nullish
     // Use == instead of === to check for both null and undefined
@@ -171,7 +142,28 @@ function UserInputPage() {
     <>
       <title>{SEO_TITLE.HOME}</title>
       <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
-        <FloatingContent />
+        {/* // If the user is not logged in, display the login form */}
+        {/* // the fetching of user profile process uses the loginLoading state too. */}
+        {!isLoggedIn || !profileFetched ? (
+          <>
+            <title>{SEO_TITLE.LOGIN}</title>
+            <LoginForm
+              loginLoading={loginLoading}
+              setLoginLoading={setLoginLoading}
+            />
+          </>
+        ) : (
+          // Display the daily fortune content if the user is logged in
+          <>
+            <title>{SEO_TITLE.DAILY_FORTUNE}</title>
+            <DailyFortuneContent
+              loading={dailyFortuneLoading}
+              error={error}
+              dailyFortune={dailyFortune}
+              onClick={toggleModalOpen}
+            />
+          </>
+        )}
       </FloatingPrompt>
       <div className="w-165">
         <UserQuestionInput />
