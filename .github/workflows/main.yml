@@ -62,10 +62,6 @@ jobs:
       - name: Backend - Test
         run: dotnet test --no-build --verbosity normal
         working-directory: ./backend
-        env:
-          ConnectionStrings__DefaultConnection: "Server=localhost;Database=tarot_test_db;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;"
-          ExternalServices__OpenAI__ApiKey: ${{ secrets.OPENAI_API_KEY }}
-          Firebase__CredentialsPath: "./Api.Tests/firebase-credentials-test.json"
 
   build-and-deploy:
     name: Build and Deploy
