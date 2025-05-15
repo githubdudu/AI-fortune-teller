@@ -25,6 +25,8 @@ function UserInputPage() {
     logout,
     profileFetched,
     setProfileFetched,
+    loginLoading,
+    setLoginLoading,
   } = useContext(AppContext);
 
   const [noMotionFlag, setNoMotionFlag] = useState(true);
@@ -34,7 +36,6 @@ function UserInputPage() {
    * login has an internal loading state that will replace all the login forms.
    * Daily fortune has a loading state only displayed as a message.
    */
-  const [loginLoading, setLoginLoading] = useState(false);
   const [dailyFortuneLoading, setDailyFortuneLoading] = useState(true);
   const [error, setError] = useState(null);
   const fortuneFetchedRef = useRef(false);
@@ -114,6 +115,7 @@ function UserInputPage() {
     profileFetched,
     setProfileFetched,
     logout,
+    setLoginLoading,
   ]);
 
   useEffect(() => {

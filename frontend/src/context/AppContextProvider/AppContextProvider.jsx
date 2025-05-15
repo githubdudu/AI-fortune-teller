@@ -37,6 +37,11 @@ export function AppContextProvider({ children }) {
     false,
   );
 
+  const [loginLoading, setLoginLoading] = useSessionStorage(
+    'loginLoading',
+    false,
+  );
+
   // Default fallback text when stream fails
   const fallbackText =
     'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
@@ -90,7 +95,9 @@ export function AppContextProvider({ children }) {
     setUserPrompt('');
     setUserChosenTheme(null);
     setReadingResult(null);
+
     setProfileFetched(false);
+    setLoginLoading(false);
 
     // Clear the modal state
     setIsModalOpen(true);
@@ -132,6 +139,8 @@ export function AppContextProvider({ children }) {
         isLoggedIn,
         profileFetched,
         setProfileFetched,
+        loginLoading,
+        setLoginLoading,
         // Streaming API from custom hook
         streamingText,
         isStreaming,
