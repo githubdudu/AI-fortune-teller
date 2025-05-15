@@ -42,28 +42,28 @@ function UserInputPage() {
 
   const navigate = useNavigate();
 
-  const fetchDailyFortune = async () => {
-    if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
-
-    setDailyFortuneLoading(true);
-    try {
-      // Using the FORTUNES endpoint which is available
-      // For non-authenticated users, we'll use the general FORTUNES endpoint
-      // For authenticated users, we can still use it with auth cookies
-      const response = await apiClient.get(
-        API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
-      );
-      setDailyFortune(response.data);
-    } catch (err) {
-      console.error('Error fetching daily fortune:', err);
-      setError('Failed to load your daily fortune');
-    } finally {
-      fortuneFetchedRef.current = true; // Mark as fetched
-      setDailyFortuneLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchDailyFortune = async () => {
+      if (fortuneFetchedRef.current || !isLoggedIn) return; // Prevent multiple fetches
+
+      setDailyFortuneLoading(true);
+      try {
+        // Using the FORTUNES endpoint which is available
+        // For non-authenticated users, we'll use the general FORTUNES endpoint
+        // For authenticated users, we can still use it with auth cookies
+        const response = await apiClient.get(
+          API_CONFIG.ENDPOINTS.DAILY_FORTUNES_ME,
+        );
+        setDailyFortune(response.data);
+      } catch (err) {
+        console.error('Error fetching daily fortune:', err);
+        setError('Failed to load your daily fortune');
+      } finally {
+        fortuneFetchedRef.current = true; // Mark as fetched
+        setDailyFortuneLoading(false);
+      }
+    };
+
     fetchDailyFortune();
   }, [isLoggedIn]); // Only re-run if login status changes
 
