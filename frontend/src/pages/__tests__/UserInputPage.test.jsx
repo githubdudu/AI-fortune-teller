@@ -84,6 +84,7 @@ function setup({
   profileFetched = false,
   setProfileFetched = vi.fn(),
   logout = vi.fn(),
+  setLoginLoading = vi.fn(),
 } = {}) {
   return render(
     <AppContext.Provider
@@ -96,6 +97,7 @@ function setup({
         profileFetched,
         setProfileFetched,
         logout,
+        setLoginLoading,
       }}
     >
       <BrowserRouter>
