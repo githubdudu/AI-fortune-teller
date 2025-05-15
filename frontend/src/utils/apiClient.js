@@ -72,7 +72,7 @@ apiClient.interceptors.response.use(
       // Handle 404 errors for user/me endpoint specifically
       if (
         error.response.status === 404 &&
-        error.config?.url?.includes('/user/me')
+        error.config?.url?.includes('/users/me')
       ) {
         console.log(
           'User not found (404). Logging out user and cleaning cookies.',
