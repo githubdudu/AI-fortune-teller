@@ -46,11 +46,6 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Create fake Firebase credentials for tests
-        run: |
-          mkdir -p ./backend/Api.Tests
-          echo '{"type":"service_account","project_id":"test-project","private_key":"-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4R4/M2bS1GB4t7NXp98C3SC6dVMvDuictGeurT8jNbvJZHtCSuYEvu\nNMoSfm76oqFvAp8Gy0iz5sxjZmSnXyCdPEovGhLa0VzMaQ8s+CLOyS56YyCFGeJZ\n-----END PRIVATE KEY-----\n","client_email":"test@example.com"}' > ./backend/Api.Tests/firebase-credentials-test.json
-
       - name: Backend - Restore dependencies
         run: dotnet restore
         working-directory: ./backend
