@@ -88,7 +88,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   return (
     <FormContainer withBackground={false}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
-      <div className="flex flex-col gap-4 min-w-[500px]">
+      <div className="flex flex-col gap-4 sm:min-w-[500px] w-full">
         {Email()}
         {Password()}
         {ErrorMessage(emailSignInError)}

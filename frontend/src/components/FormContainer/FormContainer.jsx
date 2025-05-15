@@ -4,7 +4,7 @@ function FormContainer({ children, withBackground = true }) {
   const backgroundClass = withBackground ? 'bg-gray-50 shadow-mm ' : '';
   return (
     <div
-      className={`px-9 py-5 flex flex-col items-center ${backgroundClass} rounded-xl`}
+      className={`px-0 sm:px-9 py-5 flex flex-col items-center ${backgroundClass} rounded-xl`}
     >
       {children}
     </div>
