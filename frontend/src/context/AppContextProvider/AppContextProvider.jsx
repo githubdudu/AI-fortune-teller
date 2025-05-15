@@ -77,9 +77,6 @@ export function AppContextProvider({ children }) {
   const login = (profile) => {
     setIsLoggedIn(true);
     setUserProfile(profile);
-    if (profile) {
-      setProfileFetched(true);
-    }
   };
 
   const logout = useCallback(() => {
