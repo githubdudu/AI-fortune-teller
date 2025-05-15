@@ -24,8 +24,8 @@ namespace Api.Tests.Services
             // Arrange
             var users = new List<User>
             {
-                new User { Id = Guid.NewGuid(), Username = "user1", Email = "user1@example.com", CreatedAt = DateTime.UtcNow },
-                new User { Id = Guid.NewGuid(), Username = "user2", Email = "user2@example.com", CreatedAt = DateTime.UtcNow }
+                new User { Id = Guid.NewGuid(), DisplayName = "user1", Email = "user1@example.com", CreatedAt = DateTime.UtcNow },
+                new User { Id = Guid.NewGuid(), DisplayName = "user2", Email = "user2@example.com", CreatedAt = DateTime.UtcNow }
             };
 
             _mockUserRepository.Setup(repo => repo.GetAllAsync())
@@ -36,8 +36,8 @@ namespace Api.Tests.Services
 
             // Assert
             Assert.Equal(2, result.Count());
-            Assert.Equal(users[0].Username, result.First().Username);
-            Assert.Equal(users[1].Username, result.Last().Username);
+            Assert.Equal(users[0].DisplayName, result.First().DisplayName);
+            Assert.Equal(users[1].DisplayName, result.Last().DisplayName);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Api.Tests.Services
         {
             // Arrange
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, Username = "testuser", Email = "test@example.com", CreatedAt = DateTime.UtcNow };
+            var user = new User { Id = userId, DisplayName = "testuser", Email = "test@example.com", CreatedAt = DateTime.UtcNow };
 
             _mockUserRepository.Setup(repo => repo.GetByIdAsync(userId))
                 .ReturnsAsync(user);
@@ -56,7 +56,7 @@ namespace Api.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(userId, result.Id);
-            Assert.Equal("testuser", result.Username);
+            Assert.Equal("testuser", result.DisplayName);
         }
 
         [Fact]
@@ -79,11 +79,11 @@ namespace Api.Tests.Services
         public async Task CreateUserAsync_WithValidRequest_CreatesAndReturnsUser()
         {
             // Arrange
-            var request = new CreateUserRequest { Username = "newuser", Email = "new@example.com" };
+            var request = new CreateUserRequest { DisplayName = "newuser", Email = "new@example.com" };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(request.Email))
                 .ReturnsAsync((User)null);
-            _mockUserRepository.Setup(repo => repo.GetByUsernameAsync(request.Username))
+            _mockUserRepository.Setup(repo => repo.GetByDisplayNameAsync(request.DisplayName))
                 .ReturnsAsync((User)null);
             _mockUserRepository.Setup(repo => repo.AddAsync(It.IsAny<User>()))
                 .ReturnsAsync((User user) => user);
@@ -93,7 +93,7 @@ namespace Api.Tests.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(request.Username, result.Username);
+            Assert.Equal(request.DisplayName, result.DisplayName);
             Assert.Equal(request.Email, result.Email);
             _mockUserRepository.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Once);
             _mockUserRepository.Verify(repo => repo.SaveChangesAsync(), Times.Once);
@@ -103,8 +103,8 @@ namespace Api.Tests.Services
         public async Task CreateUserAsync_WithExistingEmail_ThrowsInvalidOperationException()
         {
             // Arrange
-            var request = new CreateUserRequest { Username = "newuser", Email = "existing@example.com" };
-            var existingUser = new User { Id = Guid.NewGuid(), Username = "existinguser", Email = request.Email };
+            var request = new CreateUserRequest { DisplayName = "newuser", Email = "existing@example.com" };
+            var existingUser = new User { Id = Guid.NewGuid(), DisplayName = "existinguser", Email = request.Email };
 
             _mockUserRepository.Setup(repo => repo.GetByEmailAsync(request.Email))
                 .ReturnsAsync(existingUser);
