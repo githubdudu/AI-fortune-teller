@@ -19,6 +19,7 @@ jobs:
     # This ensures the job only runs when a PR is merged into main
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    environment: CICD
     
     permissions:
       contents: read
