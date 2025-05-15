@@ -37,11 +37,11 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
 
   const navigate = useNavigate();
 
-  // While Firebase is trying to load the existing session, this shows a loadding message.
+  // While Firebase is trying to load the existing session, this shows a loading message.
   if (loginLoading) {
     return (
-      <div className="View">
-        <Loading />
+      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+        <Loading text="Logging in..." />
       </div>
     );
   }
