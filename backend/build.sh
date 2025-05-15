@@ -4,9 +4,9 @@
 set -e
 
 # Configuration
-IMAGE_NAME="fortune-backend"
+IMAGE_NAME="backend"
 VERSION="1.0.0"  # Default version
-REGISTRY="ghcr.io/uoa-cs732-s1-2025/group-project-42"
+REGISTRY="docker.io/henrycyc"
 
 # Parse command line arguments
 PUSH=false
@@ -36,10 +36,19 @@ done
 # Full image name with tag
 FULL_IMAGE_NAME="$REGISTRY/$IMAGE_NAME:$VERSION"
 
-# Build the Docker image
+# Setup buildx builder for multi-platform builds if not already set up
+if ! docker buildx inspect multi-platform-builder > /dev/null 2>&1; then
+  echo "Creating new buildx builder for multi-platform builds..."
+  docker buildx create --name multi-platform-builder --driver docker-container --use
+fi
+
+# Select the builder
+docker buildx use multi-platform-builder
+
+# Build the Docker image (and optionally push)
 if [ "$BUILD" = true ]; then
   echo "Building Docker image: $FULL_IMAGE_NAME"
-  docker build -t "$FULL_IMAGE_NAME" -f Dockerfile .
+  docker build -t "$FULL_IMAGE_NAME" -t "$REGISTRY/$IMAGE_NAME:latest" -f Dockerfile .
   echo "Build completed successfully"
 else
   echo "Skipping build as requested"
@@ -49,6 +58,7 @@ fi
 if [ "$PUSH" = true ]; then
   echo "Pushing Docker image to registry: $FULL_IMAGE_NAME"
   docker push "$FULL_IMAGE_NAME"
+  docker push "$REGISTRY/$IMAGE_NAME:latest"
   echo "Push completed successfully"
 fi
 
