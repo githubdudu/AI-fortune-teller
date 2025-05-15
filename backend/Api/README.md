@@ -1,6 +1,6 @@
-# Backend API
+# ArcanaVerse Backend API
 
-This is the backend API for the application, built with ASP.NET Core.
+This is the backend API for the ArcanaVerse application, built with ASP.NET Core. It provides endpoints for managing fortune telling, tarot card readings, themes, and user profiles.
 
 ## Getting Started
 
@@ -71,6 +71,10 @@ The API uses JWT authentication. To access protected endpoints:
 1. Obtain a JWT token (implementation details will depend on your auth flow)
 2. Include the token in the Authorization header: `Bearer {your-token}`
 
+#### Firebase Authentication
+
+The API also supports Firebase Authentication, using the service account credentials specified in `firebase-credentials.json`. Make sure this file is properly configured with your Firebase project details.
+
 #### Generating JWT Tokens for Testing
 
 A TokenGenerator tool is included in the project for creating test tokens. To generate a new token:
@@ -133,14 +137,92 @@ To mark an API version as deprecated:
 
 All clients should be encouraged to migrate to the latest non-deprecated version.
 
-### Available Endpoints
+## ArcanaVerse-Specific API Endpoints
 
-For testing purposes, you can use the following JWT token pattern (valid for 10 years):
-```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+### Card Endpoints
+
+#### Get All Cards
+
+```bash
+GET /api/v1/cards
 ```
 
-> **Note**: Generate a fresh token using the TokenGenerator tool. The token shown in the curl examples below is just a placeholder and won't work unless it matches your current JWT settings.
+Retrieves all available tarot cards.
+
+#### Get Card by ID
+
+```bash
+GET /api/v1/cards/{id}
+```
+
+Retrieves a specific tarot card by ID.
+
+#### Get Random Card
+
+```bash
+GET /api/v1/cards/random
+```
+
+Retrieves a random tarot card for readings.
+
+#### Example Card Request
+
+```bash
+curl -v -X GET "http://localhost:5000/api/v1/cards/random" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### Fortune Endpoints
+
+#### Get Daily Fortune
+
+```bash
+GET /api/v1/fortunes/daily
+```
+
+Retrieves the daily fortune content.
+
+#### Get Fortune by Theme
+
+```bash
+GET /api/v1/fortunes/theme/{themeId}
+```
+
+Retrieves fortune content for a specific theme.
+
+#### Example Fortune Request
+
+```bash
+curl -v -X GET "http://localhost:5000/api/v1/fortunes/daily" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### Theme Endpoints
+
+#### Get All Themes
+
+```bash
+GET /api/v1/themes
+```
+
+Retrieves all available reading themes.
+
+#### Get Theme by ID
+
+```bash
+GET /api/v1/themes/{id}
+```
+
+Retrieves a specific theme by ID.
+
+#### Example Theme Request
+
+```bash
+curl -v -X GET "http://localhost:5000/api/v1/themes" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
+### User Endpoints
 
 #### Get All Users
 
@@ -164,7 +246,10 @@ curl -v -X POST "http://localhost:5000/api/v1/users" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "johndoe",
-    "email": "john.doe@example.com"
+    "email": "john.doe@example.com",
+    "preferences": {
+      "favoriteThemeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
   }'
 ```
 
@@ -176,7 +261,10 @@ curl -v -X PUT "http://localhost:5000/api/v1/users/3fa85f64-5717-4562-b3fc-2c963
   -H "Content-Type: application/json" \
   -d '{
     "username": "johndoe_updated",
-    "email": "john.updated@example.com"
+    "email": "john.updated@example.com",
+    "preferences": {
+      "favoriteThemeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
   }'
 ```
 
@@ -199,6 +287,27 @@ The application is configured to use:
 - SQL Server in production (configure connection string in appsettings.json)
 - In-memory database for development (no setup required)
 
+The database structure includes tables for:
+- Users
+- Cards
+- Fortunes
+- Daily Fortunes
+- Themes
+
+## Database Migrations
+
+The initial database migration has been set up and will create all required tables when the application runs in Production mode. To update the database structure:
+
+1. Make changes to your entity models
+2. Create a new migration:
+```bash
+dotnet ef migrations add YourMigrationName
+```
+3. Update the database:
+```bash
+dotnet ef database update
+```
+
 ## Running Tests
 
 To run the unit tests:
@@ -209,7 +318,9 @@ dotnet test
 ```
 
 The test project includes tests for:
-- Service layer
+- Card service
+- Theme service
+- User service
 - Business logic
 - Input validation 
 
@@ -225,9 +336,8 @@ The project follows a clean architecture with several layers:
 
 This separation of concerns makes the codebase more maintainable and testable.
 
-## Additional Notes
+## 🔗 Related Documentation
 
-- The API uses the repository pattern for data access
-- Global exception handling is implemented via middleware
-- CORS is configured to allow requests from http://localhost:3000
-- API versioning allows for backward compatibility 
+- [Backend Documentation](../README.md) - General backend information
+- [Main Project Documentation](../../README.md) - Overall project documentation
+- [Kubernetes Deployment](../../kubernetes/README.md) - Deployment configuration

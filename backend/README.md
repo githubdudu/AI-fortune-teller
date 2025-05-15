@@ -1,6 +1,6 @@
-# Backend Project Structure
+# ArcanaVerse Backend
 
-This directory contains the backend components for the application, organized into three main sections:
+This directory contains the backend components for the ArcanaVerse application, organized into three main sections:
 
 ## Directory Structure
 
@@ -21,12 +21,40 @@ The Api directory contains the main web application built with ASP.NET Core. It 
 
 The API uses JWT authentication, Swagger for API documentation, and supports API versioning. It runs on port 5000 (HTTP) and 5001 (HTTPS) by default.
 
+### Domain-Specific Repositories
+
+ArcanaVerse features several specialized repositories for different aspects of the fortune telling application:
+
+- **CardRepository**: Manages tarot card data, attributes, and relationships
+- **FortuneRepository**: Handles fortune content, interpretations, and predictions
+- **DailyFortuneRepository**: Manages daily changing fortune content with automatic rotation
+- **ThemeRepository**: Stores and retrieves various thematic reading information
+- **UserRepository**: Manages user profiles, preferences, and reading history
+
+### Firebase Integration
+
+The backend integrates with Firebase for enhanced authentication and storage capabilities:
+
+1. Firebase Authentication is used as an additional authentication provider
+2. Firebase Storage can be used for storing card images and other media
+3. Firebase Firestore can synchronize user preferences across devices
+
+To configure Firebase:
+1. Place your Firebase service account credentials in `backend/Api/firebase-credentials.json`
+2. The credentials file is automatically loaded at startup
+
+**Important**: The `firebase-credentials.json` file contains sensitive information and should not be committed to source control. It's included in the `.gitignore` file by default.
+
 ## Api.Tests
 
 The Api.Tests directory contains unit and integration tests for the API components. Tests are organized to mirror the structure of the main API:
 
-- **Services**: Tests for service-layer business logic
-- More test categories will be added as the application grows
+- **Services**: Tests for service-layer business logic including:
+  - CardServiceTests
+  - ThemeServiceTests
+  - UserServiceTests
+  
+More test categories will be added as the application grows.
 
 Tests use xUnit as the testing framework and Moq for mocking dependencies.
 
@@ -94,6 +122,17 @@ To use the token in API requests, include it in the Authorization header:
 Authorization: Bearer <your-token-here>
 ```
 
+## Docker Deployment
+
+To build and run the backend in a Docker container:
+
+```bash
+cd backend
+./build.sh
+```
+
+This will build a Docker image and run it with the appropriate settings.
+
 ## Getting Started
 
 To run the complete backend:
@@ -144,3 +183,9 @@ dotnet run --launch-profile Production
 - Always use `--launch-profile` instead of `--environment` to ensure the environment is correctly applied
 - In Production mode, make sure your SQL Server connection string in `appsettings.json` is correct
 - Migration files are located in `backend/Api/Migrations` folder and will be applied automatically when running in Production mode
+
+## 🔗 Related Documentation
+
+- [API Documentation](./Api/README.md) - Detailed API endpoints and usage examples
+- [Main Project Documentation](../README.md) - Overall project documentation
+- [Kubernetes Deployment](../kubernetes/README.md) - Deployment configuration
