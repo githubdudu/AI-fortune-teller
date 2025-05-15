@@ -8,6 +8,7 @@ on:
     types: [closed]
     branches:
       - main
+      - sprint-3
 
 env:
   REGISTRY: docker.io
