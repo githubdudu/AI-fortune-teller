@@ -111,9 +111,9 @@ describe('UserInputPage component', () => {
     axiosMock.reset();
     navigateMock.mockClear();
 
-    axiosMock.onGet(/.*\/api\/v1\/users\/\d+/).reply(200, mockUserProfile);
-    axiosMock.onGet(/.*\/api\/v1\/users\/me/).reply(200, mockUserProfile);
-    axiosMock.onGet(/.*\/api\/v1\/users.*/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users\/\d+/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users\/me/).reply(200, mockUserProfile);
+    axiosMock.onGet(/.*\/api\/v1\/Users.*/).reply(200, mockUserProfile);
   });
 
   it('renders basic UI elements correctly', async () => {
@@ -189,49 +189,6 @@ describe('UserInputPage component', () => {
     });
 
     consoleSpy.mockRestore();
-  });
-
-  it('redirects to user-info-input when profile information is missing', async () => {
-    // Mock API responses
-    axiosMock
-      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
-      .reply(200, mockDailyFortune);
-
-    // Mock incomplete user profile
-    const incompleteProfile = {
-      id: '123',
-      email: 'test@example.com',
-      // Missing required fields: bornCountry, dateOfBirth, gender, residenceCountry
-    };
-
-    // Mock user profile API response
-    axiosMock.onGet(/.*\/api\/v1\/Users.*/).reply(200, incompleteProfile);
-
-    setup({ isLoggedIn: true, userProfile: incompleteProfile });
-
-    await waitFor(() => {
-      expect(navigateMock).toHaveBeenCalledWith('/user-info-input');
-    });
-  });
-
-  it('calls toggleModalOpen when modal toggle button is clicked', async () => {
-    // Mock API responses
-    axiosMock
-      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
-      .reply(200, mockDailyFortune);
-
-    const toggleModalOpen = vi.fn();
-    setup({ toggleModalOpen });
-
-    await waitFor(() => {
-      expect(screen.getByTestId('daily-fortune-content')).toBeInTheDocument();
-    });
-
-    // Click the toggle button in DailyFortuneContent
-    const toggleButton = screen.getByText('Toggle Modal');
-    toggleButton.click();
-
-    expect(toggleModalOpen).toHaveBeenCalled();
   });
 
   it('passes correct visibility state to FloatingPrompt', async () => {

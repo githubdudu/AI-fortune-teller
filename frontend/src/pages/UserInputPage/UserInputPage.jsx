@@ -91,7 +91,7 @@ function UserInputPage() {
         // If we get a 401 Unauthorized error, log the user out
         if (
           (err.response && err.response.status === 401) ||
-          err.response.status === 404
+          (err.response && err.response.status === 404)
         ) {
           console.log('Session expired or unauthorized. Logging out user.');
           logout(); // Log the user out
