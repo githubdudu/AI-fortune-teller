@@ -10,7 +10,7 @@
 
 
 .floating-prompt-modal {
-  width: 50vw;
+  width: min(600px, 90vw);
   max-width: 600px;
   min-height: 550px;
   background: #faf6f4;
