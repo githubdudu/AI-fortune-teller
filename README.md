@@ -284,7 +284,3 @@ The workflow consists of the following stages:
       - Pushes Docker images to container registry
    - Deploys to Kubernetes cluster using manifests in the kubernetes directory
    - Updates application with zero downtime
-
-### Workflow Status
-
-You can check the status of recent workflow runs on the [GitHub Actions tab](https://github.com/yourusername/group-project-42/actions) of our repository.
