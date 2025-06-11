@@ -12,6 +12,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './ThemeView.css';
+import useRem from '$/hooks/useRem';
 
 // Hardcoded themes as fallback
 const hardcodedThemes = [
@@ -81,6 +82,7 @@ function ThemeView() {
     description: 'Hover over any theme card for its explanation.',
   };
 
+  const CSS_REM_VALUE = useRem();
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -136,7 +138,7 @@ function ThemeView() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {/* Fixed className typo (removed space after md:) */}
-        <div className="swiper-container max-w-[450px] md:max-w-[880px] lg:max-w-[1100px] px-4">
+        <div className="swiper-container w-screen px-4">
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={true}
@@ -147,11 +149,15 @@ function ThemeView() {
             initialSlide={0}
             className="py-4"
             breakpoints={{
-              768: {
+              [40 * CSS_REM_VALUE]: {
+                slidesPerView: 3,
+                spaceBetween: 5,
+              },
+              [48 * CSS_REM_VALUE]: {
                 slidesPerView: 4,
                 spaceBetween: 5,
               },
-              1024: {
+              [64 * CSS_REM_VALUE]: {
                 slidesPerView: 5,
                 spaceBetween: 10,
               },

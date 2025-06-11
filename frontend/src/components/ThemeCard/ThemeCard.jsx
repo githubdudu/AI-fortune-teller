@@ -47,7 +47,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
           e.target.onerror = null;
           e.target.src = themeCardPlaceholder;
         }}
-        className="h-60 object-contain border-1 border-gray-300 rounded-md shadow-lg transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_1.5em_rgba(100,108,255,0.67))]"
+        className="md:h-50 lg:h-60 object-contain border-1 border-gray-300 rounded-md shadow-lg transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_1.5em_rgba(100,108,255,0.67))]"
         alt={`${theme.name} theme card`}
       />
     </div>

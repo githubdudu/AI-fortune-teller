@@ -7,7 +7,7 @@ function ArcanaVerseLogo() {
       <Link to="/" target="_self" aria-label="Go to home page">
         <img
           src={arcanaVerseLogo}
-          className="h-25 mx-auto transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"
+          className="h-10 sm:h-15 md:h-20 lg:h-25 mx-auto transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_2em_rgba(100,108,255,0.67))]"
           alt="ArcanaVerse logo"
         />
       </Link>
