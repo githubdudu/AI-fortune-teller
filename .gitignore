@@ -73,3 +73,6 @@ local.settings.json
 logs/
 *.log
 npm-debug.log*
+
+# AI Agent
+CLAUDE.md
