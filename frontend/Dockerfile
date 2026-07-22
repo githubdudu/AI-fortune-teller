@@ -28,15 +28,6 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Copy custom nginx config
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create a script that will replace environment variables at runtime
-RUN echo "#!/bin/sh" > /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo "set -e" >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo 'for file in /usr/share/nginx/html/assets/*.js; do' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  echo "Processing $file..."' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_API_BASE_URL=.*|VITE_API_BASE_URL=\"$VITE_API_BASE_URL\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo 'done' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    chmod +x /docker-entrypoint.d/40-replace-env-vars.sh
-
 # Expose port 80
 EXPOSE 80
 
