@@ -13,13 +13,7 @@ RUN npm ci
 # Copy the rest of the code
 COPY . .
 
-# Build arguments for Firebase config (can be passed at build time)
-ARG VITE_FIREBASE_API_KEY
-ARG VITE_FIREBASE_AUTH_DOMAIN
-ARG VITE_FIREBASE_PROJECT_ID
-ARG VITE_FIREBASE_STORAGE_BUCKET
-ARG VITE_FIREBASE_MESSAGING_SENDER_ID
-ARG VITE_FIREBASE_APP_ID
+# Build argument for API base URL (can be passed at build time)
 ARG VITE_API_BASE_URL
 
 # Build the app
@@ -39,12 +33,6 @@ RUN echo "#!/bin/sh" > /docker-entrypoint.d/40-replace-env-vars.sh && \
     echo "set -e" >> /docker-entrypoint.d/40-replace-env-vars.sh && \
     echo 'for file in /usr/share/nginx/html/assets/*.js; do' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
     echo '  echo "Processing $file..."' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_API_KEY=.*|VITE_FIREBASE_API_KEY=\"$VITE_FIREBASE_API_KEY\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_AUTH_DOMAIN=.*|VITE_FIREBASE_AUTH_DOMAIN=\"$VITE_FIREBASE_AUTH_DOMAIN\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_PROJECT_ID=.*|VITE_FIREBASE_PROJECT_ID=\"$VITE_FIREBASE_PROJECT_ID\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_STORAGE_BUCKET=.*|VITE_FIREBASE_STORAGE_BUCKET=\"$VITE_FIREBASE_STORAGE_BUCKET\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_MESSAGING_SENDER_ID=.*|VITE_FIREBASE_MESSAGING_SENDER_ID=\"$VITE_FIREBASE_MESSAGING_SENDER_ID\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
-    echo '  sed -i "s|VITE_FIREBASE_APP_ID=.*|VITE_FIREBASE_APP_ID=\"$VITE_FIREBASE_APP_ID\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
     echo '  sed -i "s|VITE_API_BASE_URL=.*|VITE_API_BASE_URL=\"$VITE_API_BASE_URL\"|g" $file' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
     echo 'done' >> /docker-entrypoint.d/40-replace-env-vars.sh && \
     chmod +x /docker-entrypoint.d/40-replace-env-vars.sh
