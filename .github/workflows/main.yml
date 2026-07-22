@@ -125,6 +125,7 @@ jobs:
           stringData:
             db-connection-string: "${{ secrets.DB_CONNECTION_STRING }}"
             openai-api-key: "${{ secrets.OPENAI_API_KEY }}"
+            firebase-credentials: ${{ toJson(secrets.FIREBASE_CREDENTIALS) }}
           EOF
 
           # Apply the secrets file

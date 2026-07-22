@@ -30,6 +30,11 @@ spec:
                 secretKeyRef:
                   name: backend-secrets
                   key: openai-api-key
+            - name: Firebase__Credentials
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: firebase-credentials
 ---
 apiVersion: v1
 kind: Service
