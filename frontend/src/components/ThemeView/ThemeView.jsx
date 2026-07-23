@@ -138,7 +138,7 @@ function ThemeView() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {/* Fixed className typo (removed space after md:) */}
-        <div className="swiper-container w-screen px-4">
+        <div className="swiper-container w-screen md:max-w-[880px] lg:max-w-[1100px] px-4">
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={true}
