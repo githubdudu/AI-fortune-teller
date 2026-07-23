@@ -1,26 +1,15 @@
-# ArcanaVerse - CS732 Project (Team 42)
+# AI Fortune Teller
 
-[![CI/CD Pipeline](https://github.com/UOA-CS732-S1-2025/group-project-42/actions/workflows/main.yml/badge.svg)](https://github.com/UOA-CS732-S1-2025/group-project-42/actions/workflows/main.yml)
+Welcome to this fortune telling and tarot card reading application. This repository contains both frontend and backend components of the application.
 
-Welcome to ArcanaVerse, a fortune telling and tarot card reading application developed as part of the CS732 project. This repository contains both frontend and backend components of the application.
+** live site: not live yet **
 
-**Visit our live site: [ArcanaVerse](https://arcanaverse.xyz/home)**
+![Homepage](./homepage.png)
 
-![ArcanaVerse Homepage](./homepage.png)
-
-Our team members are:
-- Ching-Yuan Chien _(cchi496@aucklanduni.ac.nz)_
-- Katie Zhao _(szha992@aucklanduni.ac.nz)_
-- Karson Sun _(ksun421@aucklanduni.ac.nz)_
-- Jin Woo Kuk _(jkuk801@aucklanduni.ac.nz)_
-- Dewey Dong _(hdon694@aucklanduni.ac.nz)_
-- Yvonne Zhang _(byhz801@aucklanduni.ac.nz)_
-
-![Team 42 Logo](./42.png)
 
 ## 🌟 Project Overview
 
-ArcanaVerse is an interactive fortune telling application featuring:
+This application is an interactive fortune telling application featuring:
 - Daily horoscopes and fortunes
 - Interactive tarot card readings
 - Personalized user experiences
@@ -62,7 +51,7 @@ For more detailed information, refer to the specific component READMEs:
 Our project follows a clean architecture pattern with clear separation of frontend and backend:
 
 ```
-group-project-42/
+/
 ├── frontend/ - React application built with Vite
 ├── backend/ - ASP.NET Core API with clean architecture
 └── kubernetes/ - Kubernetes deployment configurations
@@ -164,7 +153,7 @@ dotnet test
 Our project follows a well-organized folder structure that promotes maintainability and separation of concerns:
 
 ```
-group-project-42/
+/
 ├── 42.png                                # Team logo
 ├── README.md                             # Main project documentation
 ├── group-project-42.sln                  # Solution file for the entire project
