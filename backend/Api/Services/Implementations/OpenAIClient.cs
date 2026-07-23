@@ -16,6 +16,7 @@ namespace Api.Services.Implementations
         private readonly ChatClient _chatClient;
         private readonly string _apiKey;
         private readonly string _baseUrl;
+        private readonly string _model;
 
         public OpenAIClient(IConfiguration configuration)
         {
@@ -27,9 +28,17 @@ namespace Api.Services.Implementations
 
                 _baseUrl =
                     configuration.GetValue<string>("ExternalServices:OpenAI:BaseUrl")
-                    ?? "https://api.openai.com/v1";
+                    ?? "https://openrouter.ai/api/v1";
 
-                _chatClient = new ChatClient(model: "gpt-4o", apiKey: _apiKey);
+                _model = "openrouter/free";
+
+                _chatClient = new(
+                    model: _model,
+                    credential: new ApiKeyCredential(_apiKey),
+                    options: new OpenAIClientOptions()
+                    {
+                        Endpoint = new Uri(_baseUrl)
+                    });
             }
             catch (Exception ex)
             {
@@ -50,7 +59,7 @@ namespace Api.Services.Implementations
             {
                 Console.WriteLine($"Error in GenerateTextAsync: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                throw new Exception("Failed to generate text from OpenAI", ex);
+                throw new Exception("Failed to generate text from OpenAI, model: " + _model, ex);
             }
         }
 
