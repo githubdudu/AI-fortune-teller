@@ -6,7 +6,7 @@ function ThemeDescription({ theme }) {
   return (
     <>
       <div
-        className="w-2xl overflow-hidden shadow-md"
+        className="max-w-2xl overflow-hidden shadow-md"
         style={{ backgroundColor: '#FFFBEF' }}
       >
         <div className="px-3 py-2">

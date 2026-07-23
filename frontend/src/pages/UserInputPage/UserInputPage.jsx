@@ -174,7 +174,7 @@ function UserInputPage() {
       <h2 className="theme-instruction-text">
         Select a theme to let fate speak first.
       </h2>
-      <div className="w-250">
+      <div className="w-auto">
         <ThemeView />
       </div>
       <div
