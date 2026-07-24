@@ -41,9 +41,6 @@ function UserAvatarButton() {
         toggleModalOpen();
         navigate('/');
         break;
-      case 'card-gallery':
-        navigate('/gallery');
-        break;
       case 'logout':
         logout();
         break;
@@ -93,10 +90,6 @@ function UserAvatarButton() {
             <Dropdown.Item
               onSelect={handleSelect}
               option={{ value: 'daily-fortune', label: 'Daily Fortune' }}
-            />
-            <Dropdown.Item
-              onSelect={handleSelect}
-              option={{ value: 'card-gallery', label: 'Card Gallery' }}
             />
             <Dropdown.Item
               onSelect={handleSelect}

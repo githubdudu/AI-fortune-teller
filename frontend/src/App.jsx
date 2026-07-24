@@ -6,7 +6,6 @@ import FortunePage from './pages/FortunePage';
 import UserInfoInputPage from './pages/UserInfoInputPage';
 import UserProfile from './pages/UserProfile/UserProfile';
 import SignUpPage from './pages/SignUpPage';
-import GalleryPage from './pages/GalleryPage';
 import AuthRoute from './authroute/AuthRoute';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -42,15 +41,6 @@ function App() {
                 </AuthRoute>
               }
             />
-            <Route
-              path="gallery"
-              element={
-                <AuthRoute>
-                  <GalleryPage />
-                </AuthRoute>
-              }
-            />
-
             <Route path="sign-up" element={<SignUpPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>

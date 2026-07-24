@@ -3,7 +3,6 @@ export const SEO_TITLE = {
   LOGIN: 'ArcanaVerse - Login',
   SIGN_UP: 'ArcanaVerse - Sign Up',
   PROFILE: 'ArcanaVerse - Profile',
-  GALLERY: 'ArcanaVerse - Gallery',
   FORTUNE: 'ArcanaVerse - Reading your Fortune',
   DAILY_FORTUNE: 'ArcanaVerse - Daily Fortune',
   NOT_FOUND: 'ArcanaVerse - Page Not Found',
