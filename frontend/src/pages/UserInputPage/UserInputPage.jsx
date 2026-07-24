@@ -165,7 +165,7 @@ function UserInputPage() {
           </>
         )}
       </FloatingPrompt>
-      <div className="w-165">
+      <div className="w-160 max-sm:w-full">
         <UserQuestionInput />
       </div>
       <Box marginBottom={2} />
@@ -174,7 +174,7 @@ function UserInputPage() {
       <h2 className="theme-instruction-text">
         Select a theme to let fate speak first.
       </h2>
-      <div className="w-250">
+      <div className="w-auto">
         <ThemeView />
       </div>
       <div

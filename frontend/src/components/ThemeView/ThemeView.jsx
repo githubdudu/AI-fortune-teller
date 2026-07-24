@@ -136,7 +136,7 @@ function ThemeView() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {/* Fixed className typo (removed space after md:) */}
-        <div className="swiper-container w-full md:max-w-[880px] lg:max-w-[1100px] px-4">
+        <div className="swiper-container max-w-[calc(100vw_-_30px)] xl:max-w-[1100px] px-4">
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={true}
@@ -147,9 +147,13 @@ function ThemeView() {
             initialSlide={0}
             className="py-4"
             breakpoints={{
+              660: {
+                slidesPerView: 3,
+                spaceBetween: 3,
+              },
               768: {
                 slidesPerView: 4,
-                spaceBetween: 5,
+                spaceBetween: 4,
               },
               1024: {
                 slidesPerView: 5,
