@@ -112,7 +112,10 @@ Content
                             : $"You are a tarot oracle with a supernatural reputation — your clients pay millions because your readings are always on point, intuitive, and uncannily accurate. {userDetail}. For the theme of '{chosenTheme}' and using these cards: {cardNames}, create a deeply insightful, mystical, and encouraging tarot reading. {promptFormat}";
 
                     Console.WriteLine($"Sending prompt to OpenAI: {prompt}");
-                    var fortuneResult = await _openAIClient.GenerateTextAsync(prompt);
+                    string accountKey = string.IsNullOrEmpty(request.UserEmail)
+                        ? "anonymous"
+                        : request.UserEmail;
+                    var fortuneResult = await _openAIClient.GenerateTextAsync(prompt, accountKey);
                     Console.WriteLine($"Fortune result received from OpenAI");
 
                     return new FortuneDto
@@ -147,11 +150,18 @@ Content
         {
             // Validate and prepare the data outside of the yielding section
             string prompt = await PreparePromptAsync(request);
+            string accountKey = string.IsNullOrEmpty(request.UserEmail)
+                ? "anonymous"
+                : request.UserEmail;
 
             // Stream the response chunks - this part contains the yield statements
             // but no surrounding try-catch blocks
             await foreach (
-                var chunk in _openAIClient.GenerateTextStreamAsync(prompt, cancellationToken)
+                var chunk in _openAIClient.GenerateTextStreamAsync(
+                    prompt,
+                    accountKey,
+                    cancellationToken
+                )
             )
             {
                 if (cancellationToken.IsCancellationRequested)

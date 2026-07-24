@@ -3,7 +3,9 @@ using System.ClientModel;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.RateLimiting;
 using System.Threading.Tasks;
+using Api.Exceptions;
 using Api.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
@@ -17,6 +19,22 @@ namespace Api.Services.Implementations
         private readonly string _apiKey;
         private readonly string _baseUrl;
         private readonly string _model;
+
+        private const int RateLimitPermits = 20;
+        private static readonly TimeSpan RateLimitWindow = TimeSpan.FromHours(1);
+
+        private readonly PartitionedRateLimiter<string> _rateLimiter = PartitionedRateLimiter.Create<string, string>(
+            accountKey =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    accountKey,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = RateLimitPermits,
+                        Window = RateLimitWindow,
+                        QueueLimit = 0,
+                    }
+                )
+        );
 
         public OpenAIClient(IConfiguration configuration)
         {
@@ -48,8 +66,16 @@ namespace Api.Services.Implementations
             }
         }
 
-        public async Task<string> GenerateTextAsync(string prompt)
+        public async Task<string> GenerateTextAsync(string prompt, string accountKey)
         {
+            using RateLimitLease lease = await _rateLimiter.AcquireAsync(accountKey, 1);
+            if (!lease.IsAcquired)
+            {
+                throw new RateLimitExceededException(
+                    $"GenerateTextAsync rate limit ({RateLimitPermits} per {RateLimitWindow.TotalHours}h) exceeded for account '{accountKey}'"
+                );
+            }
+
             try
             {
                 ChatCompletion completion = await _chatClient.CompleteChatAsync(prompt);
@@ -65,6 +91,7 @@ namespace Api.Services.Implementations
 
         public async IAsyncEnumerable<string> GenerateTextStreamAsync(
             string prompt,
+            string accountKey,
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
@@ -72,6 +99,18 @@ namespace Api.Services.Implementations
             if (cancellationToken.IsCancellationRequested)
             {
                 yield break;
+            }
+
+            using RateLimitLease lease = await _rateLimiter.AcquireAsync(
+                accountKey,
+                1,
+                cancellationToken
+            );
+            if (!lease.IsAcquired)
+            {
+                throw new RateLimitExceededException(
+                    $"GenerateTextStreamAsync rate limit ({RateLimitPermits} per {RateLimitWindow.TotalHours}h) exceeded for account '{accountKey}'"
+                );
             }
 
             AsyncCollectionResult<StreamingChatCompletionUpdate>? completionUpdates = null;
