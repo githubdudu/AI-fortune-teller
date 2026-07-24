@@ -109,7 +109,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure SQL Server with Entity Framework Core
-if (builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment("Demo"))
 {
     // Local debugging → use the in-memory store
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
