@@ -139,8 +139,8 @@ CardsDisplay.propTypes = {
  */
 const SelectionDisplay = ({
   cards,
-  error,
-  errorMessage,
+  taroCardsError,
+  streamError,
   selectedCardsID,
   handleCardSelect,
   isCardDisabled,
@@ -156,14 +156,14 @@ const SelectionDisplay = ({
     <div className="selection-container">
       <h1 className="selection-title">Select Three Cards for your Reading</h1>
 
-      {error && (
+      {taroCardsError && (
         <ErrorMessage
           message="Could not fetch cards from server. Using demo cards instead."
           type="warning"
         />
       )}
 
-      {errorMessage && <ErrorMessage message={errorMessage} type="error" />}
+      {streamError && <ErrorMessage message={streamError} type="error" />}
 
       <CardsDisplay
         cards={cards}
@@ -202,8 +202,8 @@ SelectionDisplay.propTypes = {
       imageSource: PropTypes.string,
     }),
   ).isRequired,
-  error: PropTypes.object,
-  errorMessage: PropTypes.string,
+  taroCardsError: PropTypes.object,
+  streamError: PropTypes.string,
   selectedCardsID: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ).isRequired,
@@ -219,7 +219,7 @@ const ResultsDisplay = ({
   readingResult,
   userChosenCards,
   onNewReading,
-  isLoading,
+  isStreamLoading,
 }) => {
   return (
     <div className="results-container">
@@ -233,13 +233,13 @@ const ResultsDisplay = ({
 
       <SelectedCardsDisplay cards={userChosenCards} />
 
-      {isLoading && (
+      {isStreamLoading && (
         <div className="loading-wrapper">
           <LoadingAnimation />
         </div>
       )}
 
-      {!isLoading && (
+      {!isStreamLoading && (
         <ReadingInterpretationDisplay readingText={readingResult} />
       )}
 
@@ -259,7 +259,7 @@ ResultsDisplay.propTypes = {
     }),
   ),
   onNewReading: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool,
+  isStreamLoading: PropTypes.bool,
 };
 
 /**
@@ -288,7 +288,12 @@ const FortunePage = () => {
   } = useFortuneStream();
 
   // Use custom hooks for cards and selection
-  const { cards, isLoading, error, fetchCards } = useFetchTarotCards(5);
+  const {
+    cards,
+    isLoading: isCardsLoading,
+    error: taroCardsError,
+    fetchCards,
+  } = useFetchTarotCards(5);
   const { selectedCardsID, handleCardSelect, isCardDisabled, resetSelection } =
     useCardSelection(3);
 
@@ -406,7 +411,7 @@ const FortunePage = () => {
   ]);
 
   // Show loading animation when fetching cards or submitting reading request
-  if (isLoading || (isSubmitting && !showResults)) {
+  if (isCardsLoading || (isSubmitting && !showResults)) {
     return (
       <div className="selection-container">
         <LoadingAnimation />
@@ -421,7 +426,7 @@ const FortunePage = () => {
         readingResult={streamingText || ''}
         userChosenCards={userChosenCards}
         onNewReading={handleNewReading}
-        isLoading={isStreamLoading}
+        isStreamLoading={isStreamLoading}
       />
     );
   }
@@ -430,8 +435,8 @@ const FortunePage = () => {
   return (
     <SelectionDisplay
       cards={cards}
-      error={error}
-      errorMessage={streamError}
+      taroCardsError={taroCardsError}
+      streamError={streamError}
       selectedCardsID={selectedCardsID}
       handleCardSelect={handleCardSelect}
       isCardDisabled={isCardDisabled}
