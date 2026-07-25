@@ -32,7 +32,6 @@ function FloatingPrompt({ visible, shouldReduceMotion = true, children }) {
           </motion.div>
         </div>
       )}
-      ;
     </AnimatePresence>
   );
 }
