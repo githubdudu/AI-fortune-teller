@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
 import { useLocalStorage, useSessionStorage } from 'react-use';
 import { useEffect, useCallback } from 'react';
-import { useFortuneStream } from '$/hooks/useFortuneStream';
 import { setLogoutHandler } from '$/utils/apiClient';
 
 import { logout as firebaseLogout } from '$/utils/firebase.js';
@@ -42,24 +41,6 @@ export function AppContextProvider({ children }) {
     false,
   );
 
-  // Default fallback text when stream fails
-  const fallbackText =
-    'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
-
-  // Use our custom hook for streaming functionality
-  const {
-    streamingText,
-    isStreaming,
-    streamLoading,
-    streamError,
-    startFortuneStream,
-    cleanupStream,
-    clearStreamingText,
-  } = useFortuneStream({
-    onSaveResult: setReadingResult,
-    fallbackText,
-  });
-
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
@@ -67,7 +48,6 @@ export function AppContextProvider({ children }) {
 
   const clearReadingResult = () => {
     setReadingResult(null);
-    clearStreamingText();
   };
 
   const toggleModalOpen = () => {
@@ -149,13 +129,6 @@ export function AppContextProvider({ children }) {
         setProfileFetched,
         loginLoading,
         setLoginLoading,
-        // Streaming API from custom hook
-        streamingText,
-        isStreaming,
-        streamLoading,
-        streamError,
-        startFortuneStream,
-        cleanupStream,
       }}
     >
       {children}

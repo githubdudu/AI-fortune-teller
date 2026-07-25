@@ -9,6 +9,7 @@ import ErrorMessage from '../../components/ErrorMessage';
 import { AppContext } from '../../context/AppContextProvider';
 import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';
+import { useFortuneStream } from '../../hooks/useFortuneStream';
 import { markdownToHtml, createMarkup } from '../../utils/markdownUtils';
 
 // Constants
@@ -285,12 +286,17 @@ const FortunePage = () => {
     clearQuestionAndTheme,
     readingResult: contextReadingResult,
     userChosenCards,
+  } = useContext(AppContext);
+
+  // Streaming state is local to this page so chunk updates don't re-render the app
+  const {
     streamingText,
-    isLoading: isStreamLoading,
+    streamLoading: isStreamLoading,
     streamError,
     startFortuneStream,
     cleanupStream,
-  } = useContext(AppContext);
+    clearStreamingText,
+  } = useFortuneStream({ onSaveResult: saveReadingResult });
 
   // Use custom hooks for cards and selection
   const { cards, isLoading, error, fetchCards } = useFetchTarotCards(5);
@@ -437,6 +443,7 @@ const FortunePage = () => {
     // Reset context
     clearQuestionAndTheme();
     clearReadingResult();
+    clearStreamingText();
     saveUserChosenCards(null);
 
     // Reset component state
@@ -458,6 +465,7 @@ const FortunePage = () => {
     fetchCards,
     navigate,
     cleanupStream,
+    clearStreamingText,
   ]);
 
   // Clean up any streams on unmount
