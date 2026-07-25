@@ -24,16 +24,6 @@ export function AppContextProvider({ children }) {
 
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
 
-  const [profileFetched, setProfileFetched] = useSessionStorage(
-    'profileFetched',
-    false,
-  );
-
-  const [loginLoading, setLoginLoading] = useSessionStorage(
-    'loginLoading',
-    false,
-  );
-
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
@@ -56,9 +46,6 @@ export function AppContextProvider({ children }) {
     setUserChosenCards(null);
     setUserPrompt('');
     setUserChosenTheme(null);
-
-    setProfileFetched(false);
-    setLoginLoading(false);
   }, [
     setIsLoggedIn,
     setUserProfile,
@@ -66,8 +53,6 @@ export function AppContextProvider({ children }) {
     setUserChosenCards,
     setUserPrompt,
     setUserChosenTheme,
-    setProfileFetched,
-    setLoginLoading,
   ]);
 
   // Register logout handler with API client
@@ -98,10 +83,6 @@ export function AppContextProvider({ children }) {
         login,
         logout,
         isLoggedIn,
-        profileFetched,
-        setProfileFetched,
-        loginLoading,
-        setLoginLoading,
       }}
     >
       {children}

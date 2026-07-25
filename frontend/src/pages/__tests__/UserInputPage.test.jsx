@@ -82,12 +82,14 @@ function setup({
   userProfile = mockUserProfile,
   setUserProfile = vi.fn(),
   profileFetched = false,
-  setProfileFetched = vi.fn(),
   logout = vi.fn(),
-  setLoginLoading = vi.fn(),
 } = {}) {
   // Modal state lives in the zustand store, not in AppContext
   useModalStore.setState({ isModalOpen });
+
+  // profileFetched is page-local state read from sessionStorage
+  // (react-use useSessionStorage stores JSON-serialized values)
+  sessionStorage.setItem('profileFetched', JSON.stringify(profileFetched));
 
   return render(
     <AppContext.Provider
@@ -95,10 +97,7 @@ function setup({
         isLoggedIn,
         userProfile,
         setUserProfile,
-        profileFetched,
-        setProfileFetched,
         logout,
-        setLoginLoading,
       }}
     >
       <BrowserRouter>

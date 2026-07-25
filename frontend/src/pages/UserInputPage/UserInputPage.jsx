@@ -2,6 +2,7 @@ import { Box } from 'gestalt';
 import UserQuestionInput from '../../components/UserQuestionInput';
 import ThemeView from '../../components/ThemeView';
 import { useEffect, useState, useContext, useRef } from 'react';
+import { useSessionStorage } from 'react-use';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import { AppContext } from '$/context/AppContextProvider';
 import { useModalStore } from '$/stores/modalStore';
@@ -18,19 +19,22 @@ import './UserInputPage.css';
  * @returns
  */
 function UserInputPage() {
-  const {
-    isLoggedIn,
-    setUserProfile,
-    logout,
-    profileFetched,
-    setProfileFetched,
-    loginLoading,
-    setLoginLoading,
-  } = useContext(AppContext);
+  const { isLoggedIn, setUserProfile, logout } = useContext(AppContext);
 
   const isModalOpen = useModalStore((state) => state.isModalOpen);
   const setIsModalOpen = useModalStore((state) => state.setIsModalOpen);
   const toggleModalOpen = useModalStore((state) => state.toggleModalOpen);
+
+  // Page-local login/profile-fetch progress, persisted across refreshes.
+  // Kept out of AppContext so updates don't re-render all context consumers.
+  const [profileFetched, setProfileFetched] = useSessionStorage(
+    'profileFetched',
+    false,
+  );
+  const [loginLoading, setLoginLoading] = useSessionStorage(
+    'loginLoading',
+    false,
+  );
 
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
@@ -131,8 +135,11 @@ function UserInputPage() {
   useEffect(() => {
     if (!isLoggedIn) {
       setIsModalOpen(true);
+      // Reset so the profile is re-fetched on the next login
+      setProfileFetched(false);
+      setLoginLoading(false);
     }
-  }, [isLoggedIn, setIsModalOpen]);
+  }, [isLoggedIn, setIsModalOpen, setProfileFetched, setLoginLoading]);
 
   const missingProfileInfo = (userProfile) => {
     // Check if any of the required fields are nullish
