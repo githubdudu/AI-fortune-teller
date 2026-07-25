@@ -40,7 +40,7 @@ function UserAvatarButton() {
         break;
       case 'daily-fortune':
         toggleModalOpen();
-        navigate('/');
+        navigate('/home');
         break;
       case 'logout':
         logout();
