@@ -2,7 +2,7 @@ import Card from '../../components/Card/Card';
 import './FortunePage.css';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
 import ErrorMessage from '../../components/ErrorMessage';
@@ -11,10 +11,6 @@ import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';
 import { useFortuneStream } from '../../hooks/useFortuneStream';
 import { markdownToHtml, createMarkup } from '../../utils/markdownUtils';
-
-// Constants
-const DEFAULT_READING_TEXT =
-  'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
 
 /**
  * Displays reading interpretation with markdown formatting
@@ -273,7 +269,6 @@ const FortunePage = () => {
   const navigate = useNavigate();
   const [showResults, setShowResults] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
   const {
@@ -290,7 +285,6 @@ const FortunePage = () => {
     streamLoading: isStreamLoading,
     streamError,
     startFortuneStream,
-    cleanupStream,
     clearStreamingText,
   } = useFortuneStream();
 
@@ -321,7 +315,6 @@ const FortunePage = () => {
 
     // Set submitting state
     setIsSubmitting(true);
-    setErrorMessage(null);
 
     console.log('Read button clicked - processing reading request');
 
@@ -349,7 +342,6 @@ const FortunePage = () => {
         },
       ];
 
-      // TODO: use DEFAULT_READING_TEXT
       saveUserChosenCards(defaultCards);
       setShowResults(true);
       setIsSubmitting(false);
@@ -393,9 +385,6 @@ const FortunePage = () => {
    * Reset all state for a new reading
    */
   const handleNewReading = useCallback(() => {
-    // Cleanup any active streams
-    cleanupStream();
-
     // Reset context
     clearQuestionAndTheme();
     clearStreamingText();
@@ -404,7 +393,6 @@ const FortunePage = () => {
     // Reset component state
     resetSelection();
     setShowResults(false);
-    setErrorMessage(null);
 
     // Get new cards
     fetchCards();
@@ -417,16 +405,8 @@ const FortunePage = () => {
     resetSelection,
     fetchCards,
     navigate,
-    cleanupStream,
     clearStreamingText,
   ]);
-
-  // Clean up any streams on unmount TODO: 应该在 hook里面
-  useEffect(() => {
-    return () => {
-      cleanupStream();
-    };
-  }, [cleanupStream]);
 
   // Show loading animation when fetching cards or submitting reading request
   if (isLoading || (isSubmitting && !showResults)) {
@@ -454,7 +434,7 @@ const FortunePage = () => {
     <SelectionDisplay
       cards={cards}
       error={error}
-      errorMessage={errorMessage || streamError}
+      errorMessage={streamError}
       selectedCardsID={selectedCardsID}
       handleCardSelect={handleCardSelect}
       isCardDisabled={isCardDisabled}

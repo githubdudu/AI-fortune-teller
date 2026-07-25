@@ -1,22 +1,20 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { API_CONFIG } from '../constants/config';
 
+// Default fallback if not provided
+const DEFAULT_READING_TEXT =
+  'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
+
 /**
  * Custom hook for handling fortune streaming functionality
  * @param {Object} options - Options for the hook
  * @param {string} options.fallbackText - Text to use if streaming fails
  * @returns {Object} - Streaming state and controls
  */
-export function useFortuneStream({ fallbackText } = {}) {
-  // Default fallback if not provided
-  const defaultFallback =
-    'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
-
-  const actualFallback = fallbackText || defaultFallback;
-
+export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
   // State for streaming
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamingText, setStreamingText] = useState('');
+  const [streamingText, setStreamingText] = useState(fallbackText);
   const [streamError, setStreamError] = useState(null);
   const [streamLoading, setStreamLoading] = useState(false);
 
@@ -45,19 +43,45 @@ export function useFortuneStream({ fallbackText } = {}) {
   }, []);
 
   /**
-   * Generate appropriate error message based on error response
+   * Map a failed stream response to a user-facing message.
+   *
+   * The backend (FortunesController.StreamFortuneAsync) reports most errors
+   * with HTTP 200: pre-stream validation failures are written as plain text
+   * without SSE framing, and mid-stream exceptions arrive as
+   * "data: Error: ..." events. Non-2xx statuses only come from model binding
+   * (400), middleware (429/500), or the proxy (502/503/504).
    */
   const generateErrorMessage = useCallback((error) => {
-    let errorMsg = 'Unable to fetch your reading. Please try again later.';
-    if (error.response && error.response.data) {
-      if (error.response.data.includes('Failed to generate text from OpenAI')) {
-        errorMsg =
-          'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
-      } else {
-        errorMsg = `Server error: ${error.response.data}`;
-      }
+    const status = error.status ?? 0;
+    const body = error.body || error.message || '';
+
+    if (body.includes('must be logged in')) {
+      return 'Please log in to get your fortune reading.';
     }
-    return errorMsg;
+    if (status === 429 || body.includes('rate limit')) {
+      return 'You have reached the reading limit. Please try again later.';
+    }
+    if (body.includes('OpenAI')) {
+      return 'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
+    }
+    if (status === 400 || body.includes('Request must include')) {
+      return 'Invalid reading request. Please select your cards and try again.';
+    }
+    if (status === 502 || status === 503 || status === 504) {
+      return 'The fortune service is temporarily unavailable. Please try again later.';
+    }
+    if (status >= 500) {
+      try {
+        const message = JSON.parse(body).Message;
+        if (message) {
+          return `Server error: ${message}`;
+        }
+      } catch {
+        // Non-JSON 5xx body (e.g. proxy HTML) — use the generic message below
+      }
+      return 'Server error. Please try again later.';
+    }
+    return 'Unable to fetch your reading. Please try again later.';
   }, []);
 
   // Cleanup on component unmount
@@ -87,10 +111,10 @@ export function useFortuneStream({ fallbackText } = {}) {
       timeoutRef.current = setTimeout(() => {
         console.log('Stream timeout reached');
         cleanupStream();
-        setStreamingText(actualFallback);
+        setStreamingText(fallbackText);
 
         if (onComplete) {
-          onComplete(actualFallback);
+          onComplete(fallbackText);
         }
       }, 30000);
 
@@ -108,9 +132,26 @@ export function useFortuneStream({ fallbackText } = {}) {
         signal: abortController.signal,
         keepalive: true,
       })
-        .then((response) => {
+        .then(async (response) => {
           if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            const body = await response.text().catch(() => '');
+            const httpError = new Error(
+              `HTTP error! Status: ${response.status}`,
+            );
+            httpError.status = response.status;
+            httpError.body = body;
+            throw httpError;
+          }
+
+          // Pre-stream validation failures (e.g. not logged in) come back as
+          // HTTP 200 plain text without the text/event-stream content type
+          const contentType = response.headers.get('content-type') || '';
+          if (!contentType.includes('text/event-stream')) {
+            const body = await response.text().catch(() => '');
+            const validationError = new Error(body || 'Unexpected response');
+            validationError.status = response.status;
+            validationError.body = body;
+            throw validationError;
           }
 
           console.log('Stream connected successfully');
@@ -133,7 +174,7 @@ export function useFortuneStream({ fallbackText } = {}) {
                     cleanupStream();
 
                     // Use what we have, or fallback text
-                    const finalText = streamingText || actualFallback;
+                    const finalText = streamingText || fallbackText;
 
                     if (onComplete) {
                       onComplete(finalText);
@@ -260,6 +301,16 @@ export function useFortuneStream({ fallbackText } = {}) {
                       return;
                     }
                   } catch {
+                    // Mid-stream backend exceptions arrive as "data: Error: ..."
+                    // events — surface them instead of rendering as the reading
+                    if (!receivedFirstData && rawContent.startsWith('Error:')) {
+                      setStreamError(
+                        generateErrorMessage({ status: 200, body: rawContent }),
+                      );
+                      completeStream();
+                      return;
+                    }
+
                     // Not JSON, treat as plain text
                     if (!receivedFirstData) {
                       setStreamLoading(false);
@@ -291,25 +342,28 @@ export function useFortuneStream({ fallbackText } = {}) {
           return processStream();
         })
         .catch((error) => {
-          console.error('Error with streaming request:', error);
-          setStreamError('Failed to connect to streaming service');
+          if (error.name === 'AbortError') {
+            console.log('Stream request aborted');
+            return;
+          }
 
+          console.error('Error with streaming request:', error);
           setStreamError(generateErrorMessage(error));
 
           // Use fallback text
-          setStreamingText(actualFallback);
+          setStreamingText(fallbackText);
 
           cleanupStream();
 
           if (onComplete) {
-            onComplete(actualFallback);
+            onComplete(fallbackText);
           }
         });
 
       function completeStream() {
         console.log('Completing stream with:', streamingText);
 
-        const finalText = streamingText || actualFallback;
+        const finalText = streamingText || fallbackText;
         setIsStreaming(false);
         setStreamLoading(false);
 
@@ -324,7 +378,7 @@ export function useFortuneStream({ fallbackText } = {}) {
         }
       }
     },
-    [cleanupStream, actualFallback, streamingText],
+    [cleanupStream, fallbackText, streamingText, generateErrorMessage],
   );
 
   // Clear streaming text
