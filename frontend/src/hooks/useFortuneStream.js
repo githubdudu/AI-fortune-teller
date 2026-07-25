@@ -13,7 +13,6 @@ const DEFAULT_READING_TEXT =
  */
 export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
   // State for streaming
-  const [isStreaming, setIsStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState(fallbackText);
   const [streamError, setStreamError] = useState(null);
   const [streamLoading, setStreamLoading] = useState(false);
@@ -38,7 +37,6 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
       }
     }
 
-    setIsStreaming(false);
     setStreamLoading(false);
   }, []);
 
@@ -93,12 +91,11 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
 
   // Function to start a fortune stream
   const startFortuneStream = useCallback(
-    (requestBody, onComplete) => {
+    (requestBody) => {
       // Clean up any existing streams
       cleanupStream();
 
       console.log('Starting fortune stream');
-      setIsStreaming(true);
       setStreamLoading(true);
       setStreamingText('');
       setStreamError(null);
@@ -112,10 +109,6 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
         console.log('Stream timeout reached');
         cleanupStream();
         setStreamingText(fallbackText);
-
-        if (onComplete) {
-          onComplete(fallbackText);
-        }
       }, 30000);
 
       // Start the actual stream
@@ -172,13 +165,6 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
                   timeoutRef.current = setTimeout(() => {
                     console.log('Stream timeout reached during processing');
                     cleanupStream();
-
-                    // Use what we have, or fallback text
-                    const finalText = streamingText || fallbackText;
-
-                    if (onComplete) {
-                      onComplete(finalText);
-                    }
                   }, 30000);
                 }
 
@@ -354,48 +340,30 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
           setStreamingText(fallbackText);
 
           cleanupStream();
-
-          if (onComplete) {
-            onComplete(fallbackText);
-          }
         });
 
       function completeStream() {
-        console.log('Completing stream with:', streamingText);
+        console.log('Completing stream.');
+        setStreamingText((prev) => prev || fallbackText);
 
-        const finalText = streamingText || fallbackText;
-        setIsStreaming(false);
         setStreamLoading(false);
 
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
         }
-
-        // Callback if provided
-        if (onComplete) {
-          onComplete(finalText);
-        }
       }
     },
-    [cleanupStream, fallbackText, streamingText, generateErrorMessage],
+    [cleanupStream, fallbackText, generateErrorMessage],
   );
-
-  // Clear streaming text
-  const clearStreamingText = useCallback(() => {
-    setStreamingText('');
-  }, []);
 
   return {
     // State
     streamingText,
-    isStreaming,
     streamLoading,
     streamError,
     // Actions
     startFortuneStream,
-    cleanupStream,
-    clearStreamingText,
   };
 }
 

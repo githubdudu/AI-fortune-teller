@@ -285,7 +285,6 @@ const FortunePage = () => {
     streamLoading: isStreamLoading,
     streamError,
     startFortuneStream,
-    clearStreamingText,
   } = useFortuneStream();
 
   // Use custom hooks for cards and selection
@@ -387,7 +386,6 @@ const FortunePage = () => {
   const handleNewReading = useCallback(() => {
     // Reset context
     clearQuestionAndTheme();
-    clearStreamingText();
     saveUserChosenCards(null);
 
     // Reset component state
@@ -405,7 +403,6 @@ const FortunePage = () => {
     resetSelection,
     fetchCards,
     navigate,
-    clearStreamingText,
   ]);
 
   // Show loading animation when fetching cards or submitting reading request
