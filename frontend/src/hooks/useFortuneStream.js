@@ -44,6 +44,22 @@ export function useFortuneStream({ fallbackText } = {}) {
     setStreamLoading(false);
   }, []);
 
+  /**
+   * Generate appropriate error message based on error response
+   */
+  const generateErrorMessage = useCallback((error) => {
+    let errorMsg = 'Unable to fetch your reading. Please try again later.';
+    if (error.response && error.response.data) {
+      if (error.response.data.includes('Failed to generate text from OpenAI')) {
+        errorMsg =
+          'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
+      } else {
+        errorMsg = `Server error: ${error.response.data}`;
+      }
+    }
+    return errorMsg;
+  }, []);
+
   // Cleanup on component unmount
   useEffect(() => {
     return () => {
@@ -277,6 +293,8 @@ export function useFortuneStream({ fallbackText } = {}) {
         .catch((error) => {
           console.error('Error with streaming request:', error);
           setStreamError('Failed to connect to streaming service');
+
+          setStreamError(generateErrorMessage(error));
 
           // Use fallback text
           setStreamingText(actualFallback);

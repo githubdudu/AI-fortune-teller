@@ -272,7 +272,6 @@ ResultsDisplay.propTypes = {
 const FortunePage = () => {
   const navigate = useNavigate();
   const [showResults, setShowResults] = useState(false);
-  const [readingResult, setReadingResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -314,22 +313,6 @@ const FortunePage = () => {
   );
 
   /**
-   * Generate appropriate error message based on error response
-   */
-  const generateErrorMessage = useCallback((error) => {
-    let errorMsg = 'Unable to fetch your reading. Please try again later.';
-    if (error.response && error.response.data) {
-      if (error.response.data.includes('Failed to generate text from OpenAI')) {
-        errorMsg =
-          'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
-      } else {
-        errorMsg = `Server error: ${error.response.data}`;
-      }
-    }
-    return errorMsg;
-  }, []);
-
-  /**
    * Handle reading button click
    */
   const handleReadButton = useCallback(async () => {
@@ -366,56 +349,36 @@ const FortunePage = () => {
         },
       ];
 
-      setReadingResult(DEFAULT_READING_TEXT);
+      // TODO: use DEFAULT_READING_TEXT
       saveUserChosenCards(defaultCards);
       setShowResults(true);
       setIsSubmitting(false);
       return;
     }
 
-    try {
-      // Save the selected cards to context first (before streaming starts)
-      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
-      saveUserChosenCards(selectedCardDetails);
+    // Save the selected cards to context first (before streaming starts)
+    const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
+    saveUserChosenCards(selectedCardDetails);
 
-      // Switch to results view immediately with loading state
-      setShowResults(true);
+    // Switch to results view immediately with loading state
+    setShowResults(true);
 
-      // Store current selection data for async callback
-      const currentCardIds = [...selectedCardsID];
-      const currentPrompt = userPrompt || '';
-      const currentTheme = userChosenTheme?.id || null;
+    // Store current selection data for async callback
+    const currentCardIds = [...selectedCardsID];
+    const currentPrompt = userPrompt || '';
+    const currentTheme = userChosenTheme?.id || null;
 
-      // Add a small delay to ensure state updates complete before starting stream
-      // This helps prevent the "Component unmounted" issue during navigation
-      setTimeout(() => {
-        // Only start stream if component is still mounted
-        console.log('Component is mounted, starting stream');
-        startFortuneStream({
-          cardIds: currentCardIds,
-          question: currentPrompt,
-          themeId: currentTheme,
-        });
-      }, 150);
-    } catch (error) {
-      // Handle error directly instead of using a hook
-      console.error('Error fetching reading result:', error);
-      setIsSubmitting(false);
-
-      // Generate appropriate error message
-      const errorMsg = generateErrorMessage(error);
-      setErrorMessage(errorMsg);
-
-      // Use fallback with direct function calls instead of a hook
-      setReadingResult(DEFAULT_READING_TEXT);
-
-      // Save fallback data to context
-      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
-      saveUserChosenCards(selectedCardDetails);
-
-      // Switch to results view even with the error
-      setShowResults(true);
-    }
+    // Add a small delay to ensure state updates complete before starting stream
+    // This helps prevent the "Component unmounted" issue during navigation
+    setTimeout(() => {
+      // Only start stream if component is still mounted
+      console.log('Component is mounted, starting stream');
+      startFortuneStream({
+        cardIds: currentCardIds,
+        question: currentPrompt,
+        themeId: currentTheme,
+      });
+    }, 150);
   }, [
     isSubmitting,
     selectedCardsID,
@@ -423,7 +386,6 @@ const FortunePage = () => {
     userChosenTheme,
     getSelectedCardDetails,
     saveUserChosenCards,
-    generateErrorMessage,
     startFortuneStream,
   ]);
 
@@ -441,7 +403,6 @@ const FortunePage = () => {
 
     // Reset component state
     resetSelection();
-    setReadingResult(null);
     setShowResults(false);
     setErrorMessage(null);
 
@@ -460,7 +421,7 @@ const FortunePage = () => {
     clearStreamingText,
   ]);
 
-  // Clean up any streams on unmount
+  // Clean up any streams on unmount TODO: 应该在 hook里面
   useEffect(() => {
     return () => {
       cleanupStream();
@@ -480,7 +441,7 @@ const FortunePage = () => {
   if (showResults) {
     return (
       <ResultsDisplay
-        readingResult={streamingText || readingResult || ''}
+        readingResult={streamingText || ''}
         userChosenCards={userChosenCards}
         onNewReading={handleNewReading}
         isLoading={isStreamLoading}
