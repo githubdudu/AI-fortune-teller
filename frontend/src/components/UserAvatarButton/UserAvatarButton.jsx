@@ -8,6 +8,7 @@ import {
   CompositeZIndex,
 } from 'gestalt';
 import { AppContext } from '$/context/AppContextProvider';
+import { useModalStore } from '$/stores/modalStore';
 
 function UserAvatarButton() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ function UserAvatarButton() {
   const anchorRef = useRef(null);
   const PAGE_HEADER_ZINDEX = new FixedZIndex(10);
 
-  const { userProfile, isLoggedIn, logout, toggleModalOpen } =
-    useContext(AppContext);
+  const { userProfile, isLoggedIn, logout } = useContext(AppContext);
+  const toggleModalOpen = useModalStore((state) => state.toggleModalOpen);
 
   useEffect(() => {
     setOpen(false);

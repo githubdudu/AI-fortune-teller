@@ -22,8 +22,6 @@ export function AppContextProvider({ children }) {
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
-  const [isModalOpen, setIsModalOpen] = useSessionStorage('isModalOpen', true);
-
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
 
   const [profileFetched, setProfileFetched] = useSessionStorage(
@@ -39,10 +37,6 @@ export function AppContextProvider({ children }) {
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
-  };
-
-  const toggleModalOpen = () => {
-    setIsModalOpen((prev) => !prev);
   };
 
   const login = (profile) => {
@@ -65,9 +59,6 @@ export function AppContextProvider({ children }) {
 
     setProfileFetched(false);
     setLoginLoading(false);
-
-    // Clear the modal state
-    setIsModalOpen(true);
   }, [
     setIsLoggedIn,
     setUserProfile,
@@ -77,7 +68,6 @@ export function AppContextProvider({ children }) {
     setUserChosenTheme,
     setProfileFetched,
     setLoginLoading,
-    setIsModalOpen,
   ]);
 
   // Register logout handler with API client
@@ -105,9 +95,6 @@ export function AppContextProvider({ children }) {
         clearQuestionAndTheme,
         userProfile,
         setUserProfile,
-        isModalOpen,
-        setIsModalOpen,
-        toggleModalOpen,
         login,
         logout,
         isLoggedIn,

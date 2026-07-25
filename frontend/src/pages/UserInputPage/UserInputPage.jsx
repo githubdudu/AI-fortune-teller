@@ -4,6 +4,7 @@ import ThemeView from '../../components/ThemeView';
 import { useEffect, useState, useContext, useRef } from 'react';
 import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
 import { AppContext } from '$/context/AppContextProvider';
+import { useModalStore } from '$/stores/modalStore';
 import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
 import LoginForm from '$/components/LoginForm';
 import { useNavigate } from 'react-router-dom';
@@ -18,9 +19,6 @@ import './UserInputPage.css';
  */
 function UserInputPage() {
   const {
-    isModalOpen,
-    setIsModalOpen,
-    toggleModalOpen,
     isLoggedIn,
     setUserProfile,
     logout,
@@ -29,6 +27,10 @@ function UserInputPage() {
     loginLoading,
     setLoginLoading,
   } = useContext(AppContext);
+
+  const isModalOpen = useModalStore((state) => state.isModalOpen);
+  const setIsModalOpen = useModalStore((state) => state.setIsModalOpen);
+  const toggleModalOpen = useModalStore((state) => state.toggleModalOpen);
 
   const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
@@ -125,6 +127,12 @@ function UserInputPage() {
   useEffect(() => {
     setNoMotionFlag(!isLoggedIn);
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+    }
+  }, [isLoggedIn, setIsModalOpen]);
 
   const missingProfileInfo = (userProfile) => {
     // Check if any of the required fields are nullish

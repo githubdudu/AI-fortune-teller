@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { AppContext } from '$/context/AppContextProvider';
+import { useModalStore } from '$/stores/modalStore';
 import UserInputPage from '../UserInputPage/UserInputPage';
 
 // Mock axios requests
@@ -79,27 +80,25 @@ function setup({
   isLoggedIn = true,
   isModalOpen = false,
   userProfile = mockUserProfile,
-  toggleModalOpen = vi.fn(),
   setUserProfile = vi.fn(),
   profileFetched = false,
   setProfileFetched = vi.fn(),
   logout = vi.fn(),
   setLoginLoading = vi.fn(),
-  setIsModalOpen = vi.fn(),
 } = {}) {
+  // Modal state lives in the zustand store, not in AppContext
+  useModalStore.setState({ isModalOpen });
+
   return render(
     <AppContext.Provider
       value={{
         isLoggedIn,
-        isModalOpen,
         userProfile,
-        toggleModalOpen,
         setUserProfile,
         profileFetched,
         setProfileFetched,
         logout,
         setLoginLoading,
-        setIsModalOpen,
       }}
     >
       <BrowserRouter>
@@ -114,6 +113,8 @@ describe('UserInputPage component', () => {
     vi.clearAllMocks();
     axiosMock.reset();
     navigateMock.mockClear();
+    sessionStorage.clear();
+    useModalStore.setState({ isModalOpen: true });
 
     axiosMock.onGet(/.*\/api\/v1\/Users\/\d+/).reply(200, mockUserProfile);
     axiosMock.onGet(/.*\/api\/v1\/Users\/me/).reply(200, mockUserProfile);
@@ -201,15 +202,16 @@ describe('UserInputPage component', () => {
       .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
       .reply(200, mockDailyFortune);
 
-    // Test with modal open
-    setup({ isModalOpen: true });
+    // profileFetched: true so the profile-fetch effect doesn't overwrite
+    // the modal state we seed into the store
+    setup({ isModalOpen: true, profileFetched: true });
 
     const floatingPrompt = screen.getByTestId('floating-prompt');
     expect(floatingPrompt).toHaveAttribute('data-visible', 'true');
 
     // Reset and test with modal closed
     cleanup();
-    setup({ isModalOpen: false });
+    setup({ isModalOpen: false, profileFetched: true });
 
     const closedFloatingPrompt = screen.getByTestId('floating-prompt');
     expect(closedFloatingPrompt).toHaveAttribute('data-visible', 'false');
