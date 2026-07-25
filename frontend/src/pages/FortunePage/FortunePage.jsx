@@ -279,12 +279,9 @@ const FortunePage = () => {
   // AppContext provides user theme, prompt, and methods to save/clear reading results
   const {
     saveUserChosenCards,
-    saveReadingResult,
     userChosenTheme,
     userPrompt,
-    clearReadingResult,
     clearQuestionAndTheme,
-    readingResult: contextReadingResult,
     userChosenCards,
   } = useContext(AppContext);
 
@@ -296,7 +293,7 @@ const FortunePage = () => {
     startFortuneStream,
     cleanupStream,
     clearStreamingText,
-  } = useFortuneStream({ onSaveResult: saveReadingResult });
+  } = useFortuneStream();
 
   // Use custom hooks for cards and selection
   const { cards, isLoading, error, fetchCards } = useFetchTarotCards(5);
@@ -371,7 +368,6 @@ const FortunePage = () => {
 
       setReadingResult(DEFAULT_READING_TEXT);
       saveUserChosenCards(defaultCards);
-      saveReadingResult(DEFAULT_READING_TEXT);
       setShowResults(true);
       setIsSubmitting(false);
       return;
@@ -416,7 +412,6 @@ const FortunePage = () => {
       // Save fallback data to context
       const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
       saveUserChosenCards(selectedCardDetails);
-      saveReadingResult(DEFAULT_READING_TEXT);
 
       // Switch to results view even with the error
       setShowResults(true);
@@ -428,7 +423,6 @@ const FortunePage = () => {
     userChosenTheme,
     getSelectedCardDetails,
     saveUserChosenCards,
-    saveReadingResult,
     generateErrorMessage,
     startFortuneStream,
   ]);
@@ -442,7 +436,6 @@ const FortunePage = () => {
 
     // Reset context
     clearQuestionAndTheme();
-    clearReadingResult();
     clearStreamingText();
     saveUserChosenCards(null);
 
@@ -459,7 +452,6 @@ const FortunePage = () => {
     navigate('/');
   }, [
     clearQuestionAndTheme,
-    clearReadingResult,
     saveUserChosenCards,
     resetSelection,
     fetchCards,
@@ -488,9 +480,7 @@ const FortunePage = () => {
   if (showResults) {
     return (
       <ResultsDisplay
-        readingResult={
-          streamingText || contextReadingResult || readingResult || ''
-        }
+        readingResult={streamingText || readingResult || ''}
         userChosenCards={userChosenCards}
         onNewReading={handleNewReading}
         isLoading={isStreamLoading}

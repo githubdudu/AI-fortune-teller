@@ -19,11 +19,6 @@ export function AppContextProvider({ children }) {
     null,
   );
 
-  const [readingResult, setReadingResult] = useSessionStorage(
-    'readingResult',
-    null,
-  );
-
   const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
@@ -44,10 +39,6 @@ export function AppContextProvider({ children }) {
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
-  };
-
-  const clearReadingResult = () => {
-    setReadingResult(null);
   };
 
   const toggleModalOpen = () => {
@@ -71,7 +62,6 @@ export function AppContextProvider({ children }) {
     setUserChosenCards(null);
     setUserPrompt('');
     setUserChosenTheme(null);
-    setReadingResult(null);
 
     setProfileFetched(false);
     setLoginLoading(false);
@@ -85,7 +75,6 @@ export function AppContextProvider({ children }) {
     setUserChosenCards,
     setUserPrompt,
     setUserChosenTheme,
-    setReadingResult,
     setProfileFetched,
     setLoginLoading,
     setIsModalOpen,
@@ -116,9 +105,6 @@ export function AppContextProvider({ children }) {
         clearQuestionAndTheme,
         userProfile,
         setUserProfile,
-        readingResult,
-        saveReadingResult: setReadingResult,
-        clearReadingResult,
         isModalOpen,
         setIsModalOpen,
         toggleModalOpen,

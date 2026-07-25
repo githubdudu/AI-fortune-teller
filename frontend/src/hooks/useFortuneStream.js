@@ -4,11 +4,10 @@ import { API_CONFIG } from '../constants/config';
 /**
  * Custom hook for handling fortune streaming functionality
  * @param {Object} options - Options for the hook
- * @param {Function} options.onSaveResult - Function to save the result to persistent storage
  * @param {string} options.fallbackText - Text to use if streaming fails
  * @returns {Object} - Streaming state and controls
  */
-export function useFortuneStream({ onSaveResult, fallbackText }) {
+export function useFortuneStream({ fallbackText } = {}) {
   // Default fallback if not provided
   const defaultFallback =
     'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
@@ -74,10 +73,6 @@ export function useFortuneStream({ onSaveResult, fallbackText }) {
         cleanupStream();
         setStreamingText(actualFallback);
 
-        if (onSaveResult) {
-          onSaveResult(actualFallback);
-        }
-
         if (onComplete) {
           onComplete(actualFallback);
         }
@@ -123,10 +118,6 @@ export function useFortuneStream({ onSaveResult, fallbackText }) {
 
                     // Use what we have, or fallback text
                     const finalText = streamingText || actualFallback;
-
-                    if (onSaveResult) {
-                      onSaveResult(finalText);
-                    }
 
                     if (onComplete) {
                       onComplete(finalText);
@@ -290,10 +281,6 @@ export function useFortuneStream({ onSaveResult, fallbackText }) {
           // Use fallback text
           setStreamingText(actualFallback);
 
-          if (onSaveResult) {
-            onSaveResult(actualFallback);
-          }
-
           cleanupStream();
 
           if (onComplete) {
@@ -313,18 +300,13 @@ export function useFortuneStream({ onSaveResult, fallbackText }) {
           timeoutRef.current = null;
         }
 
-        // Save to persistent state if provided
-        if (onSaveResult) {
-          onSaveResult(finalText);
-        }
-
         // Callback if provided
         if (onComplete) {
           onComplete(finalText);
         }
       }
     },
-    [cleanupStream, actualFallback, streamingText, onSaveResult],
+    [cleanupStream, actualFallback, streamingText],
   );
 
   // Clear streaming text
