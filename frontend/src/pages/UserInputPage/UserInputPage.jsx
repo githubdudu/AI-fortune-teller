@@ -36,7 +36,6 @@ function UserInputPage() {
     false,
   );
 
-  const [noMotionFlag, setNoMotionFlag] = useState(true);
   const [dailyFortune, setDailyFortune] = useState(null);
   /**
    * One loading state for login and another for daily fortune.
@@ -129,10 +128,6 @@ function UserInputPage() {
   ]);
 
   useEffect(() => {
-    setNoMotionFlag(!isLoggedIn);
-  }, [isLoggedIn]);
-
-  useEffect(() => {
     if (!isLoggedIn) {
       setIsModalOpen(true);
       // Reset so the profile is re-fetched on the next login
@@ -156,7 +151,7 @@ function UserInputPage() {
   return (
     <>
       <title>{SEO_TITLE.HOME}</title>
-      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
+      <FloatingPrompt visible={isModalOpen}>
         {/* // If the user is not logged in, display the login form */}
         {/* // the fetching of user profile process uses the loginLoading state too. */}
         {!isLoggedIn || !profileFetched ? (

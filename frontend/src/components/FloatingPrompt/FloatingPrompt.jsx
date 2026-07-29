@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingPrompt.css';
 import PropTypes from 'prop-types';
 
-function FloatingPrompt({ visible, shouldReduceMotion = true, children }) {
+function FloatingPrompt({ visible, children }) {
   return (
     <AnimatePresence>
       {visible && (
@@ -10,21 +10,10 @@ function FloatingPrompt({ visible, shouldReduceMotion = true, children }) {
           <motion.div
             className="floating-prompt-modal"
             initial={{ y: 12, opacity: 0 }}
-            animate={
-              shouldReduceMotion
-                ? { y: 0, opacity: 1 }
-                : { y: 0, opacity: 1, scale: [1, 1.02, 1] }
-            }
+            animate={{ y: 0, opacity: 1 }}
             transition={{
               y: { duration: 0.6, ease: 'easeOut' },
               opacity: { duration: 0.6 },
-              scale: {
-                duration: 2.5,
-                repeat: Infinity,
-                repeatType: 'reverse',
-                ease: 'easeInOut',
-                delay: 1,
-              },
             }}
           >
             {children}

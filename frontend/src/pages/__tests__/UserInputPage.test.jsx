@@ -20,12 +20,8 @@ vi.mock('../../components/ThemeView', () => ({
 }));
 
 vi.mock('../../components/FloatingPrompt/FloatingPrompt', () => ({
-  default: ({ children, visible, shouldReduceMotion }) => (
-    <div
-      data-testid="floating-prompt"
-      data-visible={visible.toString()}
-      data-reduce-motion={shouldReduceMotion.toString()}
-    >
+  default: ({ children, visible }) => (
+    <div data-testid="floating-prompt" data-visible={visible.toString()}>
       {children}
     </div>
   ),
@@ -214,26 +210,6 @@ describe('UserInputPage component', () => {
 
     const closedFloatingPrompt = screen.getByTestId('floating-prompt');
     expect(closedFloatingPrompt).toHaveAttribute('data-visible', 'false');
-  });
-
-  it('sets noMotionFlag correctly based on login state', async () => {
-    // Mock API responses
-    axiosMock
-      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
-      .reply(200, mockDailyFortune);
-
-    // When logged in
-    setup({ isLoggedIn: true });
-
-    let floatingPrompt = screen.getByTestId('floating-prompt');
-    expect(floatingPrompt).toHaveAttribute('data-reduce-motion', 'false');
-
-    // Reset and test when not logged in
-    cleanup();
-    setup({ isLoggedIn: false });
-
-    floatingPrompt = screen.getByTestId('floating-prompt');
-    expect(floatingPrompt).toHaveAttribute('data-reduce-motion', 'true');
   });
 
   describe('Cleanup behavior', () => {
