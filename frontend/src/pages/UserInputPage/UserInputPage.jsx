@@ -187,10 +187,8 @@ function UserInputPage() {
       <div className="w-auto">
         <ThemeView />
       </div>
-      <div
-        className="fixed top-115 left-1/2 -translate-x-1/2 w-1200 h-1200 bg-[#FFF9F7] rounded-full z-[-1] pointer-events-none"
-        style={{ boxShadow: '0px 80px 300px rgba(0, 0, 0, 0.75)' }}
-      />
+      {/* Decorative horizon vignette — geometry is documented on `bg-horizon` in index.css */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-horizon" />
     </>
   );
 }

@@ -45,6 +45,25 @@
   background-size: calc(100% + 600px) 100%;
 }
 
+/* Decorative "horizon" vignette.
+   It is the soft shadow that sits above the arc of a huge circle: r = 2400px
+   with its top edge 460px below the viewport top, so the centre is at
+   50% 2860px (460 + 2400). Inside the arc is transparent so the page
+   background shows through; above it a dark band fades out over ~320px. 
+   To tune: move the arc with the centre's 2860px (= wanted top edge + 2400);
+   change its curvature by adjusting `circle <r>` and the centre together so
+   that centreY - r stays at the wanted top edge. */
+@utility bg-horizon {
+  background: radial-gradient(
+    circle 2400px at 50% 2860px,
+    transparent 2400px,
+    rgba(0, 0, 0, 0.22) 2400px,
+    rgba(0, 0, 0, 0.12) 2470px,
+    rgba(0, 0, 0, 0.04) 2570px,
+    rgba(0, 0, 0, 0) 2720px
+  );
+}
+
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
