@@ -26,7 +26,6 @@ function FloatingPrompt({ visible, children }) {
 
 FloatingPrompt.propTypes = {
   visible: PropTypes.bool.isRequired,
-  shouldReduceMotion: PropTypes.bool,
   children: PropTypes.node,
 };
 
