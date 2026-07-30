@@ -8,7 +8,7 @@ function FloatingPrompt({ visible, children }) {
       {visible && (
         <div className="floating-prompt-container">
           <motion.div
-            className="floating-prompt-modal"
+            className="floating-prompt-modal sm:min-w-xl min-w-sm"
             initial={{ y: 12, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{

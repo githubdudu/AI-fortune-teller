@@ -14,6 +14,37 @@
   --color-figma-green: #C7F3DD;
 }
 
+/* Custom utilities */
+@theme {
+  --animate-daily-fortune-bg: gradientShift 20s linear infinite;
+
+  @keyframes gradientShift {
+    from { background-position: 0 0; }
+    to   { background-position: -565.685px 0; }
+  }
+}
+
+/* Custom metallic gradient */
+@utility bg-daily-fortune {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--figma-pink) 0px,
+    var(--figma-red) 40px,
+    #ffd9b0 60px,
+    #fff8ec 72px,
+    var(--figma-yellow) 88px,
+    var(--figma-red) 120px,
+    var(--figma-pink) 168px,
+    var(--figma-green) 216px,
+    #ffe8b6 240px,
+    #fffbf2 252px,
+    var(--figma-yellow) 268px,
+    var(--figma-red) 312px,
+    var(--figma-pink) 400px
+  );
+  background-size: calc(100% + 600px) 100%;
+}
+
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

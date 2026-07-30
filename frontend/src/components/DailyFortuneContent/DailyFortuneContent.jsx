@@ -26,26 +26,32 @@ const colorMap = {
 function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
   return (
     <div className="h-[50vh] flex flex-col justify-between items-center">
-      <p className="text-3xl text-figma-red font-medium">
-        The future is calling.
-      </p>
-      <p className="text-3xl text-figma-red font-medium">
-        Click to start your fortune.
-      </p>
+      <div>
+        <p className="text-3xl text-figma-red font-medium">
+          The future is calling.
+        </p>
+        <p className="text-3xl text-figma-red font-medium">
+          Click to start your fortune.
+        </p>
+      </div>
 
       {loading && <p>Loading themes...</p>}
       {error ? (
         <p className="error text-red-500 font-medium ">{error}</p>
       ) : dailyFortune ? (
-        <div className="fortune-card">
-          <div className="fortune-main">
-            <div className="fortune-block">
-              <div className="fortune-label">Your lucky number</div>
+        <div className="fortune-daily bg-daily-fortune animate-daily-fortune-bg flex flex-col gap-6 rounded-2xl drop-shadow-2xl/15 shadow-lg hover:shadow-xl py-6 px-5 max-w-md w-[90%]">
+          <div className="fortune-main flex max-sm:flex-col justify-between gap-4">
+            <div className="fortune-block flex-1 flex flex-col justify-between items-center min-h-20">
+              <div className="fortune-label text-sm mb-1.5 text-neutral-800">
+                Your lucky number
+              </div>
               <div className="fortune-number">{dailyFortune.luckyNumber}</div>
             </div>
 
-            <div className="fortune-block">
-              <div className="fortune-label">Your lucky colour</div>
+            <div className="fortune-block flex-1 flex flex-col justify-between items-center min-h-20">
+              <div className="fortune-label text-sm mb-1.5 text-neutral-800">
+                Your lucky colour
+              </div>
               <div className="fortune-color-line">
                 <span
                   className="color-swatch"
@@ -61,7 +67,9 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
             </div>
           </div>
           <div className="fortune-advice">
-            <div className="fortune-label">Piece of advice:</div>
+            <div className="fortune-label text-sm mb-1.5 text-neutral-800">
+              Piece of advice:
+            </div>
             <p>{dailyFortune.advice}</p>
           </div>
         </div>
