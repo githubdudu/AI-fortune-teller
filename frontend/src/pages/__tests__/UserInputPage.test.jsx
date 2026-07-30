@@ -19,7 +19,7 @@ vi.mock('../../components/ThemeView', () => ({
   default: () => <div data-testid="theme-view">ThemeView</div>,
 }));
 
-vi.mock('../../components/FloatingPrompt/FloatingPrompt', () => ({
+vi.mock('$/pages/UserInputPage/components/FloatingPrompt', () => ({
   default: ({ children, visible }) => (
     <div data-testid="floating-prompt" data-visible={visible.toString()}>
       {children}
@@ -27,7 +27,7 @@ vi.mock('../../components/FloatingPrompt/FloatingPrompt', () => ({
   ),
 }));
 
-vi.mock('../../components/DailyFortuneContent/DailyFortuneContent', () => ({
+vi.mock('$/pages/UserInputPage/components/DailyFortuneContent', () => ({
   default: ({ loading, error, dailyFortune, onClick }) => (
     <div
       data-testid="daily-fortune-content"

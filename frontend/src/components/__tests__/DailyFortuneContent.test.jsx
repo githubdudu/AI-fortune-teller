@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { render, fireEvent } from '@testing-library/react';
-import DailyFortuneContent from '../DailyFortuneContent/DailyFortuneContent';
+import DailyFortuneContent from '../../pages/UserInputPage/components/DailyFortuneContent';
 
 /**
  * Tests that the component renders initial prompt text when no data is supplied.
