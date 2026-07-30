@@ -1,11 +1,11 @@
-import Card from '../../components/Card/Card';
+import Card from './components/Card';
 import './FortunePage.css';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
 import React, { useState, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from './components/ErrorMessage';
 import { AppContext } from '../../context/AppContextProvider';
 import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';

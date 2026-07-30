@@ -11,11 +11,11 @@ import UserInputPage from '../UserInputPage/UserInputPage';
 const axiosMock = new MockAdapter(axios);
 
 // Mock child components to simplify testing
-vi.mock('../../components/UserQuestionInput', () => ({
+vi.mock('$/pages/UserInputPage/components/UserQuestionInput', () => ({
   default: () => <div data-testid="user-question-input">UserQuestionInput</div>,
 }));
 
-vi.mock('../../components/ThemeView', () => ({
+vi.mock('$/pages/UserInputPage/components/ThemeView', () => ({
   default: () => <div data-testid="theme-view">ThemeView</div>,
 }));
 
@@ -41,7 +41,7 @@ vi.mock('$/pages/UserInputPage/components/DailyFortuneContent', () => ({
   ),
 }));
 
-vi.mock('$/components/LoginForm', () => ({
+vi.mock('$/pages/UserInputPage/components/LoginForm', () => ({
   default: () => <div data-testid="login-form">LoginForm</div>,
 }));
 

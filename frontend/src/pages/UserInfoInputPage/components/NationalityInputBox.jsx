@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ComboBox } from 'gestalt';
 import PropTypes from 'prop-types';
 
-import { COUNTRY_LIST } from '../../constants/nationality';
+import { COUNTRY_LIST } from '$/constants/nationality';
 
 const COUNTRY_OPTIONS = COUNTRY_LIST.map((item) => ({
   value: item.id,

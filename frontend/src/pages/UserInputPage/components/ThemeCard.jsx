@@ -1,9 +1,9 @@
 // For actual use with theme prop from AppContext, replace ThemeCardPlaceholder with proper image.
 import PropTypes from 'prop-types';
-import themeCardPlaceholder from '../../assets/ThemeCardPlaceholder.png';
+import themeCardPlaceholder from '$/assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { AppContext } from '../../context/AppContextProvider';
+import { AppContext } from '$/context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 

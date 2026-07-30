@@ -1,13 +1,13 @@
 import { Box } from 'gestalt';
-import UserQuestionInput from '../../components/UserQuestionInput';
-import ThemeView from '../../components/ThemeView';
+import UserQuestionInput from './components/UserQuestionInput';
+import ThemeView from './components/ThemeView';
 import { useEffect, useState, useContext, useRef } from 'react';
 import { useSessionStorage } from 'react-use';
 import FloatingPrompt from './components/FloatingPrompt';
 import { AppContext } from '$/context/AppContextProvider';
 import { useModalStore } from '$/stores/modalStore';
 import DailyFortuneContent from './components/DailyFortuneContent';
-import LoginForm from '$/components/LoginForm';
+import LoginForm from './components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';

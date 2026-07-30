@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import arcanaVerseLogo from '../../assets/arcanaVerse.png';
+import arcanaVerseLogo from '$/assets/arcanaVerse.png';
 
 function ArcanaVerseLogo() {
   return (

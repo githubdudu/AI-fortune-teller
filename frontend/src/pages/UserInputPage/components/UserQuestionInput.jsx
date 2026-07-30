@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
 import { useEffect, useRef, useState, useContext } from 'react';
-import { AppContext } from '../../context/AppContextProvider';
+import { AppContext } from '$/context/AppContextProvider';
 import './UserQuestionInput.css';
 
 function UserQuestionInput() {

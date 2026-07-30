@@ -1,9 +1,9 @@
 import { Flex } from 'gestalt';
 import { useState, useEffect, useCallback } from 'react';
-import ThemeCard from '../ThemeCard';
-import ThemeDescription from '../ThemeDescription/ThemeDescription';
-import { API_CONFIG } from '../../constants/config';
-import apiClient from '../../utils/apiClient';
+import ThemeCard from './ThemeCard';
+import ThemeDescription from './ThemeDescription';
+import { API_CONFIG } from '$/constants/config';
+import apiClient from '$/utils/apiClient';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper modules
 import { Navigation, Pagination } from 'swiper/modules';

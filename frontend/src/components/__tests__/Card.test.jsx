@@ -1,6 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Card from '../Card/Card';
+import Card from '$/pages/FortunePage/components/Card';
 
 /**
  * Tests that the card is initially displayed showing the back of the card.

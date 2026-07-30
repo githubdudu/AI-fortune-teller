@@ -4,11 +4,11 @@ import { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
-import NationalityInputBox from '$/components/NationalityInputBox';
+import NationalityInputBox from './NationalityInputBox';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../context/AppContextProvider';
-import { API_CONFIG } from '../../constants/config';
-import { COUNTRY_LIST } from '../../constants/nationality';
+import { AppContext } from '$/context/AppContextProvider';
+import { API_CONFIG } from '$/constants/config';
+import { COUNTRY_LIST } from '$/constants/nationality';
 
 function UserDetailsForm() {
   const { userProfile, setUserProfile } = useContext(AppContext);

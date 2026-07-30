@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import { Box, Flex } from 'gestalt';
 
-import ArcanaVerseLogo from '../../components/ArcanaVerseLogo';
-import UserAvatarButton from '../../components/UserAvatarButton/UserAvatarButton';
+import ArcanaVerseLogo from './components/ArcanaVerseLogo';
+import UserAvatarButton from './components/UserAvatarButton';
 
 function RootLayoutPage() {
   return (
