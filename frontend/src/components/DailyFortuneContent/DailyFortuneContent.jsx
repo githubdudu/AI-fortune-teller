@@ -83,7 +83,7 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
       )}
 
       <button
-        className="bg-figma-red text-white text-base font-medium rounded-4xl cursor-pointer px-7 py-3 hover:bg-[#FF9E6B] hover:translate-y-[-2px] hover:shadow-md transition-all duration-200"
+        className="bg-figma-red text-white text-base font-medium rounded-4xl cursor-pointer px-7 py-3 hover:bg-[#FF9E6B] hover:translate-y-[-2px] shadow-sm hover:shadow-md transition-all duration-200"
         onClick={onClick}
       >
         Start Reading
