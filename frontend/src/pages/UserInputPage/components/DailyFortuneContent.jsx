@@ -23,6 +23,11 @@ const colorMap = {
 };
 
 function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
+  dailyFortune = dailyFortune || {
+    luckyNumber: 7,
+    luckyColor: 'Pink',
+    advice: 'Trust your instincts today.',
+  };
   return (
     <div className="flex flex-col gap-12 justify-between items-center">
       <div>
@@ -57,8 +62,7 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
                 <span
                   className="color-swatch rounded-full shadow-md size-6"
                   style={{
-                    backgroundColor:
-                      colorMap[dailyFortune.luckyColor] || '#FFC0CB',
+                    backgroundColor: colorMap[dailyFortune.luckyColor],
                   }}
                 ></span>
                 <span className="fortune-color-name text-2xl font-medium text-neutral-800 ">
