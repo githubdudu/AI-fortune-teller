@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import './DailyFortuneContent.css';
 
 const colorMap = {
   Red: '#FF0000',
@@ -25,7 +24,7 @@ const colorMap = {
 
 function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
   return (
-    <div className="h-[50vh] flex flex-col justify-between items-center">
+    <div className="flex flex-col gap-12 justify-between items-center">
       <div>
         <p className="text-3xl text-figma-red font-medium">
           The future is calling.
@@ -40,37 +39,41 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
         <p className="error text-red-500 font-medium ">{error}</p>
       ) : dailyFortune ? (
         <div className="fortune-daily bg-daily-fortune animate-daily-fortune-bg flex flex-col gap-6 rounded-2xl drop-shadow-2xl/15 shadow-lg hover:shadow-xl py-6 px-5 max-w-md w-[90%]">
-          <div className="fortune-main flex max-sm:flex-col justify-between gap-4">
-            <div className="fortune-block flex-1 flex flex-col justify-between items-center min-h-20">
+          <div className="fortune-main flex justify-between gap-4">
+            <div className="fortune-block flex-1 flex flex-col justify-around items-center min-h-20">
               <div className="fortune-label text-sm mb-1.5 text-neutral-800">
                 Your lucky number
               </div>
-              <div className="fortune-number">{dailyFortune.luckyNumber}</div>
+              <div className="fortune-number text-3xl font-bold text-neutral-800">
+                {dailyFortune.luckyNumber}
+              </div>
             </div>
 
-            <div className="fortune-block flex-1 flex flex-col justify-between items-center min-h-20">
+            <div className="fortune-block flex-1 flex flex-col justify-around items-center min-h-20">
               <div className="fortune-label text-sm mb-1.5 text-neutral-800">
                 Your lucky colour
               </div>
-              <div className="fortune-color-line">
+              <div className="fortune-color-line flex items-center gap-2">
                 <span
-                  className="color-swatch"
+                  className="color-swatch rounded-full shadow-md size-6"
                   style={{
                     backgroundColor:
                       colorMap[dailyFortune.luckyColor] || '#FFC0CB',
                   }}
                 ></span>
-                <span className="fortune-color-name">
+                <span className="fortune-color-name text-2xl font-medium text-neutral-800 ">
                   {dailyFortune.luckyColor}
                 </span>
               </div>
             </div>
           </div>
-          <div className="fortune-advice">
-            <div className="fortune-label text-sm mb-1.5 text-neutral-800">
+          <div className="fortune-advice mt-8 pt-4 border-t-2 border-neutral-950/20">
+            <div className="fortune-label text-sm font-medium mb-1.5 text-neutral-800">
               Piece of advice:
             </div>
-            <p>{dailyFortune.advice}</p>
+            <p className="text-xl text-neutral-800 font-medium">
+              {dailyFortune.advice}
+            </p>
           </div>
         </div>
       ) : (
