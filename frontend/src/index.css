@@ -6,6 +6,14 @@
 @import 'gestalt/dist/gestalt.css';
 @import 'gestalt-datepicker/dist/gestalt-datepicker.css';
 
+@theme {
+  --color-figma-pink: #F4CAE0;
+  --color-figma-red: #FFAE8B;
+  --color-figma-yellow: #FFE1AD;
+  --color-figma-grass: #EEF8B6;
+  --color-figma-green: #C7F3DD;
+}
+
 /* Only keep essential base styles - the rest will be handled by Tailwind */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

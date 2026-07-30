@@ -25,9 +25,13 @@ const colorMap = {
 
 function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
   return (
-    <>
-      <p className="prompt-text">The future is calling.</p>
-      <p className="prompt-text">Click to start your fortune.</p>
+    <div className="h-[50vh] flex flex-col justify-between items-center">
+      <p className="text-3xl text-figma-red font-medium">
+        The future is calling.
+      </p>
+      <p className="text-3xl text-figma-red font-medium">
+        Click to start your fortune.
+      </p>
 
       {loading && <p>Loading themes...</p>}
       {error ? (
@@ -62,13 +66,18 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
           </div>
         </div>
       ) : (
-        <p className="prompt-text">Loading your daily fortune...</p>
+        <p className="text-3xl text-figma-red font-medium">
+          Loading your daily fortune...
+        </p>
       )}
 
-      <button className="prompt-button" onClick={onClick}>
+      <button
+        className="bg-figma-red text-white text-base font-medium rounded-4xl cursor-pointer px-7 py-3 hover:bg-[#FF9E6B] hover:translate-y-[-2px] hover:shadow-md transition-all duration-200"
+        onClick={onClick}
+      >
         Start Reading
       </button>
-    </>
+    </div>
   );
 }
 

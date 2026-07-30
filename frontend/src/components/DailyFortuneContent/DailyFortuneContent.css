@@ -1,29 +1,5 @@
 
-.prompt-text {
-    font-size: 2rem;
-    font-weight: 500;
-    color: var(--figma-red);
-    margin-bottom: 16px;
-  }
   
-  .prompt-button {
-    background-color: var(--figma-red);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 30px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 40px auto;
-  }
-  
-  .prompt-button:hover {
-    background-color: #FF9E6B;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
   
   .fortune-card {
     margin-top: 32px;
