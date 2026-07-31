@@ -104,7 +104,8 @@ const CardsDisplay = ({
           onClick={() => onCardSelect(card.id)}
         >
           <Card
-            backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+            backImage="/cards/back-416.webp"
+            backImageSmall="/cards/back-240.webp"
             frontImage={card.imageSource || '/defaultFrontCard.png'}
             disabled={isCardDisabled(card.id)}
             isShowFront={selectedCardsID.includes(card.id)}

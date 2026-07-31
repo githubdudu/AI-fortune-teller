@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 const Card = ({
   frontImage,
   backImage,
+  backImageSmall,
   disabled,
   description,
   name,
@@ -23,10 +24,29 @@ const Card = ({
     >
       <div className="tarot-card-inner">
         <div className="tarot-card-back">
-          <img src={backImage} alt="Tarot Card Back" />
+          <img
+            src={backImage}
+            srcSet={
+              backImageSmall
+                ? `${backImageSmall} 240w, ${backImage} 416w`
+                : undefined
+            }
+            sizes="208px"
+            width={208}
+            height={312}
+            decoding="async"
+            fetchPriority="high"
+            alt="Tarot Card Back"
+          />
         </div>
         <div className="tarot-card-front">
-          <img src={frontImage} alt="Tarot Card Front" />
+          <img
+            src={frontImage}
+            width={208}
+            height={312}
+            decoding="async"
+            alt="Tarot Card Front"
+          />
           <div className="tarot-card-description">
             <h3>{name}</h3>
             <p>{description}</p>
@@ -43,6 +63,7 @@ const Card = ({
 Card.propTypes = {
   frontImage: PropTypes.string,
   backImage: PropTypes.string,
+  backImageSmall: PropTypes.string,
   disabled: PropTypes.bool,
   description: PropTypes.string,
   name: PropTypes.string,
@@ -53,6 +74,7 @@ Card.propTypes = {
 Card.defaultProps = {
   frontImage: null,
   backImage: null,
+  backImageSmall: null,
   disabled: false,
   description: '',
   name: '',
