@@ -52,7 +52,7 @@ function UserAvatarButton() {
 
   return (
     <Sticky top={0}>
-      <div className="w-screen flex justify-end pt-4 pr-6">
+      <div className="flex justify-end pt-4 pr-6">
         {isLoggedIn ? (
           <div className="hover:opacity-80 transition-opacity">
             <button

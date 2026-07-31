@@ -129,6 +129,7 @@ function ThemeView() {
         alignItems="center"
         justifyContent="center"
         direction="column"
+        width="100%"
         gap={6}
       >
         {/* Display loading state or error message */}

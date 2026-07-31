@@ -10,15 +10,19 @@ function RootLayoutPage() {
       alignItems="center"
       justifyContent="start"
       direction="column"
-      height="100vh"
+      height="100%"
+      width="100%"
+      gap={{ row: 0, column: 5 }}
     >
-      <UserAvatarButton />
-      <Box marginBottom={5}>
+      <Flex.Item flex="none" alignSelf="stretch">
+        <UserAvatarButton />
         <ArcanaVerseLogo />
-      </Box>
-      <Flex alignItems="center" justifyContent="start" direction="column">
-        <Outlet />
-      </Flex>
+      </Flex.Item>
+      <Flex.Item flex="grow">
+        <Flex alignItems="center" justifyContent="start" direction="column">
+          <Outlet />
+        </Flex>
+      </Flex.Item>
     </Flex>
   );
 }
