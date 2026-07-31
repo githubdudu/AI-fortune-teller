@@ -1,7 +1,12 @@
+/* This CSS is for the Swiper component 
+ * This is the only way to style the Swiper component 
+ * The class names could be found in the Swiper documentation
+ */
+
 .swiper-button-next,
 .swiper-button-prev {
   background-color: rgba(255, 255, 255, 0.8);
-  color: #646cff !important;
+  color: var(--color-ink-700) !important;
   width: 45px !important;
   height: 45px !important;
   border-radius: 50%;
@@ -17,7 +22,7 @@
 
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-  background-color: #646cff;
+  background-color: var(--color-ink-700);
   color: white !important;
   transform: scale(1.05);
 }
@@ -27,5 +32,5 @@
 }
 
 .swiper-pagination-bullet.swiper-pagination-bullet-active {
-  background: #646cff !important;
+  background: var(--color-ink-700) !important;
 }
