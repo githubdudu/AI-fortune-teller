@@ -154,7 +154,9 @@ const SelectionDisplay = ({
 
   return (
     <div className="selection-container">
-      <h1 className="selection-title">Select Three Cards for your Reading</h1>
+      <h1 className="selection-title text-ink-900">
+        Select Three Cards for your Reading
+      </h1>
 
       {taroCardsError && (
         <ErrorMessage
@@ -184,7 +186,7 @@ const SelectionDisplay = ({
             disabled={selectedCardsID.length !== 3}
           />
         ) : (
-          <div className="cards-remaining">
+          <div className="cards-remaining text-ink-900">
             <span>{3 - selectedCardsID.length} cards remaining</span>
           </div>
         )}
