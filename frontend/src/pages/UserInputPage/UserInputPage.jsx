@@ -1,4 +1,3 @@
-import { Box } from 'gestalt';
 import UserQuestionInput from './components/UserQuestionInput';
 import ThemeView from './components/ThemeView';
 import { useEffect, useState, useContext, useRef } from 'react';
@@ -12,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
 import { SEO_TITLE } from '$/constants/seo';
-import './UserInputPage.css';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
@@ -178,10 +176,10 @@ function UserInputPage() {
       <div className="w-160 max-sm:w-full">
         <UserQuestionInput />
       </div>
-      <Box marginBottom={2} />
-      <h2 className="divider-text">- or -</h2>
-      <Box marginBottom={2} />
-      <h2 className="theme-instruction-text">
+      <h2 className="divider-text font-cormorant font-bold text-2xl text-mist-800 mb-2 ">
+        - or -
+      </h2>
+      <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-ink-800 mb-2">
         Select a theme to let fate speak first.
       </h2>
       <div className="w-auto">

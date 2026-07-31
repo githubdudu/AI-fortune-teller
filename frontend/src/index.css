@@ -12,6 +12,30 @@
   --color-figma-yellow: #FFE1AD;
   --color-figma-grass: #EEF8B6;
   --color-figma-green: #C7F3DD;
+
+  /* Foreground / dark ramp — H=318deg, corrected from the original #261060.
+     Carries CONTENT: headings, body copy, links, button labels. */
+  --color-ink-950: #1E0326; /* strongest display headings; only when it must outweigh everything */
+  --color-ink-900: #381243; /* default foreground / primary text — replaces #261060 */
+  --color-ink-800: #4E225A; /* card body copy, secondary headings */
+  --color-ink-700: #693878; /* lightest step still safe on every pastel (4.79:1 on figma-red) */
+  --color-ink-600: #864F97; /* large text only (>=24px, or >=18.66px bold) — 3.26:1 on figma-red */
+  --color-ink-500: #A66BB9; /* never body text; decoration, hover accents, disabled */
+
+  /* Neutral ramp — same hue, near-zero chroma.
+     Carries STRUCTURE: borders, dividers, surfaces, supporting text. */
+  --color-mist-50: #FBF9FC; /* page background */
+  --color-mist-100: #F5F2F6; /* card and input surfaces */
+  --color-mist-200: #E7E3E8; /* dividers, hr */
+  --color-mist-300: #D4CFD5; /* input borders at rest */
+  --color-mist-400: #A8A2AA; /* placeholder, disabled — never body text (2.50:1) */
+  --color-mist-500: #847D87; /* decorative icons (clears 3:1, not enough for text) */
+  --color-mist-600: #68606A; /* secondary text, timestamps, captions */
+  --color-mist-700: #4C454E; /* neutral body copy */
+  --color-mist-800: #312B33; /* neutral headings */
+  --color-mist-900: #1D191E; /* strongest neutral contrast */
+
+  --font-cormorant: 'Cormorant Garamond', Georgia, serif;
 }
 
 /* Custom utilities */
@@ -28,19 +52,19 @@
 @utility bg-daily-fortune {
   background-image: repeating-linear-gradient(
     135deg,
-    var(--figma-pink) 0px,
-    var(--figma-red) 40px,
+    var(--color-figma-pink) 0px,
+    var(--color-figma-red) 40px,
     #ffd9b0 60px,
     #fff8ec 72px,
-    var(--figma-yellow) 88px,
-    var(--figma-red) 120px,
-    var(--figma-pink) 168px,
-    var(--figma-green) 216px,
+    var(--color-figma-yellow) 88px,
+    var(--color-figma-red) 120px,
+    var(--color-figma-pink) 168px,
+    var(--color-figma-green) 216px,
     #ffe8b6 240px,
     #fffbf2 252px,
-    var(--figma-yellow) 268px,
-    var(--figma-red) 312px,
-    var(--figma-pink) 400px
+    var(--color-figma-yellow) 268px,
+    var(--color-figma-red) 312px,
+    var(--color-figma-pink) 400px
   );
   background-size: calc(100% + 600px) 100%;
 }
@@ -70,7 +94,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: light;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
@@ -92,22 +116,6 @@ body {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-image: url('/assets/Background_Cloud.png');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
   :root {
     color: #213547;
     background-image: url('/assets/Background_Cloud.png');
