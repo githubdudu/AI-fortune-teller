@@ -6,10 +6,9 @@ namespace Api.Services.Interfaces
 {
     public interface IOpenAIClient
     {
-        Task<string> GenerateTextAsync(string prompt, string accountKey);
+        Task<string> GenerateTextAsync(string prompt);
         IAsyncEnumerable<string> GenerateTextStreamAsync(
             string prompt,
-            string accountKey,
             CancellationToken cancellationToken = default
         );
     }
