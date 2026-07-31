@@ -19,7 +19,6 @@ export function AppContextProvider({ children }) {
     null,
   );
 
-  const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
@@ -42,14 +41,12 @@ export function AppContextProvider({ children }) {
 
     // Clear the session storage
     setUserProfile(null);
-    setUserInfo(null);
     setUserChosenCards(null);
     setUserPrompt('');
     setUserChosenTheme(null);
   }, [
     setIsLoggedIn,
     setUserProfile,
-    setUserInfo,
     setUserChosenCards,
     setUserPrompt,
     setUserChosenTheme,
@@ -75,8 +72,6 @@ export function AppContextProvider({ children }) {
         saveUserPrompt: setUserPrompt,
         userChosenTheme,
         saveUserChosenTheme: setUserChosenTheme,
-        userInfo,
-        saveUserInfo: setUserInfo,
         clearQuestionAndTheme,
         userProfile,
         setUserProfile,
