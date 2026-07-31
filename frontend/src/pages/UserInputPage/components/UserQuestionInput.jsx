@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
 import { useEffect, useRef, useState, useContext } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
-import './UserQuestionInput.css';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
@@ -89,7 +88,9 @@ function UserQuestionInput() {
     <>
       <div className="w-full max-w-2xl mx-auto">
         {/* TODO: Font to be changed later */}
-        <h2 className="title">What answer do you seek?</h2>
+        <h2 className="title font-cormorant font-extrabold text-4xl text-ink-800 text-center mb-2">
+          What answer do you seek?
+        </h2>
         <div className="relative mb-1">
           <textarea
             id="text-area-user-prompt"
@@ -99,20 +100,19 @@ function UserQuestionInput() {
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-gray-300 rounded-lg py-3 pl-4 pr-32 text-lg text-[#261060] placeholder-[#261060] resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 overflow-hidden`}
+            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-32 text-lg text-ink-900 placeholder-mist-500 bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-800/20 overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSubmit();
               }
             }}
-            style={{ backgroundColor: '#FFFBEF' }}
           />
           <button
             onClick={handleSubmit}
             className={`absolute ${
               textAreaHeight <= 56 ? 'top-1/2 -translate-y-1/2' : 'bottom-2'
-            } right-3 p-0 mr-2 bg-transparent border-none cursor-pointer text-[#261060] hover:text-[#261060] flex items-center justify-center`}
+            } right-3 p-0 mr-2 bg-transparent border-none cursor-pointer text-mist-500 hover:text-ink-900 flex items-center justify-center`}
             type="button"
           >
             <svg
