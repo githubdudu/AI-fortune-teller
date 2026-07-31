@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Flex, Box, Button, Text, TextArea, Toast } from 'gestalt';
+import { toast } from 'sonner';
+import { Toaster } from '$/pages/RootLayoutPage/components/Toaster';
 import { useEffect, useRef, useState, useContext } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
 
@@ -17,7 +18,6 @@ function UserQuestionInput() {
   } = useContext(AppContext);
   // internal state
   const [input, setInput] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [textAreaHeight, setTextAreaHeight] = useState(0);
 
   const navigate = useNavigate();
@@ -31,15 +31,6 @@ function UserQuestionInput() {
     textAreaRef.current.style.height = textAreaRef.current.scrollHeight + 'px';
     setTextAreaHeight(textAreaRef.current.scrollHeight);
   }, [input]);
-
-  useEffect(() => {
-    if (errorMessage) {
-      const timer = setTimeout(() => {
-        handleDismiss();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [errorMessage]);
 
   const handleSubmit = () => {
     clearQuestionAndTheme();
@@ -69,8 +60,7 @@ function UserQuestionInput() {
     // Validation for empty input submit, or question with less than 4 words
     // TODO: Come up with a logic for validating non sense words combination...
     if (trimmedInput.length < 10 || wordCount < 4) {
-      setErrorMessage('Please enter a more complete and meaningful question.');
-      setInput('');
+      toast.warning('Please enter a more complete and meaningful question.');
       return;
     }
 
@@ -78,10 +68,6 @@ function UserQuestionInput() {
     saveUserPrompt(trimmedInput);
     // TODO: change route accordingly
     navigate('/fortune');
-  };
-
-  const handleDismiss = () => {
-    setErrorMessage('');
   };
 
   return (
@@ -129,16 +115,7 @@ function UserQuestionInput() {
             </svg>
           </button>
         </div>
-        {errorMessage && (
-          <div className="flex justify-center mt-2">
-            <Toast
-              text={errorMessage}
-              dismissButton={{
-                onDismiss: handleDismiss,
-              }}
-            />
-          </div>
-        )}
+        <Toaster />
       </div>
     </>
   );
