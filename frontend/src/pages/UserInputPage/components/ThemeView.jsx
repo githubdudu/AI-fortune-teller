@@ -6,7 +6,7 @@ import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper modules
-import { Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -123,6 +123,10 @@ function ThemeView() {
     fetchThemes();
   }, []);
 
+  if (!themes || !Array.isArray(themes) || themes.length === 0) {
+    return loading && <div>Loading themes...</div>;
+  }
+
   return (
     <>
       <Flex
@@ -133,20 +137,23 @@ function ThemeView() {
         gap={6}
       >
         {/* Display loading state or error message */}
-        {loading && <p>Loading themes...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {/* Fixed className typo (removed space after md:) */}
         <div className="swiper-container max-w-[calc(100vw_-_30px)] xl:max-w-[1100px] px-4">
           <Swiper
-            modules={[Navigation, Pagination]}
+            modules={[Navigation, Pagination, Autoplay]}
             navigation={true}
             pagination={{ clickable: true }}
-            slidesPerView={1}
             spaceBetween={10}
             loop={true}
             initialSlide={0}
+            lazyPreloadPrevNext={2}
             className="py-4"
+            autoplay={{
+              delay: 3000,
+              pauseOnMouseEnter: true,
+            }}
             breakpoints={{
               660: {
                 slidesPerView: 3,

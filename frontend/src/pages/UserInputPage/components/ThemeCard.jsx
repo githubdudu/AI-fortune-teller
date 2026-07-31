@@ -43,6 +43,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
     >
       <img
         src={image}
+        loading="lazy"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = themeCardPlaceholder;
