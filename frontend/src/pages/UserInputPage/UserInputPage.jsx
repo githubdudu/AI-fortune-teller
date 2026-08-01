@@ -180,7 +180,7 @@ function UserInputPage() {
         - or -
       </h2>
       <div className="w-auto flex flex-col items-center">
-        <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-ink-800 mb-2">
+        <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-center text-ink-800 mb-2">
           Select a theme to let fate speak first.
         </h2>
         <ThemeView />
