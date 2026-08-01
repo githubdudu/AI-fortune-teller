@@ -10,7 +10,7 @@ function RootLayoutPage() {
       alignItems="center"
       justifyContent="start"
       direction="column"
-      height="100%"
+      height="100vh"
       width="100%"
       gap={{ row: 0, column: 5 }}
     >
@@ -19,7 +19,7 @@ function RootLayoutPage() {
         <ArcanaVerseLogo />
       </Flex.Item>
       <Flex.Item flex="grow">
-        <div className="w-full h-full flex items-center justify-start flex-col gap-5">
+        <div className="w-full h-full flex items-center justify-around flex-col gap-5">
           <Outlet />
         </div>
       </Flex.Item>
