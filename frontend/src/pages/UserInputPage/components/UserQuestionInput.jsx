@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { Toaster } from '$/pages/RootLayoutPage/components/Toaster';
 import { useEffect, useRef, useState, useContext } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
+import { isMeaningfulQuestion } from '$/utils/questionValidation';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
@@ -55,11 +56,10 @@ function UserQuestionInput() {
     }
 
     const trimmedInput = input.trim();
-    const wordCount = trimmedInput.split(/\s+/).length;
 
-    // Validation for empty input submit, or question with less than 4 words
-    // TODO: Come up with a logic for validating non sense words combination...
-    if (trimmedInput.length < 10 || wordCount < 4) {
+    // Validation for empty input submit, or question shorter than ~4 words.
+    // Counts CJK characters too, since they carry no spaces to split on.
+    if (!isMeaningfulQuestion(trimmedInput, 4)) {
       toast.warning('Please enter a more complete and meaningful question.');
       return;
     }
