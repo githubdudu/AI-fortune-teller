@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import themeCardPlaceholder from '$/assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
@@ -12,6 +12,14 @@ function ThemeCard({ theme, onHover, disabled = false }) {
 
   const { saveUserChosenTheme, clearQuestionAndTheme, saveUserChosenCards } =
     useContext(AppContext);
+
+  const [isLoaded, setIsLoaded] = useState(false);
+  const imgRef = useRef(null);
+
+  // Cached images can finish loading before React attaches onLoad
+  useEffect(() => {
+    if (imgRef.current?.complete) setIsLoaded(true);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -41,16 +49,27 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       onMouseEnter={handleMouseEnter}
       className="cursor-pointer w-full flex justify-center pt-2 pb-8"
     >
-      <img
-        src={image}
-        loading="lazy"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = themeCardPlaceholder;
-        }}
-        className="h-60 object-contain border-1 border-gray-300 rounded-md shadow-lg transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))]"
-        alt={`${theme.name} theme card`}
-      />
+      <div
+        className={`h-60 w-[137px] shrink-0 overflow-hidden rounded-md ${
+          isLoaded ? '' : 'bg-gray-200'
+        }`}
+      >
+        <img
+          ref={imgRef}
+          src={image}
+          loading="lazy"
+          onLoad={() => setIsLoaded(true)}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = themeCardPlaceholder;
+            setIsLoaded(true);
+          }}
+          className={`h-full w-full object-cover rounded-md shadow-lg transition-[filter,opacity] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          alt={`${theme.name} theme card`}
+        />
+      </div>
     </div>
   );
 }
