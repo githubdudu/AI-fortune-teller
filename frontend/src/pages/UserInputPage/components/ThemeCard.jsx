@@ -50,7 +50,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       className="cursor-pointer w-full flex justify-center pt-2 pb-8"
     >
       <div
-        className={`h-60 w-[135px] shrink-0 overflow-hidden rounded-md ${
+        className={`relative h-60 w-[135px] shrink-0 overflow-hidden rounded-md ${
           isLoaded ? '' : 'bg-gray-200'
         }`}
       >
@@ -68,6 +68,10 @@ function ThemeCard({ theme, onHover, disabled = false }) {
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           alt={`${theme.name} theme card`}
+        />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-ring-1 inset-ring-black inset-0 rounded-md"
         />
       </div>
     </div>
