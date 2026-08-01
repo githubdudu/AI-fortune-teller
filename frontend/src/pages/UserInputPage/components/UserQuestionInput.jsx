@@ -77,7 +77,7 @@ function UserQuestionInput() {
         <h2 className="title font-cormorant font-extrabold text-4xl text-ink-800 text-center mb-2">
           What answer do you seek?
         </h2>
-        <div className="relative mb-1">
+        <div className="relative leading-none">
           <textarea
             id="text-area-user-prompt"
             placeholder="Type a question you'd like to seek from the cards"
@@ -86,7 +86,7 @@ function UserQuestionInput() {
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-32 text-lg text-ink-900 placeholder-mist-500 bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
+            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-16 text-lg text-ink-900 placeholder-mist-500 bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -98,14 +98,14 @@ function UserQuestionInput() {
             onClick={handleSubmit}
             className={`absolute ${
               textAreaHeight <= 56 ? 'top-1/2 -translate-y-1/2' : 'bottom-2'
-            } right-3 p-0 mr-2 bg-transparent border-none cursor-pointer text-mist-500 hover:text-ink-900 flex items-center justify-center`}
+            } right-2 size-9 bg-mist-600 rounded-md border-mist-600 cursor-pointer text-mist-50 hover:bg-mist-500 flex items-center justify-center`}
             type="button"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              className="w-4 h-4 mb-1"
+              className="w-5 h-5"
             >
               <path
                 fillRule="evenodd"
