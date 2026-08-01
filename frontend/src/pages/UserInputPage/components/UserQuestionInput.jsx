@@ -80,13 +80,13 @@ function UserQuestionInput() {
         <div className="relative leading-none">
           <textarea
             id="text-area-user-prompt"
-            placeholder="Type a question you'd like to seek from the cards"
+            placeholder="Type a question you'd like to seek"
             value={input}
             onChange={handleChange}
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-16 text-lg text-ink-900 placeholder-mist-500 bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
+            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-16 text-lg text-ink-900 placeholder-mist-500 max-sm:placeholder:text-base bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
