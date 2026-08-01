@@ -50,7 +50,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       className="cursor-pointer w-full flex justify-center pt-2 pb-8"
     >
       <div
-        className={`relative h-60 w-[135px] shrink-0 overflow-hidden rounded-md ${
+        className={`relative h-60 w-[135px] shrink-0 rounded-md shadow-xl/25 transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
           isLoaded ? '' : 'bg-gray-200'
         }`}
       >
@@ -64,7 +64,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
             e.target.src = themeCardPlaceholder;
             setIsLoaded(true);
           }}
-          className={`h-full w-full object-cover rounded-md shadow-lg transition-[filter,opacity] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
+          className={`h-full w-full object-cover rounded-md transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
           alt={`${theme.name} theme card`}
