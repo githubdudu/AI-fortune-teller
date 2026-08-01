@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# build-theme-images.py working files
+scripts/.venv
+scripts/.cache
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -18,56 +18,56 @@ const hardcodedThemes = [
   {
     id: 1,
     name: 'general',
-    image: 'icons/general.png',
+    image: '/themes/general.webp',
     description:
       'Embrace your optimism and strive for fulfilment, but stay open to new experiences along your journey.',
   },
   {
     id: 2,
     name: 'love',
-    image: 'icons/love.png',
+    image: '/themes/love.webp',
     description:
       'Open your heart to deep emotional connections, and reflect on current feelings or new romantic beginnings.',
   },
   {
     id: 3,
     name: 'finance',
-    image: 'icons/finance.png',
+    image: '/themes/finance.webp',
     description:
       'Evaluate your financial habits with an eye on long-term security, and consider how ambition and stability align.',
   },
   {
     id: 4,
     name: 'career',
-    image: 'icons/career.png',
+    image: '/themes/career.webp',
     description:
       'Discover your unique strengths and explore what drives your ambition, building clarity in your career direction.',
   },
   {
     id: 5,
     name: 'relationships',
-    image: 'icons/relationships.png',
+    image: '/themes/relationships.webp',
     description:
       'Reflect on how you connect with those around you, and consider ways to nurture and grow your personal bonds.',
   },
   {
     id: 6,
     name: 'health',
-    image: 'icons/health.png',
+    image: '/themes/health.webp',
     description:
       'Tune into your body and emotions, and explore how balance and mindful habits shape your overall well-being.',
   },
   {
     id: 7,
     name: 'decisions',
-    image: 'icons/decisions.png',
+    image: '/themes/decisions.webp',
     description:
       "Gain clarity and confidence when facing life's turning points, and uncover what truly aligns with your path.",
   },
   {
     id: 8,
     name: 'travel',
-    image: 'icons/travel.png',
+    image: '/themes/travel.webp',
     description:
       'Explore new environments and shifting paths, and reflect on how movement and change inspire transformation.',
   },

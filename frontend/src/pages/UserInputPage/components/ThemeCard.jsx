@@ -50,7 +50,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       className="cursor-pointer w-full flex justify-center pt-2 pb-8"
     >
       <div
-        className={`h-60 w-[137px] shrink-0 overflow-hidden rounded-md ${
+        className={`h-60 w-[135px] shrink-0 overflow-hidden rounded-md ${
           isLoaded ? '' : 'bg-gray-200'
         }`}
       >
