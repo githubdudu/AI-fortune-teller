@@ -179,10 +179,10 @@ function UserInputPage() {
       <h2 className="divider-text font-cormorant font-bold text-2xl text-mist-800 mb-2 ">
         - or -
       </h2>
-      <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-ink-800 mb-2">
-        Select a theme to let fate speak first.
-      </h2>
-      <div className="w-auto">
+      <div className="w-auto flex flex-col items-center">
+        <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-ink-800 mb-2">
+          Select a theme to let fate speak first.
+        </h2>
         <ThemeView />
       </div>
       {/* Decorative horizon vignette — geometry is documented on `bg-horizon` in index.css */}

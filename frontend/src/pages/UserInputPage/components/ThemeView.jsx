@@ -134,7 +134,6 @@ function ThemeView() {
         justifyContent="center"
         direction="column"
         width="100%"
-        gap={6}
       >
         {/* Display loading state or error message */}
         {error && <p style={{ color: 'red' }}>{error}</p>}
