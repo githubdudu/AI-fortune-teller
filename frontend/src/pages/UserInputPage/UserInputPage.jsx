@@ -147,7 +147,7 @@ function UserInputPage() {
   };
 
   return (
-    <>
+    <div className="w-full h-full flex items-center justify-around flex-col gap-5">
       <title>{SEO_TITLE.HOME}</title>
       <FloatingPrompt visible={isModalOpen}>
         {/* // If the user is not logged in, display the login form */}
@@ -187,7 +187,7 @@ function UserInputPage() {
       </div>
       {/* Decorative horizon vignette — geometry is documented on `bg-horizon` in index.css */}
       <div className="fixed inset-0 z-[-1] pointer-events-none bg-horizon" />
-    </>
+    </div>
   );
 }
 

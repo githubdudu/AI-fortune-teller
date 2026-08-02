@@ -19,9 +19,7 @@ function RootLayoutPage() {
         <ArcanaVerseLogo />
       </Flex.Item>
       <Flex.Item flex="grow">
-        <div className="w-full h-full flex items-center justify-around flex-col gap-5">
-          <Outlet />
-        </div>
+        <Outlet />
       </Flex.Item>
     </Flex>
   );
