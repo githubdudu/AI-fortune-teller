@@ -50,7 +50,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       className="cursor-pointer w-full flex justify-center pt-2 pb-8"
     >
       <div
-        className={`relative h-60 w-[135px] shrink-0 rounded-md shadow-xl/25 transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
+        className={`relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
           isLoaded ? '' : 'bg-gray-200'
         }`}
       >
