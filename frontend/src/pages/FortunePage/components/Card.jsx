@@ -15,15 +15,19 @@ const Card = ({
   const [isNumberShow, setIsNumberShow] = useState(false);
   return (
     <div
-      className={`tarot-card ${isShowFront ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
+      className={`tarot-card w-[13rem] h-[19.5rem] perspective-distant cursor-pointer relative  ${isShowFront ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
       onTransitionEnd={() => {
         if (isShowFront) {
           setIsNumberShow(true);
         }
       }}
     >
-      <div className="tarot-card-inner">
-        <div className="tarot-card-back">
+      <div
+        className={`tarot-card-inner relative w-full h-full text-center rounded-lg transition-transform duration-600 transform-3d shadow-md hover:shadow-xl ${isShowFront ? 'rotate-y-180 -translate-y-9' : ''} `}
+      >
+        <div
+          className={`tarot-card-back z-10 absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink rotate-y-0`}
+        >
           <img
             src={backImage}
             srcSet={
@@ -39,7 +43,9 @@ const Card = ({
             alt="Tarot Card Back"
           />
         </div>
-        <div className="tarot-card-front">
+        <div
+          className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isShowFront ? 'shadow-md shadow-pink-800' : ''} bg-blue rotate-y-180`}
+        >
           <img
             src={frontImage}
             width={208}
