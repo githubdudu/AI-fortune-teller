@@ -3,16 +3,19 @@ import { render, fireEvent } from '@testing-library/react';
 import DailyFortuneContent from '../../pages/UserInputPage/components/DailyFortuneContent';
 
 /**
- * Tests that the component renders initial prompt text when no data is supplied.
+ * Tests that the component renders the prompt plus its fallback fortune when no
+ * data is supplied.
  */
 it('renders initial prompt text correctly', () => {
   const onClick = vi.fn();
   const { getByText } = render(<DailyFortuneContent onClick={onClick} />);
 
   expect(getByText('Start Reading')).toBeInTheDocument();
+  expect(getByText('The future is calling.')).toBeInTheDocument();
 
-  // Should show loading message when no fortune data is provided
-  expect(getByText('Loading your daily fortune...')).toBeInTheDocument();
+  // Falls back to a default fortune rather than a loading message
+  expect(getByText('Your lucky number')).toBeInTheDocument();
+  expect(getByText('Pink')).toBeInTheDocument();
 });
 
 /**
