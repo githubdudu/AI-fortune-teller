@@ -3,10 +3,10 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   FloatingPortal,
   flip,
-  offset,
   shift,
   useClientPoint,
   useFloating,
+  useTransitionStyles,
 } from '@floating-ui/react';
 import { motion, useSpring } from 'motion/react';
 
@@ -21,8 +21,9 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
   const [mousePos, setMousePos] = useState(null);
 
   const { refs, x, y, strategy, isPositioned, context } = useFloating({
+    placement: 'right-start',
     open: mousePos !== null,
-    middleware: [offset(16), flip(), shift({ padding: 8 })],
+    middleware: [flip(), shift({ padding: 8 })],
   });
 
   // Let the floating element follow the mouse position
@@ -31,6 +32,9 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
     x: mousePos?.x ?? null,
     y: mousePos?.y ?? null,
   });
+
+  // Fade in/out on open/close, using Floating UI's defaults
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context);
 
   // Springs trail the position Floating UI computes, instead of snapping to it
   const springX = useSpring(0, SPRING);
@@ -73,7 +77,7 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
     };
   }, [anchorRef, enabled, children]);
 
-  if (mousePos === null) {
+  if (!isMounted) {
     return null;
   }
 
@@ -88,6 +92,7 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
           left: 0,
           x: springX,
           y: springY,
+          ...transitionStyles,
         }}
       >
         {children}
