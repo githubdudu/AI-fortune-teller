@@ -10,13 +10,14 @@ const Card = ({
   description,
   name,
   isShowFront,
+  isSelected,
   cardNumber,
 }) => {
   const [isNumberShow, setIsNumberShow] = useState(false);
   const cardRef = useRef(null);
   return (
     <div
-      className={`tarot-card w-[13rem] h-[19.5rem] perspective-distant relative ${isShowFront ? 'flipped' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
+      className={`tarot-card w-[13rem] h-[19.5rem] perspective-distant relative ${isShowFront ? 'flipped' : ''} ${isSelected ? 'no-flip-back' : ''}`}
       onTransitionEnd={() => {
         if (isShowFront) {
           setIsNumberShow(true);
@@ -24,7 +25,7 @@ const Card = ({
       }}
     >
       <div
-        className={`tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transition-transform duration-600 transform-3d shadow-md hover:shadow-xl ${isShowFront ? 'rotate-y-180 -translate-y-9' : ''} `}
+        className={`tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transition-transform duration-600 transform-3d shadow-md hover:shadow-xl ${isShowFront ? 'rotate-y-180' : ''} ${isSelected ? '-translate-y-9' : ''}`}
       >
         <div
           className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink rotate-y-0`}
@@ -46,7 +47,7 @@ const Card = ({
         </div>
         <div
           ref={cardRef}
-          className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isShowFront ? 'shadow-md shadow-pink-800' : ''} bg-blue rotate-y-180`}
+          className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''} bg-blue rotate-y-180`}
         >
           <img
             src={frontImage}
@@ -79,6 +80,7 @@ Card.propTypes = {
   description: PropTypes.string,
   name: PropTypes.string,
   isShowFront: PropTypes.bool,
+  isSelected: PropTypes.bool,
   cardNumber: PropTypes.string,
 };
 

@@ -89,19 +89,19 @@ SelectedCardsDisplay.propTypes = {
 /**
  * Displays the card selection interface
  */
-const CardsDisplay = ({ cards, onCardSelect, selectedCardsID }) => {
+const CardsDisplay = ({ cards, onCardSelect, selectionMark }) => {
   return (
     <div className="card-container">
-      {cards.map((card) => (
-        <div key={card.id} onClick={() => onCardSelect(card.id)}>
+      {cards.map((card, index) => (
+        <div key={card.id} onClick={() => onCardSelect(card.id, index)}>
           <Card
             backImage="/cards/back-416.webp"
             backImageSmall="/cards/back-240.webp"
             frontImage={card.imageSource || '/defaultFrontCard.png'}
-            isShowFront={selectedCardsID.includes(card.id)}
+            isSelected={selectionMark[index]}
             name={card.name}
             description={card.description}
-            cardNumber={selectedCardsID.indexOf(card.id) + 1}
+            cardNumber={selectionMark.indexOf(true) + 1}
           />
         </div>
       ))}
@@ -119,9 +119,7 @@ CardsDisplay.propTypes = {
     }),
   ).isRequired,
   onCardSelect: PropTypes.func.isRequired,
-  selectedCardsID: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  ).isRequired,
+  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
 };
 
 /**
@@ -131,13 +129,16 @@ const SelectionDisplay = ({
   cards,
   taroCardsError,
   streamError,
-  selectedCardsID,
+  selectionMark,
   handleCardSelect,
   handleReadButton,
 }) => {
   // Local click handler without event parameter
   const onReadButtonClick = () => {
-    console.log('Read button clicked with selected cards:', selectedCardsID);
+    console.log(
+      'Read button clicked with selected cards:',
+      cards.filter((card, index) => selectionMark[index]),
+    );
     handleReadButton();
   };
 
@@ -159,11 +160,11 @@ const SelectionDisplay = ({
       <CardsDisplay
         cards={cards}
         onCardSelect={handleCardSelect}
-        selectedCardsID={selectedCardsID}
+        selectionMark={selectionMark}
       />
 
       <div className="action-container">
-        {selectedCardsID.length === 3 ? (
+        {selectionMark.filter((mark) => mark).length === 3 ? (
           <Button
             text="See Your Reading"
             name="edit-button"
@@ -171,11 +172,13 @@ const SelectionDisplay = ({
             onClick={onReadButtonClick}
             size="lg"
             accessibilityLabel="Get your tarot reading"
-            disabled={selectedCardsID.length !== 3}
+            disabled={selectionMark.filter((mark) => mark).length !== 3}
           />
         ) : (
           <div className="cards-remaining text-ink-900">
-            <span>{3 - selectedCardsID.length} cards remaining</span>
+            <span>
+              {3 - selectionMark.filter((mark) => mark).length} cards remaining
+            </span>
           </div>
         )}
       </div>
@@ -194,9 +197,7 @@ SelectionDisplay.propTypes = {
   ).isRequired,
   taroCardsError: PropTypes.object,
   streamError: PropTypes.string,
-  selectedCardsID: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  ).isRequired,
+  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
   handleCardSelect: PropTypes.func.isRequired,
   handleReadButton: PropTypes.func.isRequired,
 };
@@ -283,20 +284,9 @@ const FortunePage = () => {
     error: taroCardsError,
     fetchCards,
   } = useFetchTarotCards(5);
-  const { selectedCardsID, handleCardSelect, resetSelection } =
-    useCardSelection(3);
-
-  /**
-   * Get details for selected cards
-   */
-  const getSelectedCardDetails = useCallback(
-    (selectedIds) => {
-      return selectedIds.map((id) => {
-        const card = cards.find((c) => c.id === id);
-        return card || { id };
-      });
-    },
-    [cards],
+  const { selectedCounts, selectionMark, handleCardSelect } = useCardSelection(
+    cards.length,
+    3,
   );
 
   /**
@@ -312,7 +302,7 @@ const FortunePage = () => {
     console.log('Read button clicked - processing reading request');
 
     // Handle case when no cards are selected (fallback to defaults)
-    if (!selectedCardsID?.length) {
+    if (!selectedCounts) {
       // Call the function directly instead of inside a hook
       const defaultCards = [
         {
@@ -342,14 +332,14 @@ const FortunePage = () => {
     }
 
     // Save the selected cards to context first (before streaming starts)
-    const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
-    saveUserChosenCards(selectedCardDetails);
+    const selectedCards = cards.filter((card, index) => selectionMark[index]);
+    saveUserChosenCards(selectedCards);
 
     // Switch to results view immediately with loading state
     setShowResults(true);
 
     // Store current selection data for async callback
-    const currentCardIds = [...selectedCardsID];
+    const currentCardIds = selectedCards.map((card) => card.id);
     const currentPrompt = userPrompt || '';
     const currentTheme = userChosenTheme?.id || null;
 
@@ -366,12 +356,13 @@ const FortunePage = () => {
     }, 150);
   }, [
     isSubmitting,
-    selectedCardsID,
+    selectedCounts,
     userPrompt,
     userChosenTheme,
-    getSelectedCardDetails,
     saveUserChosenCards,
     startFortuneStream,
+    cards,
+    selectionMark,
   ]);
 
   /**
@@ -383,7 +374,6 @@ const FortunePage = () => {
     saveUserChosenCards(null);
 
     // Reset component state
-    resetSelection();
     setShowResults(false);
 
     // Get new cards
@@ -391,13 +381,7 @@ const FortunePage = () => {
 
     // Navigate back to landing page
     navigate('/');
-  }, [
-    clearQuestionAndTheme,
-    saveUserChosenCards,
-    resetSelection,
-    fetchCards,
-    navigate,
-  ]);
+  }, [clearQuestionAndTheme, saveUserChosenCards, fetchCards, navigate]);
 
   // Show loading animation when fetching cards or submitting reading request
   if (isCardsLoading || (isSubmitting && !showResults)) {
@@ -426,7 +410,7 @@ const FortunePage = () => {
       cards={cards}
       taroCardsError={taroCardsError}
       streamError={streamError}
-      selectedCardsID={selectedCardsID}
+      selectionMark={selectionMark}
       handleCardSelect={handleCardSelect}
       handleReadButton={handleReadButton}
     />

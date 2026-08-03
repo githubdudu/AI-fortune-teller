@@ -2,64 +2,55 @@ import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Custom hook for managing tarot card selection
- * @param {number} maxCards - Maximum number of cards that can be selected
+ * @param {number} totalCounts - Total number of cards available for selection
+ * @param {number} maxSelection - Maximum number of cards that can be selected
  * @returns {Object} Card selection state and handlers
  */
-const useCardSelection = (maxCards = 3) => {
-  const [selectedCardsID, setSelectedCardsID] = useState([]);
-  const [isSelectDisabled, setIsSelectDisabled] = useState(false);
+const useCardSelection = (totalCounts, maxSelection = 3) => {
+  const [selectedCounts, setSelectedCounts] = useState(0);
+  const [selectionMark, setSelectionMark] = useState(
+    Array(totalCounts).fill(false),
+  );
 
-  // Update disabled state when selection changes
   useEffect(() => {
-    setIsSelectDisabled(selectedCardsID.length >= maxCards);
-  }, [selectedCardsID, maxCards]);
+    setSelectionMark(Array(totalCounts).fill(false));
+    setSelectedCounts(0);
+  }, [totalCounts]);
 
   /**
    * Handle card selection
    * @param {number} cardId - ID of the card being selected
+   * @param {number} index - Index of the card in the selection array
+   * @returns {boolean} True if selection was successful, false otherwise
    */
   const handleCardSelect = useCallback(
-    (cardId) => {
-      // Prevent selection if already have max cards selected and this card is not already selected
-      if (isSelectDisabled && !selectedCardsID.includes(cardId)) {
-        return;
+    (cardId, index) => {
+      // Toggle selected cards
+      if (selectionMark[index]) {
+        setSelectionMark((prevMark) =>
+          prevMark.map((mark, i) => (i === index ? false : mark)),
+        );
+        setSelectedCounts((prevCounts) => prevCounts - 1);
+        return true;
       }
 
-      // Don't re-select an already selected card
-      if (selectedCardsID.includes(cardId)) {
-        return;
+      if (!selectionMark[index] && selectedCounts < maxSelection) {
+        setSelectionMark((prevMark) =>
+          prevMark.map((mark, i) => (i === index ? true : mark)),
+        );
+        setSelectedCounts((prevCounts) => prevCounts + 1);
+        return true;
       }
 
-      setSelectedCardsID((prevCards) => [...prevCards, cardId]);
+      return false;
     },
-    [isSelectDisabled, selectedCardsID],
+    [selectionMark, selectedCounts, maxSelection],
   );
-
-  /**
-   * Check if a card should be disabled based on selection state
-   * @param {number} cardId - ID of the card to check
-   * @returns {boolean} True if card should be disabled
-   */
-  const isCardDisabled = useCallback(
-    (cardId) => {
-      return isSelectDisabled && !selectedCardsID.includes(cardId);
-    },
-    [isSelectDisabled, selectedCardsID],
-  );
-
-  /**
-   * Reset card selection
-   */
-  const resetSelection = useCallback(() => {
-    setSelectedCardsID([]);
-  }, []);
 
   return {
-    selectedCardsID,
-    isSelectDisabled,
+    selectedCounts,
+    selectionMark,
     handleCardSelect,
-    isCardDisabled,
-    resetSelection,
   };
 };
 

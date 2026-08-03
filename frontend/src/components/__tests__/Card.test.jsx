@@ -178,6 +178,7 @@ it('applies correct CSS classes based on state', () => {
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
       isShowFront={true}
+      isSelected={true}
     />,
   );
   cardElement = container.querySelector('.tarot-card');
