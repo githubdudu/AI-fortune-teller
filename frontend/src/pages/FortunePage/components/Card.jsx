@@ -60,7 +60,7 @@ const Card = ({
             anchorRef={cardRef}
             enabled={isShowFront && !disabled && !!description}
           >
-            <div className="tarot-card-description w-3xs">
+            <div className="tarot-card-description  w-3xs p-3 rounded-lg text-white bg-mist-900/70">
               <h3 className="text-base mb-2 text-[#ffd7ec] font-bold">
                 {name}
               </h3>
