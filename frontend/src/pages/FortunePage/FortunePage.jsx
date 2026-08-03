@@ -98,11 +98,7 @@ const CardsDisplay = ({
   return (
     <div className="card-container">
       {cards.map((card) => (
-        <div
-          key={card.id}
-          className="card-wrapper"
-          onClick={() => onCardSelect(card.id)}
-        >
+        <div key={card.id} onClick={() => onCardSelect(card.id)}>
           <Card
             backImage="/cards/back-416.webp"
             backImageSmall="/cards/back-240.webp"

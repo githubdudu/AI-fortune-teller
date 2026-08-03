@@ -1,4 +1,5 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import Card from '$/pages/FortunePage/components/Card';
 
@@ -20,54 +21,55 @@ it('renders correctly with back side showing initially', () => {
 });
 
 /**
- * Tests that clicking the card flips it and shows the front side with description.
+ * Tests that hovering a flipped card shows the description in a floating block.
  */
-it('flips and shows front side with description when clicked', () => {
-  const { getByAltText, getByText, container } = render(
+it('shows the description in a floating block on hover', async () => {
+  const user = userEvent.setup();
+  const { getByAltText, container } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
+      isShowFront={true}
     />,
   );
-
-  // Click the card to flip it
-  const card = container.querySelector('.tarot-card');
-  fireEvent.click(card);
 
   // Should show the front image
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 
-  // Should now show the title and description
-  expect(getByText('The Fool')).toBeInTheDocument();
+  // Hovering the card should reveal the title and description
+  const card = container.querySelector('.tarot-card');
+  await user.hover(card);
+
+  expect(await screen.findByText('The Fool')).toBeInTheDocument();
   expect(
-    getByText('The Fool symbolizes key aspects of the human journey.'),
+    screen.getByText('The Fool symbolizes key aspects of the human journey.'),
   ).toBeInTheDocument();
 });
 
 /**
- * Tests that the card respects the initialFlipped prop.
+ * Tests that the description is not rendered until the card is hovered.
  */
-it('shows front side initially when initialFlipped is true', () => {
-  const { getByAltText, getByText } = render(
+it('does not show the description until hovered', () => {
+  const { getByAltText, queryByText } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
-      initialFlipped={true}
+      isShowFront={true}
     />,
   );
 
   // Should show the front image
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 
-  // Should show the title and description since card is flipped
-  expect(getByText('The Fool')).toBeInTheDocument();
+  // But the description block should not be mounted yet
+  expect(queryByText('The Fool')).not.toBeInTheDocument();
   expect(
-    getByText('The Fool symbolizes key aspects of the human journey.'),
-  ).toBeInTheDocument();
+    queryByText('The Fool symbolizes key aspects of the human journey.'),
+  ).not.toBeInTheDocument();
 });
 
 /**
@@ -128,7 +130,7 @@ it('renders the number with correct value when flipped', () => {
  * Tests that the card does not flip back once it has been flipped to the front.
  */
 it('does not flip back once flipped to front', () => {
-  const { getByAltText, getByText, container } = render(
+  const { getByAltText, container } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
@@ -143,14 +145,12 @@ it('does not flip back once flipped to front', () => {
 
   // Verify it's showing the front
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
-  expect(getByText('The Fool')).toBeInTheDocument();
 
   // Click the card again to try to flip it back
   fireEvent.click(card);
 
-  // Should still show the front image and text (not flipping back)
+  // Should still show the front image (not flipping back)
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
-  expect(getByText('The Fool')).toBeInTheDocument();
 });
 
 /**
