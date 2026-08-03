@@ -1,73 +1,3 @@
-.card-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  margin: 40px 0;
-  position: relative;
-}
-
-.selection-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  max-width: 100vw;
-  min-width: 900px;
-  margin: 0 auto;
-  min-height: 70vh;
-  overflow: hidden;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-  100% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.selection-title {
-  font-size: 2.4rem;
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: bold;
-  text-shadow: 0 0 15px rgba(255, 221, 247, 0.7);
-  position: relative;
-  z-index: 2;
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.cards-remaining {
-  background-color: rgba(255, 251, 239, 0.85);
-  padding: 8px 20px;
-  border-radius: 20px;
-  margin-bottom: 10px;
-  font-weight: 500;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 2;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-  .card-container {
-    gap: 15px;
-  }
-  
-  .selection-title {
-    font-size: 1.8rem;
-  }
-}
 
 .results-container {
   max-width: 1200px;
@@ -90,21 +20,7 @@
   margin: 0 auto;
   width: 100%;
 }
-.result-card {
-  width: 280px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.result-card:hover {
-  transform: translateY(-10px);
-}
+
 .card-with-position {
   position: relative;
   margin-bottom: 1rem;
@@ -137,18 +53,7 @@
   font-size: 0.9rem;
   color: #666;
 }
-/* the styling of Card component when displaying the fortune reading result */
-.result-card .tarot-card {
-  width: 200px;
-  height: 300px;
-  margin: 0 auto;
-}
-.result-card .tarot-card-inner {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-.result-card .tarot-card img {
-  object-fit: cover;
-}
+
 
 .loading-wrapper {
   display: flex;
@@ -164,11 +69,6 @@
   .selected-cards-display {
     flex-direction: column;
     align-items: center;
-  }
-  
-  .result-card {
-    width: 90%;
-    max-width: 300px;
   }
 }
 
