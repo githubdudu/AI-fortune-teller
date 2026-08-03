@@ -38,7 +38,7 @@ const Card = ({
           className={`tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transition-transform duration-600 transform-3d shadow-md hover:shadow-xl ${isShowFront ? 'rotate-y-180' : ''} ${isSelected ? '-translate-y-9 rotate-y-180' : ''}`}
         >
           <div
-            className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink rotate-y-0`}
+            className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink-600 rotate-y-0`}
           >
             <img
               src={backImage}
@@ -57,7 +57,7 @@ const Card = ({
           </div>
           <div
             ref={cardRef}
-            className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''} bg-blue rotate-y-180`}
+            className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''} bg-blue-500 rotate-y-180`}
           >
             <img
               src={frontImage}

@@ -1,3 +1,77 @@
+/*
+ * Holographic refraction, adapted from the pokemon-cards-css technique:
+ * a repeating rainbow band plus a radial hotspot, both positioned by the
+ * pointer (--mx / --my, published by useCardTilt).
+ *
+ * Blend modes are `overlay`/`soft-light`, not the original's `color-dodge`.
+ * Dodge is `Cb / (1 - Cs)`, which clips straight to white on a light backdrop —
+ * on our bright tarot artwork the whole sheen burned out and read as nothing.
+ * Overlay keeps its contrast in both directions.
+ */
+.tarot-card {
+  --mx: 50%;
+  --my: 50%;
+  --pointer-from-center: 0;
+}
+
+.card-holo,
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: 100;
+}
+
+.card-holo {
+  background-image: repeating-linear-gradient(
+    110deg,
+    rgba(255, 119, 115, 0.6) 0%,
+    rgba(255, 237, 95, 0.6) 8%,
+    rgba(168, 255, 95, 0.6) 16%,
+    rgba(131, 255, 247, 0.6) 24%,
+    rgba(120, 148, 255, 0.6) 32%,
+    rgba(216, 117, 255, 0.6) 40%,
+    rgba(255, 119, 115, 0.6) 48%
+  );
+  /* Oversized so the band can slide as the pointer moves */
+  background-size: 300% 300%;
+  background-position: var(--mx) var(--my);
+  mix-blend-mode: overlay;
+  /* Mild contrast only — pushing channels towards 1 is what blew out before */
+  filter: contrast(1.2) saturate(1.5);
+}
+
+.card-glare {
+  /* Fades to transparent, not to a dark ring: the hotspot should only add
+     light, never dirty the edges of the artwork. */
+  background-image: radial-gradient(
+    farthest-corner circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.8) 10%,
+    rgba(255, 255, 255, 0.3) 30%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.tarot-card:hover .card-holo {
+  /* Fades up towards the edges, where a real foil catches the most light */
+  opacity: calc(0.45 + 0.35 * var(--pointer-from-center));
+}
+
+.tarot-card:hover .card-glare {
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .tarot-card:hover .card-holo,
+  .tarot-card:hover .card-glare {
+    opacity: 0;
+  }
+}
+
 .card-number {
   position: absolute;
   left: -10px;
