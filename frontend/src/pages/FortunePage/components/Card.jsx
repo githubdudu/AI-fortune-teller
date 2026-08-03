@@ -7,7 +7,6 @@ const Card = ({
   frontImage,
   backImage,
   backImageSmall,
-  disabled,
   description,
   name,
   isShowFront,
@@ -17,7 +16,7 @@ const Card = ({
   const cardRef = useRef(null);
   return (
     <div
-      className={`tarot-card w-[13rem] h-[19.5rem] perspective-distant relative ${isShowFront ? 'flipped' : ''} ${disabled ? 'disabled' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
+      className={`tarot-card w-[13rem] h-[19.5rem] perspective-distant relative ${isShowFront ? 'flipped' : ''} ${isShowFront ? 'no-flip-back' : ''}`}
       onTransitionEnd={() => {
         if (isShowFront) {
           setIsNumberShow(true);
@@ -56,10 +55,7 @@ const Card = ({
             decoding="async"
             alt="Tarot Card Front"
           />
-          <FloatingDescription
-            anchorRef={cardRef}
-            enabled={isShowFront && !disabled && !!description}
-          >
+          <FloatingDescription anchorRef={cardRef} enabled={!!description}>
             <div className="tarot-card-description  w-3xs p-3 rounded-lg text-white bg-mist-900/70">
               <h3 className="text-base mb-2 text-[#ffd7ec] font-bold">
                 {name}
@@ -80,7 +76,6 @@ Card.propTypes = {
   frontImage: PropTypes.string,
   backImage: PropTypes.string,
   backImageSmall: PropTypes.string,
-  disabled: PropTypes.bool,
   description: PropTypes.string,
   name: PropTypes.string,
   isShowFront: PropTypes.bool,
@@ -91,7 +86,6 @@ Card.defaultProps = {
   frontImage: null,
   backImage: null,
   backImageSmall: null,
-  disabled: false,
   description: '',
   name: '',
 };

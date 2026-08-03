@@ -166,10 +166,9 @@ it('applies correct CSS classes based on state', () => {
     />,
   );
 
-  // Initially should not have 'flipped' or 'disabled' classes
+  // Initially should not have 'flipped' classes
   let cardElement = container.querySelector('.tarot-card');
   expect(cardElement.classList.contains('flipped')).toBe(false);
-  expect(cardElement.classList.contains('disabled')).toBe(false);
   expect(cardElement.classList.contains('no-flip-back')).toBe(false);
 
   // flip
@@ -185,18 +184,4 @@ it('applies correct CSS classes based on state', () => {
   // Should now have 'flipped' and 'no-flip-back' classes
   expect(cardElement.classList.contains('flipped')).toBe(true);
   expect(cardElement.classList.contains('no-flip-back')).toBe(true);
-
-  // Rerender with disabled prop
-  rerender(
-    <Card
-      name="The Fool"
-      frontImage="path/to/front-image.png"
-      backImage="path/to/back-image.png"
-      disabled={true}
-    />,
-  );
-
-  // Should now have the 'disabled' class
-  cardElement = container.querySelector('.tarot-card');
-  expect(cardElement.classList.contains('disabled')).toBe(true);
 });

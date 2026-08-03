@@ -89,12 +89,7 @@ SelectedCardsDisplay.propTypes = {
 /**
  * Displays the card selection interface
  */
-const CardsDisplay = ({
-  cards,
-  onCardSelect,
-  isCardDisabled,
-  selectedCardsID,
-}) => {
+const CardsDisplay = ({ cards, onCardSelect, selectedCardsID }) => {
   return (
     <div className="card-container">
       {cards.map((card) => (
@@ -103,7 +98,6 @@ const CardsDisplay = ({
             backImage="/cards/back-416.webp"
             backImageSmall="/cards/back-240.webp"
             frontImage={card.imageSource || '/defaultFrontCard.png'}
-            disabled={isCardDisabled(card.id)}
             isShowFront={selectedCardsID.includes(card.id)}
             name={card.name}
             description={card.description}
@@ -125,7 +119,6 @@ CardsDisplay.propTypes = {
     }),
   ).isRequired,
   onCardSelect: PropTypes.func.isRequired,
-  isCardDisabled: PropTypes.func.isRequired,
   selectedCardsID: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ).isRequired,
@@ -140,7 +133,6 @@ const SelectionDisplay = ({
   streamError,
   selectedCardsID,
   handleCardSelect,
-  isCardDisabled,
   handleReadButton,
 }) => {
   // Local click handler without event parameter
@@ -167,7 +159,6 @@ const SelectionDisplay = ({
       <CardsDisplay
         cards={cards}
         onCardSelect={handleCardSelect}
-        isCardDisabled={isCardDisabled}
         selectedCardsID={selectedCardsID}
       />
 
@@ -207,7 +198,6 @@ SelectionDisplay.propTypes = {
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ).isRequired,
   handleCardSelect: PropTypes.func.isRequired,
-  isCardDisabled: PropTypes.func.isRequired,
   handleReadButton: PropTypes.func.isRequired,
 };
 
@@ -293,7 +283,7 @@ const FortunePage = () => {
     error: taroCardsError,
     fetchCards,
   } = useFetchTarotCards(5);
-  const { selectedCardsID, handleCardSelect, isCardDisabled, resetSelection } =
+  const { selectedCardsID, handleCardSelect, resetSelection } =
     useCardSelection(3);
 
   /**
@@ -438,7 +428,6 @@ const FortunePage = () => {
       streamError={streamError}
       selectedCardsID={selectedCardsID}
       handleCardSelect={handleCardSelect}
-      isCardDisabled={isCardDisabled}
       handleReadButton={handleReadButton}
     />
   );
