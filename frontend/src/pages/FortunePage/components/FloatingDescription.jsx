@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   FloatingPortal,
   flip,
@@ -8,15 +8,19 @@ import {
   useClientPoint,
   useFloating,
 } from '@floating-ui/react';
+import { motion, useSpring } from 'motion/react';
+
+// Lower stiffness / higher mass = more lag behind the cursor
+const SPRING = { stiffness: 1000, damping: 60, mass: 0.6 };
 
 /**
- * Shows the card description in a block that follows the cursor while hovering
+ * Shows the card description in a block that trails the cursor while hovering
  * `anchorRef`. Renders nothing in place — the block itself goes to a portal.
  */
 const FloatingDescription = ({ anchorRef, enabled, children }) => {
   const [mousePos, setMousePos] = useState(null);
 
-  const { refs, floatingStyles, context } = useFloating({
+  const { refs, x, y, strategy, isPositioned, context } = useFloating({
     open: mousePos !== null,
     middleware: [offset(16), flip(), shift({ padding: 8 })],
   });
@@ -27,6 +31,27 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
     x: mousePos?.x ?? null,
     y: mousePos?.y ?? null,
   });
+
+  // Springs trail the position Floating UI computes, instead of snapping to it
+  const springX = useSpring(0, SPRING);
+  const springY = useSpring(0, SPRING);
+  const settled = useRef(false);
+
+  useLayoutEffect(() => {
+    if (!isPositioned) {
+      settled.current = false;
+      return;
+    }
+    if (settled.current) {
+      springX.set(x);
+      springY.set(y);
+    } else {
+      // First position of a hover: land directly, don't fly in from (0, 0)
+      springX.jump(x);
+      springY.jump(y);
+      settled.current = true;
+    }
+  }, [x, y, isPositioned, springX, springY]);
 
   // Update mouse position
   useEffect(() => {
@@ -54,14 +79,19 @@ const FloatingDescription = ({ anchorRef, enabled, children }) => {
 
   return (
     <FloatingPortal>
-      <div
+      <motion.div
         ref={refs.setFloating}
+        className="pointer-events-none"
         style={{
-          ...floatingStyles,
+          position: strategy,
+          top: 0,
+          left: 0,
+          x: springX,
+          y: springY,
         }}
       >
         {children}
-      </div>
+      </motion.div>
     </FloatingPortal>
   );
 };

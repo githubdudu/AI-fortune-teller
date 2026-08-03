@@ -38,9 +38,9 @@ it('shows the description in a floating block on hover', async () => {
   // Should show the front image
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 
-  // Hovering the card should reveal the title and description
-  const card = container.querySelector('.tarot-card');
-  await user.hover(card);
+  // Hovering the front face should reveal the title and description
+  const cardFront = container.querySelector('.tarot-card-front');
+  await user.hover(cardFront);
 
   expect(await screen.findByText('The Fool')).toBeInTheDocument();
   expect(
