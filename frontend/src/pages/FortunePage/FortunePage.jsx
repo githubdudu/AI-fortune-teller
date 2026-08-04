@@ -1,262 +1,15 @@
-import Card from './components/Card';
-import './FortunePage.css';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box } from 'gestalt';
 import React, { useState, useContext, useCallback } from 'react';
-import PropTypes from 'prop-types';
+
+import './FortunePage.css';
+import SelectionView from './SelectionView';
+import ReadingView from './ReadingView';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
-import ErrorMessage from './components/ErrorMessage';
+
 import { AppContext } from '../../context/AppContextProvider';
 import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';
 import { useFortuneStream } from '../../hooks/useFortuneStream';
-import { markdownToHtml, createMarkup } from '../../utils/markdownUtils';
-
-/**
- * Displays reading interpretation with markdown formatting
- */
-const ReadingInterpretationDisplay = ({ readingText }) => {
-  // Convert markdown text to HTML
-  const htmlContent = markdownToHtml(readingText);
-
-  return (
-    <div className="interpretation-box">
-      <h2 className="interpretation-title">✦ Interpretation ✦</h2>
-      <div
-        className="interpretation-text markdown-content"
-        dangerouslySetInnerHTML={createMarkup(htmlContent)}
-      />
-    </div>
-  );
-};
-
-ReadingInterpretationDisplay.propTypes = {
-  readingText: PropTypes.string.isRequired,
-};
-
-/**
- * Button to start a new reading
- */
-const NewReadingButton = ({ onClick }) => {
-  return (
-    <Box marginTop={2} display="flex" justifyContent="center">
-      <Button
-        text="Reveal Another Reading"
-        name="edit-button"
-        onClick={onClick}
-        size="lg"
-        color="red"
-      />
-    </Box>
-  );
-};
-
-NewReadingButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-};
-
-/**
- * Displays the cards selected for the reading
- */
-const SelectedCardsDisplay = ({ cards }) => {
-  return (
-    <div className="selected-cards-display">
-      {cards?.map((card, index) => (
-        <div key={card.id}>
-          <Card
-            frontImage={card.imageSource || '/defaultFrontCard.png'}
-            isShowFront={true}
-            name={card.name}
-            description={card.description}
-            index={index}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-SelectedCardsDisplay.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ),
-};
-
-/**
- * Displays the card selection interface
- */
-const CardsDisplay = ({ cards, onCardSelect, selectionMark }) => {
-  return (
-    <div className="card-container relative flex w-full justify-between gap-4 my-10">
-      {cards.map((card, index) => (
-        <div
-          key={card.id}
-          className="min-w-0 shrink flex flex-col items-center"
-          onClick={() => onCardSelect(card.id, index)}
-        >
-          <Card
-            backImage="/cards/back-416.webp"
-            backImageSmall="/cards/back-240.webp"
-            frontImage={card.imageSource || '/defaultFrontCard.png'}
-            isSelected={selectionMark[index]}
-            name={card.name}
-            description={card.description}
-            cardNumber={selectionMark.indexOf(true) + 1}
-            index={index}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-CardsDisplay.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ).isRequired,
-  onCardSelect: PropTypes.func.isRequired,
-  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
-};
-
-/**
- * Card selection screen
- */
-const SelectionDisplay = ({
-  cards,
-  taroCardsError,
-  streamError,
-  selectionMark,
-  handleCardSelect,
-  handleReadButton,
-}) => {
-  // Local click handler without event parameter
-  const onReadButtonClick = () => {
-    console.log(
-      'Read button clicked with selected cards:',
-      cards.filter((card, index) => selectionMark[index]),
-    );
-    handleReadButton();
-  };
-
-  return (
-    <div className="selection-container flex flex-col items-center p-5 max-w-screen sm:w-xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh]">
-      <h1 className="selection-title mb-5 text-3xl md:text-4xl text-center font-bold font-cormorant text-ink-900">
-        Select Three Cards for your Reading
-      </h1>
-
-      {taroCardsError && (
-        <ErrorMessage
-          message="Could not fetch cards from server. Using demo cards instead."
-          type="warning"
-        />
-      )}
-
-      {streamError && <ErrorMessage message={streamError} type="error" />}
-
-      <CardsDisplay
-        cards={cards}
-        onCardSelect={handleCardSelect}
-        selectionMark={selectionMark}
-      />
-
-      <div className="action-container">
-        {selectionMark.filter((mark) => mark).length === 3 ? (
-          <Button
-            text="See Your Reading"
-            name="edit-button"
-            color="blue"
-            onClick={onReadButtonClick}
-            size="lg"
-            accessibilityLabel="Get your tarot reading"
-            disabled={selectionMark.filter((mark) => mark).length !== 3}
-          />
-        ) : (
-          <div className="cards-remaining px-5 py-2 mb-2 rounded-full shadow-lg bg-mist-200 font-medium  text-ink-900">
-            <span>
-              {3 - selectionMark.filter((mark) => mark).length} cards remaining
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-SelectionDisplay.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ).isRequired,
-  taroCardsError: PropTypes.object,
-  streamError: PropTypes.string,
-  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
-  handleCardSelect: PropTypes.func.isRequired,
-  handleReadButton: PropTypes.func.isRequired,
-};
-
-/**
- * Reading results screen
- */
-const ResultsDisplay = ({
-  readingResult,
-  userChosenCards,
-  onNewReading,
-  isStreamLoading,
-}) => {
-  return (
-    <div className="results-container">
-      <h1 className="reading-title"> Your ArcanaVerse Reading </h1>
-
-      <Box className="reading-subtitle-wrapper">
-        <p className="reading-subtitle-text">
-          The cards have spoken. Here is your path forward.
-        </p>
-      </Box>
-
-      <SelectedCardsDisplay cards={userChosenCards} />
-
-      {isStreamLoading && (
-        <div className="loading-wrapper">
-          <LoadingAnimation />
-        </div>
-      )}
-
-      {!isStreamLoading && (
-        <ReadingInterpretationDisplay readingText={readingResult} />
-      )}
-
-      <NewReadingButton onClick={onNewReading} />
-    </div>
-  );
-};
-
-ResultsDisplay.propTypes = {
-  readingResult: PropTypes.string.isRequired,
-  userChosenCards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ),
-  onNewReading: PropTypes.func.isRequired,
-  isStreamLoading: PropTypes.bool,
-};
 
 /**
  * Main FortunePage component
@@ -401,7 +154,7 @@ const FortunePage = () => {
   // Show results after reading is complete
   if (showResults) {
     return (
-      <ResultsDisplay
+      <ReadingView
         readingResult={streamingText || ''}
         userChosenCards={userChosenCards}
         onNewReading={handleNewReading}
@@ -412,7 +165,7 @@ const FortunePage = () => {
 
   // Show card selection
   return (
-    <SelectionDisplay
+    <SelectionView
       cards={cards}
       taroCardsError={taroCardsError}
       streamError={streamError}
