@@ -64,15 +64,6 @@ const ReadingView = ({ userChosenCards }) => {
     userChosenCards,
   ]);
 
-  // Show loading animation when fetching cards or submitting reading request
-  if (isSubmitting) {
-    return (
-      <div className="selection-container">
-        <LoadingAnimation />
-      </div>
-    );
-  }
-
   return (
     <div className="results-container">
       <h1 className="reading-title"> Your ArcanaVerse Reading </h1>

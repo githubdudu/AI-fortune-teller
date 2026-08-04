@@ -12,13 +12,6 @@ import useFetchTarotCards from '../../hooks/useFetchTarotCards';
  * Main FortunePage component
  */
 const FortunePage = () => {
-  // AppContext provides user theme, prompt, and methods to save/clear reading results
-  // const {
-  // saveUserChosenCards, TODO: delete all of these
-  // clearQuestionAndTheme, TODO: auto clear at home page, check usage
-  // userChosenCards, TODO: delete the one in AppContext.
-  // } = useContext(AppContext);
-
   // Use custom hooks for cards and selection
   const {
     cards,

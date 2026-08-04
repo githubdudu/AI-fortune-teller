@@ -10,8 +10,7 @@ const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 function ThemeCard({ theme, onHover, disabled = false }) {
   const image = IMAGE_BASE_URL + theme.image;
 
-  const { saveUserChosenTheme, clearQuestionAndTheme, saveUserChosenCards } =
-    useContext(AppContext);
+  const { saveUserChosenTheme, saveUserPrompt } = useContext(AppContext);
 
   const [isLoaded, setIsLoaded] = useState(false);
   const imgRef = useRef(null);
@@ -26,9 +25,8 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   const handleClick = () => {
     // If there is a API error at input page, do not allow to click on theme card
     if (disabled) return;
-    // Clear the user question and theme from context
-    clearQuestionAndTheme();
-    saveUserChosenCards(null);
+    // so drop any question left over from an earlier reading.
+    saveUserPrompt('');
     // Store the selected theme in context for later use
     saveUserChosenTheme(theme);
 

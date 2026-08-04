@@ -14,19 +14,9 @@ export function AppContextProvider({ children }) {
     null,
   );
 
-  const [userChosenCards, setUserChosenCards] = useSessionStorage(
-    'userChosenCards',
-    null,
-  );
-
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
-
-  const clearQuestionAndTheme = () => {
-    setUserPrompt('');
-    setUserChosenTheme(null);
-  };
 
   const login = (profile) => {
     setIsLoggedIn(true);
@@ -41,16 +31,9 @@ export function AppContextProvider({ children }) {
 
     // Clear the session storage
     setUserProfile(null);
-    setUserChosenCards(null);
     setUserPrompt('');
     setUserChosenTheme(null);
-  }, [
-    setIsLoggedIn,
-    setUserProfile,
-    setUserChosenCards,
-    setUserPrompt,
-    setUserChosenTheme,
-  ]);
+  }, [setIsLoggedIn, setUserProfile, setUserPrompt, setUserChosenTheme]);
 
   // Register logout handler with API client
   useEffect(() => {
@@ -66,13 +49,10 @@ export function AppContextProvider({ children }) {
   return (
     <AppContext.Provider
       value={{
-        userChosenCards,
-        saveUserChosenCards: setUserChosenCards,
         userPrompt,
         saveUserPrompt: setUserPrompt,
         userChosenTheme,
         saveUserChosenTheme: setUserChosenTheme,
-        clearQuestionAndTheme,
         userProfile,
         setUserProfile,
         login,

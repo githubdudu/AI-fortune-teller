@@ -9,14 +9,7 @@ function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
   // Context state
-  const {
-    saveUserPrompt,
-    clearQuestionAndTheme,
-    userChosenTheme,
-    userPrompt,
-    userChosenCards,
-    saveUserChosenCards,
-  } = useContext(AppContext);
+  const { saveUserPrompt, saveUserChosenTheme } = useContext(AppContext);
   // internal state
   const [input, setInput] = useState('');
   const [textAreaHeight, setTextAreaHeight] = useState(0);
@@ -34,27 +27,6 @@ function UserQuestionInput() {
   }, [input]);
 
   const handleSubmit = () => {
-    clearQuestionAndTheme();
-    // Clear the user question and theme from context
-    if (!userPrompt) {
-      console.log('userPrompt is empty');
-    } else {
-      console.log('userPrompt:', userPrompt);
-    }
-    if (!userChosenTheme) {
-      console.log('userChosenTheme is empty');
-    } else {
-      console.log('userChosenTheme:', userChosenTheme);
-    }
-
-    // Clear the user chosen cards from context
-    saveUserChosenCards(null);
-    if (!userChosenCards) {
-      console.log('userChosenCards is empty');
-    } else {
-      console.log('userChosenCards:', userChosenCards);
-    }
-
     const trimmedInput = input.trim();
 
     // Validation for empty input submit, or question shorter than ~4 words.
@@ -64,9 +36,9 @@ function UserQuestionInput() {
       return;
     }
 
-    // TODO: Save the input as user prompt in the context for later use
+    // so drop any theme left over from an earlier reading.
+    saveUserChosenTheme(null);
     saveUserPrompt(trimmedInput);
-    // TODO: change route accordingly
     navigate('/fortune');
   };
 
