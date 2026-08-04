@@ -23,6 +23,8 @@ vi.mock('motion/react', async () => {
     'animate',
     'initial',
     'exit',
+    'whileHover',
+    'whileTap',
     'transition',
     'style',
     'onAnimationComplete',
@@ -200,17 +202,17 @@ it('does not flip back once flipped to front', () => {
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 });
 
+const targetOf = (container) =>
+  JSON.parse(
+    container.querySelector('.tarot-card-inner').getAttribute('data-animate'),
+  );
+
 /**
  * Tests that the card animates to the right target for each state: face down
  * and flat at rest, turned over when showing the front, and additionally
  * lifted when selected.
  */
 it('animates to the correct target for each state', () => {
-  const targetOf = (container) =>
-    JSON.parse(
-      container.querySelector('.tarot-card-inner').getAttribute('data-animate'),
-    );
-
   const { container, rerender } = render(
     <Card
       name="The Fool"
@@ -221,7 +223,7 @@ it('animates to the correct target for each state', () => {
   );
 
   // At rest: back facing the viewer, sitting flat
-  expect(targetOf(container)).toEqual({ rotateY: 0, y: 0 });
+  expect(targetOf(container)).toEqual({ rotateY: 0, y: 0, scale: 1 });
 
   // Showing the front turns the card over but does not lift it
   rerender(
@@ -232,7 +234,7 @@ it('animates to the correct target for each state', () => {
       isShowFront={true}
     />,
   );
-  expect(targetOf(container)).toEqual({ rotateY: 180, y: 0 });
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 
   // Selecting lifts the card clear of the row as well
   rerender(
@@ -244,5 +246,29 @@ it('animates to the correct target for each state', () => {
       isSelected={true}
     />,
   );
-  expect(targetOf(container)).toEqual({ rotateY: 180, y: -50 });
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: -50, scale: 1 });
+});
+
+/**
+ * Tests that hovering scales the card up and that leaving returns it to rest.
+ * The scale deliberately lives in `animate` alongside the flip and lift rather
+ * than in a `whileHover` prop, which used to fight `animate` and flicker.
+ */
+it('scales up while hovered and returns to rest on leave', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+    />,
+  );
+
+  expect(targetOf(container).scale).toBe(1);
+
+  await user.hover(container.querySelector('.tarot-card'));
+  expect(targetOf(container).scale).toBe(1.06);
+
+  await user.unhover(container.querySelector('.tarot-card'));
+  expect(targetOf(container).scale).toBe(1);
 });

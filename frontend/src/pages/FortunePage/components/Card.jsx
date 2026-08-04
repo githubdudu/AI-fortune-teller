@@ -12,9 +12,29 @@ const FLIP_SPRING = { type: 'spring', stiffness: 120, damping: 16 };
 // 0.5 gives a clear overshoot-and-settle; push towards 0.7 for more, 0.3 for less.
 const LIFT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.7 };
 
+// Hover is asymmetric on purpose: growing has a pronounced bounce, mimicking
+// the feel of Balatro, while shrinking settles almost flat. Springing on the
+// way out too would make the whole row twitch as the cursor sweeps across it.
+const HOVER_IN_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.8 };
+const HOVER_OUT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.4 };
+
 // How far a selected card rises out of the row, in px
 const LIFT_DISTANCE = -50;
 
+const HOVER_SCALE = 1.06;
+
+/**
+ * Card component
+ *
+ * It is a container for the card's front and back, with tilt effects, hover and tap animations, and flip animations.
+ *
+ * The first div is the container. It has the setting of cursor, the size of the card, and perspective.
+ * The second layer is for the tilt effect.
+ * The third layer has animation for the flip, lift and hover effect. And shadow.
+ * The fourth layer is for the front and back of the card.
+ * The back is simple, just an image.
+ * The front contains the image, the holo and glare effect, and the floating description.
+ */
 const Card = ({
   frontImage,
   backImage,
@@ -29,23 +49,48 @@ const Card = ({
   const cardRef = useRef(null);
   // Tilt lives on `.tarot-card`; the flip stays on `.tarot-card-inner` so the
   // two transforms never overwrite each other.
-  const { ref: tiltRef, rotateX, rotateY, tiltHandlers } = useCardTilt();
+  const {
+    ref: tiltRef,
+    rotateX,
+    rotateY,
+    isHovered,
+    tiltHandlers,
+  } = useCardTilt();
 
   return (
-    <div className="w-[13rem] h-[19.5rem] perspective-distant ">
+    // Set `cursor-pointer` on this untransformed box is more stable.
+    // Then there are two layers with motion transforms
+    // Then the card's front and back
+    <div className="w-[13rem] h-[19.5rem] perspective-distant cursor-pointer">
       <motion.div
         ref={tiltRef}
         {...tiltHandlers}
         style={{ rotateX, rotateY }}
-        className="tarot-card size-full transform-3d relative"
+        // Raised while hovered so the scaled-up card is not clipped by the
+        // neighbours it overlaps — driven by the same state as the scale, so
+        // the two can never disagree the way a CSS `:hover` could.
+        className={`tarot-card size-full transform-3d relative ${isHovered ? 'z-20' : ''}`}
       >
         <motion.div
-          className="tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transform-3d shadow-md hover:shadow-xl"
+          // Shadow follows the same hover state as the scale. A CSS `:hover`
+          // here would flicker for the same reason the cursor did.
+          className={`tarot-card-inner relative w-full h-full text-center rounded-lg transform-3d ${isHovered ? 'shadow-xl' : 'shadow-md'}`}
+          // Every animated axis goes through this one object. `scale` used to
+          // live in `whileHover`, but that competes with `animate`: this object
+          // is rebuilt on each render, and re-applying it has no `scale` key, so
+          // motion kept resetting the hover scale and re-running it — the flicker.
           animate={{
             rotateY: isShowFront ? 180 : 0,
             y: isSelected ? LIFT_DISTANCE : 0,
+            scale: isHovered ? HOVER_SCALE : 1,
           }}
-          transition={{ rotateY: FLIP_SPRING, y: LIFT_SPRING }}
+          transition={{
+            rotateY: FLIP_SPRING,
+            y: LIFT_SPRING,
+            // Picked per direction: `isHovered` is already the direction of
+            // travel at the moment the target changes
+            scale: isHovered ? HOVER_IN_SPRING : HOVER_OUT_SPRING,
+          }}
           // Scoped to this element's own animation. The `transitionend` this
           // replaced bubbled, so the holo layers' opacity fade used to trip it.
           onAnimationComplete={() => {
@@ -55,7 +100,7 @@ const Card = ({
           }}
         >
           <div
-            className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink-600 rotate-y-0`}
+            className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg rotate-y-0`}
           >
             <img
               src={backImage}
@@ -74,7 +119,7 @@ const Card = ({
           </div>
           <div
             ref={cardRef}
-            className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''} bg-blue-500 rotate-y-180`}
+            className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''}  rotate-y-180`}
           >
             <img
               src={frontImage}

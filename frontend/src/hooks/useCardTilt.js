@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useSpring } from 'motion/react';
 
 // Low-ish stiffness with light damping so the card overshoots slightly and
@@ -39,11 +39,13 @@ const useCardTilt = ({ max = 13 } = {}) => {
   const ref = useRef(null);
   // Cached on pointer enter so the move handler never forces a layout
   const rectRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const rotateX = useSpring(0, TILT_SPRING);
   const rotateY = useSpring(0, TILT_SPRING);
 
   const handlePointerEnter = useCallback(() => {
+    setIsHovered(true);
     if (!ref.current || prefersNoTilt()) return;
     rectRef.current = ref.current.getBoundingClientRect();
   }, []);
@@ -75,6 +77,7 @@ const useCardTilt = ({ max = 13 } = {}) => {
   );
 
   const handlePointerLeave = useCallback(() => {
+    setIsHovered(false);
     rectRef.current = null;
     // Spring back to flat rather than snapping
     rotateX.set(0);
@@ -85,6 +88,9 @@ const useCardTilt = ({ max = 13 } = {}) => {
     ref,
     rotateX,
     rotateY,
+    // Exposed so hover-driven animations can go through the same `animate`
+    // object as everything else, instead of a competing `whileHover` prop
+    isHovered,
     tiltHandlers: {
       onPointerEnter: handlePointerEnter,
       onPointerMove: handlePointerMove,
