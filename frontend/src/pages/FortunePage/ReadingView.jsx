@@ -10,6 +10,7 @@ import ErrorMessage from './components/ErrorMessage';
 import { markdownToHtml, createMarkup } from '$/utils/markdownUtils';
 import { AppContext } from '$/context/AppContextProvider';
 import { useFortuneStream } from '$/hooks/useFortuneStream';
+import './ReadingView.css';
 
 /**
  * Reading results screen
@@ -65,11 +66,14 @@ const ReadingView = ({ userChosenCards }) => {
   ]);
 
   return (
-    <div className="results-container">
-      <h1 className="reading-title"> Your ArcanaVerse Reading </h1>
+    <div className="results-container max-w-screen-xl mx-auto p-8 relative min-h-screen flex flex-col items-center text-center font-cormorant">
+      <h1 className="reading-title text-4xl font-bold text-ink-800 text-center">
+        {' '}
+        Your ArcanaVerse Reading{' '}
+      </h1>
 
       <Box className="reading-subtitle-wrapper">
-        <p className="reading-subtitle-text">
+        <p className="reading-subtitle-text mt-1 mb-15 text-xl text-ink-700">
           The cards have spoken. Here is your path forward.
         </p>
       </Box>
@@ -87,11 +91,7 @@ const ReadingView = ({ userChosenCards }) => {
         accessibilityLabel="Get your tarot reading"
       />
 
-      {isStreamLoading && (
-        <div className="loading-wrapper">
-          <LoadingAnimation />
-        </div>
-      )}
+      {isStreamLoading && <LoadingAnimation />}
 
       {!isStreamLoading && (
         <ReadingInterpretationDisplay readingText={readingResult} />
@@ -128,7 +128,7 @@ ReadingView.propTypes = {
  */
 const SelectedCardsDisplay = ({ cards }) => {
   return (
-    <div className="selected-cards-display">
+    <div className="selected-cards-display flex flex-wrap max-md:flex-col justify-center items-center gap-8 mx-auto w-full">
       {cards?.map((card, index) => (
         <div key={card.id}>
           <Card
@@ -163,10 +163,12 @@ const ReadingInterpretationDisplay = ({ readingText }) => {
   const htmlContent = markdownToHtml(readingText);
 
   return (
-    <div className="interpretation-box">
-      <h2 className="interpretation-title">✦ Interpretation ✦</h2>
+    <div className="interpretation-box w-full max-w-3xl min-h-40 mx-auto mb-2 p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm">
+      <h2 className="interpretation-title text-xl font-bold text-mist-800 mb-3">
+        ✦ Interpretation ✦
+      </h2>
       <div
-        className="interpretation-text markdown-content"
+        className="interpretation-text text-base text-mist-800 markdown-content"
         dangerouslySetInnerHTML={createMarkup(htmlContent)}
       />
     </div>
