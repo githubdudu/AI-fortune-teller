@@ -1,4 +1,6 @@
 import { Button } from 'gestalt';
+import { useNavigate } from 'react-router-dom';
+
 import ErrorMessage from './components/ErrorMessage';
 import Card from './components/Card';
 import PropTypes from 'prop-types';
@@ -10,11 +12,11 @@ import PropTypes from 'prop-types';
 const SelectionView = ({
   cards,
   taroCardsError,
-  streamError,
   selectionMark,
   handleCardSelect,
-  handleReadButton,
 }) => {
+  const navigate = useNavigate();
+
   // Turn an axios error into something readable, keeping the HTTP status
   // (e.g. 429 rate limiting) visible on the page instead of only in the console.
   const describeCardsError = (error) => {
@@ -36,13 +38,9 @@ const SelectionView = ({
     return `Could not fetch cards from server${detail ? ` (${detail})` : ''}. Using demo cards instead.`;
   };
 
-  // Local click handler without event parameter
-  const onReadButtonClick = () => {
-    console.log(
-      'Read button clicked with selected cards:',
-      cards.filter((card, index) => selectionMark[index]),
-    );
-    handleReadButton();
+  const onConfirmButtonClick = () => {
+    console.log('Confirm button clicked with selected cards:', cards);
+    navigate('reading');
   };
 
   return (
@@ -58,8 +56,6 @@ const SelectionView = ({
         />
       )}
 
-      {streamError && <ErrorMessage message={streamError} type="error" />}
-
       <CardsDisplay
         cards={cards}
         onCardSelect={handleCardSelect}
@@ -69,12 +65,12 @@ const SelectionView = ({
       <div className="action-container">
         {selectionMark.filter((mark) => mark).length === 3 ? (
           <Button
-            text="See Your Reading"
+            text="Confirm Card Selection"
             name="edit-button"
             color="blue"
-            onClick={onReadButtonClick}
+            onClick={onConfirmButtonClick}
             size="lg"
-            accessibilityLabel="Get your tarot reading"
+            accessibilityLabel="Confirm Tarot Card Selection"
             disabled={selectionMark.filter((mark) => mark).length !== 3}
           />
         ) : (
@@ -99,10 +95,8 @@ SelectionView.propTypes = {
     }),
   ).isRequired,
   taroCardsError: PropTypes.object,
-  streamError: PropTypes.string,
   selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
   handleCardSelect: PropTypes.func.isRequired,
-  handleReadButton: PropTypes.func.isRequired,
 };
 
 /**

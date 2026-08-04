@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Card from './components/Card';
 import LoadingAnimation from '$/components/LoadingAnimation/LoadingAnimation';
+import ErrorMessage from './components/ErrorMessage';
 
 import { markdownToHtml, createMarkup } from '$/utils/markdownUtils';
 
@@ -14,6 +15,8 @@ const ReadingView = ({
   userChosenCards,
   onNewReading,
   isStreamLoading,
+  streamError,
+  handleReadButton,
 }) => {
   return (
     <div className="results-container">
@@ -26,6 +29,17 @@ const ReadingView = ({
       </Box>
 
       <SelectedCardsDisplay cards={userChosenCards} />
+
+      {streamError && <ErrorMessage message={streamError} type="error" />}
+
+      <Button
+        text="See Your Reading"
+        name="edit-button"
+        color="blue"
+        onClick={handleReadButton}
+        size="lg"
+        accessibilityLabel="Get your tarot reading"
+      />
 
       {isStreamLoading && (
         <div className="loading-wrapper">
@@ -54,6 +68,8 @@ ReadingView.propTypes = {
   ),
   onNewReading: PropTypes.func.isRequired,
   isStreamLoading: PropTypes.bool,
+  streamError: PropTypes.string,
+  handleReadButton: PropTypes.func.isRequired,
 };
 
 /**

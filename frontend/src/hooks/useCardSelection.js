@@ -2,11 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Custom hook for managing tarot card selection
- * @param {number} totalCounts - Total number of cards available for selection
+ * @typedef {Object} Card - Tarot card object
+ * @property {number} id - Unique ID
+ * @property {string} name - Card name
+ * @property {string} description - Card description
+ * @property {string} imageSource - URL
+ *
+ * @param {Card[]} cards - Array of cards available for selection
  * @param {number} maxSelection - Maximum number of cards that can be selected
  * @returns {Object} Card selection state and handlers
  */
-const useCardSelection = (totalCounts, maxSelection = 3) => {
+const useCardSelection = (cards, maxSelection = 3) => {
+  const totalCounts = cards.length;
+
   const [selectedCounts, setSelectedCounts] = useState(0);
   const [selectionMark, setSelectionMark] = useState(
     Array(totalCounts).fill(false),

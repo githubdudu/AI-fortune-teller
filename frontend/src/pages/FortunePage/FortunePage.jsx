@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import React, { useState, useContext, useCallback } from 'react';
 
 import './FortunePage.css';
@@ -21,11 +21,11 @@ const FortunePage = () => {
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
   const {
-    saveUserChosenCards,
+    // saveUserChosenCards, TODO: delete all of these
     userChosenTheme,
     userPrompt,
-    clearQuestionAndTheme,
-    userChosenCards,
+    // clearQuestionAndTheme, TODO: auto clear at home page, check usage
+    // userChosenCards, TODO: delete the one in AppContext.
   } = useContext(AppContext);
 
   // Streaming state is local to this page so chunk updates don't re-render the app
@@ -41,12 +41,8 @@ const FortunePage = () => {
     cards,
     isLoading: isCardsLoading,
     error: taroCardsError,
-    fetchCards,
   } = useFetchTarotCards(5);
-  const { selectedCounts, selectionMark, handleCardSelect } = useCardSelection(
-    cards.length,
-    3,
-  );
+  const { selectionMark, handleCardSelect } = useCardSelection(cards, 3);
 
   /**
    * Handle reading button click
@@ -60,39 +56,8 @@ const FortunePage = () => {
 
     console.log('Read button clicked - processing reading request');
 
-    // Handle case when no cards are selected (fallback to defaults)
-    if (!selectedCounts) {
-      // Call the function directly instead of inside a hook
-      const defaultCards = [
-        {
-          id: 1,
-          name: 'The Fool',
-          description: 'New beginnings, innocence, spontaneity',
-          imageSource: '/defaultFrontCard.png',
-        },
-        {
-          id: 2,
-          name: 'The Magician',
-          description: 'Manifestation, resourcefulness, power',
-          imageSource: '/defaultFrontCard.png',
-        },
-        {
-          id: 3,
-          name: 'The High Priestess',
-          description: 'Intuition, sacred knowledge, divine feminine',
-          imageSource: '/defaultFrontCard.png',
-        },
-      ];
-
-      saveUserChosenCards(defaultCards);
-      setShowResults(true);
-      setIsSubmitting(false);
-      return;
-    }
-
     // Save the selected cards to context first (before streaming starts)
     const selectedCards = cards.filter((card, index) => selectionMark[index]);
-    saveUserChosenCards(selectedCards);
 
     // Switch to results view immediately with loading state
     setShowResults(true);
@@ -115,10 +80,8 @@ const FortunePage = () => {
     }, 150);
   }, [
     isSubmitting,
-    selectedCounts,
     userPrompt,
     userChosenTheme,
-    saveUserChosenCards,
     startFortuneStream,
     cards,
     selectionMark,
@@ -128,19 +91,12 @@ const FortunePage = () => {
    * Reset all state for a new reading
    */
   const handleNewReading = useCallback(() => {
-    // Reset context
-    clearQuestionAndTheme();
-    saveUserChosenCards(null);
-
     // Reset component state
     setShowResults(false);
 
-    // Get new cards
-    fetchCards();
-
     // Navigate back to landing page
     navigate('/');
-  }, [clearQuestionAndTheme, saveUserChosenCards, fetchCards, navigate]);
+  }, [navigate]);
 
   // Show loading animation when fetching cards or submitting reading request
   if (isCardsLoading || (isSubmitting && !showResults)) {
@@ -151,28 +107,36 @@ const FortunePage = () => {
     );
   }
 
-  // Show results after reading is complete
-  if (showResults) {
-    return (
-      <ReadingView
-        readingResult={streamingText || ''}
-        userChosenCards={userChosenCards}
-        onNewReading={handleNewReading}
-        isStreamLoading={isStreamLoading}
-      />
-    );
-  }
-
-  // Show card selection
   return (
-    <SelectionView
-      cards={cards}
-      taroCardsError={taroCardsError}
-      streamError={streamError}
-      selectionMark={selectionMark}
-      handleCardSelect={handleCardSelect}
-      handleReadButton={handleReadButton}
-    />
+    // TODO: migrate to Outlet and useOutletContext when the props are less
+    <Routes>
+      <Route
+        index
+        element={
+          <SelectionView
+            cards={cards}
+            taroCardsError={taroCardsError}
+            selectionMark={selectionMark}
+            handleCardSelect={handleCardSelect}
+          />
+        }
+      />
+      <Route
+        path="reading"
+        element={
+          <ReadingView
+            readingResult={streamingText || ''}
+            userChosenCards={cards.filter(
+              (card, index) => selectionMark[index],
+            )}
+            onNewReading={handleNewReading}
+            isStreamLoading={isStreamLoading}
+            streamError={streamError}
+            handleReadButton={handleReadButton}
+          />
+        }
+      />
+    </Routes>
   );
 };
 
