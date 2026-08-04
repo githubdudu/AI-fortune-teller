@@ -5,6 +5,16 @@ import { motion } from 'motion/react';
 import FloatingDescription from './FloatingDescription';
 import useCardTilt from '$/hooks/useCardTilt';
 
+// Controls the physical feel of the card's flip
+const FLIP_SPRING = { type: 'spring', stiffness: 120, damping: 16 };
+
+// `bounce` (0 = none, 1 = extreme) with `visualDuration` (seconds to visually reach the target)
+// 0.5 gives a clear overshoot-and-settle; push towards 0.7 for more, 0.3 for less.
+const LIFT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.7 };
+
+// How far a selected card rises out of the row, in px
+const LIFT_DISTANCE = -50;
+
 const Card = ({
   frontImage,
   backImage,
@@ -27,15 +37,22 @@ const Card = ({
         ref={tiltRef}
         {...tiltHandlers}
         style={{ rotateX, rotateY }}
-        className={`tarot-card size-full transform-3d relative ${isShowFront ? 'flipped' : ''} ${isSelected ? 'no-flip-back' : ''}`}
-        onTransitionEnd={() => {
-          if (isShowFront) {
-            setIsNumberShow(true);
-          }
-        }}
+        className="tarot-card size-full transform-3d relative"
       >
-        <div
-          className={`tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transition-transform duration-600 transform-3d shadow-md hover:shadow-xl ${isShowFront ? 'rotate-y-180' : ''} ${isSelected ? '-translate-y-9 rotate-y-180' : ''}`}
+        <motion.div
+          className="tarot-card-inner relative w-full h-full text-center rounded-lg cursor-pointer transform-3d shadow-md hover:shadow-xl"
+          animate={{
+            rotateY: isShowFront ? 180 : 0,
+            y: isSelected ? LIFT_DISTANCE : 0,
+          }}
+          transition={{ rotateY: FLIP_SPRING, y: LIFT_SPRING }}
+          // Scoped to this element's own animation. The `transitionend` this
+          // replaced bubbled, so the holo layers' opacity fade used to trip it.
+          onAnimationComplete={() => {
+            if (isShowFront) {
+              setIsNumberShow(true);
+            }
+          }}
         >
           <div
             className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg bg-pink-600 rotate-y-0`}
@@ -81,7 +98,7 @@ const Card = ({
           {isNumberShow && cardNumber != undefined && (
             <div className="card-number">{cardNumber}</div>
           )}
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );
