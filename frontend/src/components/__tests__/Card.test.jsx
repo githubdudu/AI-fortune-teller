@@ -272,3 +272,51 @@ it('scales up while hovered and returns to rest on leave', async () => {
   await user.unhover(container.querySelector('.tarot-card'));
   expect(targetOf(container).scale).toBe(1);
 });
+
+/**
+ * Tests that pressing scales past the hover scale, and that releasing drops
+ * back to hover rather than all the way to rest while still hovered.
+ */
+it('scales further while pressed and returns to the hover scale on release', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+    />,
+  );
+  const card = container.querySelector('.tarot-card');
+
+  await user.hover(card);
+  expect(targetOf(container).scale).toBe(1.06);
+
+  fireEvent.pointerDown(card);
+  expect(targetOf(container).scale).toBeCloseTo(1.12);
+
+  fireEvent.pointerUp(card);
+  expect(targetOf(container).scale).toBe(1.06);
+});
+
+/**
+ * Tests that leaving the card mid-press clears the pressed state, so a card
+ * the pointer was dragged off does not stay stuck scaled up.
+ */
+it('clears the pressed state when the pointer leaves mid-press', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+    />,
+  );
+  const card = container.querySelector('.tarot-card');
+
+  await user.hover(card);
+  fireEvent.pointerDown(card);
+  expect(targetOf(container).scale).toBeCloseTo(1.12);
+
+  await user.unhover(card);
+  expect(targetOf(container).scale).toBe(1);
+});

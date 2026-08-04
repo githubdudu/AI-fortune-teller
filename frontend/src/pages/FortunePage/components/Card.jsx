@@ -10,7 +10,7 @@ const FLIP_SPRING = { type: 'spring', stiffness: 120, damping: 16 };
 
 // `bounce` (0 = none, 1 = extreme) with `visualDuration` (seconds to visually reach the target)
 // 0.5 gives a clear overshoot-and-settle; push towards 0.7 for more, 0.3 for less.
-const LIFT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.7 };
+const LIFT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.4 };
 
 // Hover is asymmetric on purpose: growing has a pronounced bounce, mimicking
 // the feel of Balatro, while shrinking settles almost flat. Springing on the
@@ -21,7 +21,12 @@ const HOVER_OUT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.4 };
 // How far a selected card rises out of the row, in px
 const LIFT_DISTANCE = -50;
 
+// Pressing punches through the hover scale rather than replacing it, and snaps
+// there faster than hover does so the click feels immediate
+const TAP_SPRING = { type: 'spring', visualDuration: 0.08, bounce: 0.5 };
+
 const HOVER_SCALE = 1.06;
+const TAP_SCALE = HOVER_SCALE + 0.06;
 
 /**
  * Card component
@@ -54,8 +59,11 @@ const Card = ({
     rotateX,
     rotateY,
     isHovered,
+    isPressed,
     tiltHandlers,
   } = useCardTilt();
+
+  const scale = isPressed ? TAP_SCALE : isHovered ? HOVER_SCALE : 1;
 
   return (
     // Set `cursor-pointer` on this untransformed box is more stable.
@@ -82,14 +90,19 @@ const Card = ({
           animate={{
             rotateY: isShowFront ? 180 : 0,
             y: isSelected ? LIFT_DISTANCE : 0,
-            scale: isHovered ? HOVER_SCALE : 1,
+            scale,
           }}
           transition={{
             rotateY: FLIP_SPRING,
             y: LIFT_SPRING,
-            // Picked per direction: `isHovered` is already the direction of
-            // travel at the moment the target changes
-            scale: isHovered ? HOVER_IN_SPRING : HOVER_OUT_SPRING,
+            // Picked per direction: these flags are already the direction of
+            // travel at the moment the target changes. Press wins over hover,
+            // since releasing onto a still-hovered card should spring back up.
+            scale: isPressed
+              ? TAP_SPRING
+              : isHovered
+                ? HOVER_IN_SPRING
+                : HOVER_OUT_SPRING,
           }}
           // Scoped to this element's own animation. The `transitionend` this
           // replaced bubbled, so the holo layers' opacity fade used to trip it.

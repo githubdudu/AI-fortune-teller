@@ -40,6 +40,7 @@ const useCardTilt = ({ max = 13 } = {}) => {
   // Cached on pointer enter so the move handler never forces a layout
   const rectRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const rotateX = useSpring(0, TILT_SPRING);
   const rotateY = useSpring(0, TILT_SPRING);
@@ -78,23 +79,35 @@ const useCardTilt = ({ max = 13 } = {}) => {
 
   const handlePointerLeave = useCallback(() => {
     setIsHovered(false);
+    // Dragging off the card counts as releasing it — otherwise a card the
+    // pointer left mid-press would stay stuck in its pressed state
+    setIsPressed(false);
     rectRef.current = null;
     // Spring back to flat rather than snapping
     rotateX.set(0);
     rotateY.set(0);
   }, [rotateX, rotateY]);
 
+  const handlePointerDown = useCallback(() => setIsPressed(true), []);
+  const handlePointerUp = useCallback(() => setIsPressed(false), []);
+
   return {
     ref,
     rotateX,
     rotateY,
-    // Exposed so hover-driven animations can go through the same `animate`
-    // object as everything else, instead of a competing `whileHover` prop
+    // Exposed so hover- and press-driven animations can go through the same
+    // `animate` object as everything else, instead of competing `whileHover` /
+    // `whileTap` props
     isHovered,
+    isPressed,
     tiltHandlers: {
       onPointerEnter: handlePointerEnter,
       onPointerMove: handlePointerMove,
       onPointerLeave: handlePointerLeave,
+      onPointerDown: handlePointerDown,
+      onPointerUp: handlePointerUp,
+      // Fires when the browser takes the pointer away (scroll, gesture)
+      onPointerCancel: handlePointerUp,
     },
   };
 };
