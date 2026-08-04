@@ -29,6 +29,17 @@ const TAP_SPRING = { type: 'spring', visualDuration: 0.08, bounce: 0.5 };
 const HOVER_SCALE = 1.06;
 const TAP_SCALE = HOVER_SCALE + 0.06;
 
+// The flight back to the slot after the card is let go.
+//
+// Defaults are 200/40, i.e. overdamped (damping ratio ~1.4) — that is the
+// sluggish return. 900/32 puts the ratio near 0.53: fast, with a small
+// overshoot. Raise bounceStiffness for more speed, lower bounceDamping for
+// more overshoot.
+const DRAG_RETURN_TRANSITION = {
+  bounceStiffness: 900,
+  bounceDamping: 40,
+};
+
 /**
  * Card component
  *
@@ -53,7 +64,11 @@ const Card = ({
   index,
 }) => {
   const [isNumberShow, setIsNumberShow] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const cardRef = useRef(null);
+  // Set for the lifetime of one press that turned into a drag
+  const didDragRef = useRef(false);
+
   // Tilt lives on `.tarot-card`; the flip stays on `.tarot-card-inner` so the
   // two transforms never overwrite each other.
   const {
@@ -63,7 +78,7 @@ const Card = ({
     isHovered,
     isPressed,
     tiltHandlers,
-  } = useCardTilt();
+  } = useCardTilt({ enabled: !isDragging });
 
   const scale = isPressed ? TAP_SCALE : isHovered ? HOVER_SCALE : 1;
 
@@ -81,16 +96,30 @@ const Card = ({
     // The idle drift rides on this outermost box
     <motion.div
       style={{ y: floatY, rotate: floatRotate }}
-      className="w-[13rem] h-[19.5rem] perspective-distant cursor-pointer"
+      // A drag could end in a click.
+      // Caught here so letting go of a dragged card never reads as picking it.
+      onClickCapture={(event) => {
+        if (!didDragRef.current) return;
+        didDragRef.current = false;
+        event.stopPropagation();
+      }}
+      className={`w-[13rem] h-[19.5rem] perspective-distant select-none ${isDragging ? 'cursor-grabbing z-30' : 'cursor-pointer'}`}
     >
       <motion.div
         ref={tiltRef}
         {...tiltHandlers}
         style={{ rotateX, rotateY }}
-        // Raised while hovered so the scaled-up card is not clipped by the
-        // neighbours it overlaps — driven by the same state as the scale, so
-        // the two can never disagree the way a CSS `:hover` could.
-        className={`tarot-card size-full transform-3d relative ${isHovered ? 'z-20' : ''}`}
+        // Drag rides on this layer
+        drag
+        dragSnapToOrigin
+        dragMomentum={false}
+        dragTransition={DRAG_RETURN_TRANSITION}
+        onDragStart={() => {
+          setIsDragging(true);
+          didDragRef.current = true;
+        }}
+        onDragEnd={() => setIsDragging(false)}
+        className="tarot-card size-full transform-3d relative"
       >
         <motion.div
           // Shadow follows the same hover state as the scale. A CSS `:hover`
@@ -140,6 +169,8 @@ const Card = ({
               height={312}
               decoding="async"
               fetchPriority="high"
+              // Images's own drag-and-drop conflicts with motion's drag
+              draggable={false}
               alt="Tarot Card Back"
             />
           </div>
@@ -152,6 +183,7 @@ const Card = ({
               width={208}
               height={312}
               decoding="async"
+              draggable={false}
               alt="Tarot Card Front"
             />
             {/* Holographic refraction, layered over the artwork only */}

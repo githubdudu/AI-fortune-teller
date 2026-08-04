@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSpring } from 'motion/react';
 
 // Low-ish stiffness with light damping so the card overshoots slightly and
@@ -33,9 +33,12 @@ const prefersNoTilt = () => {
  *
  * @param {Object} options
  * @param {number} options.max - Maximum tilt in degrees on each axis
+ * @param {boolean} options.enabled - Set false while the card is being dragged.
+ *   The tilt maths works off a rect cached on pointer enter, which a moving
+ *   card invalidates immediately — left running, the tilt would spin wildly.
  * @returns {Object} ref, motion values and pointer handlers to spread on the element
  */
-const useCardTilt = ({ max = 13 } = {}) => {
+const useCardTilt = ({ max = 13, enabled = true } = {}) => {
   const ref = useRef(null);
   // Cached on pointer enter so the move handler never forces a layout
   const rectRef = useRef(null);
@@ -44,6 +47,14 @@ const useCardTilt = ({ max = 13 } = {}) => {
 
   const rotateX = useSpring(0, TILT_SPRING);
   const rotateY = useSpring(0, TILT_SPRING);
+
+  // Drop the tilt while disabled rather than freezing it at its last angle
+  useEffect(() => {
+    if (enabled) return;
+    rectRef.current = null;
+    rotateX.set(0);
+    rotateY.set(0);
+  }, [enabled, rotateX, rotateY]);
 
   const handlePointerEnter = useCallback(() => {
     setIsHovered(true);
@@ -55,7 +66,7 @@ const useCardTilt = ({ max = 13 } = {}) => {
     (event) => {
       const element = ref.current;
       const rect = rectRef.current;
-      if (!element || !rect) return;
+      if (!enabled || !element || !rect) return;
 
       // Pointer position inside the card, 0..1 on each axis
       const px = (event.clientX - rect.left) / rect.width;
@@ -74,7 +85,7 @@ const useCardTilt = ({ max = 13 } = {}) => {
       );
       element.style.setProperty('--pointer-from-center', `${distance}`);
     },
-    [max, rotateX, rotateY],
+    [enabled, max, rotateX, rotateY],
   );
 
   const handlePointerLeave = useCallback(() => {
