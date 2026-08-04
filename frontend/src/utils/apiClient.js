@@ -125,8 +125,9 @@ export const tarotCardService = {
       .then((response) => response.data)
       .catch((error) => {
         console.error('Error fetching random cards:', error);
-        // Return fallback cards in case of error
-        return [
+        // Attach fallback cards to the error so callers can still render
+        // something, then rethrow so the failure is visible to the UI.
+        error.fallbackCards = [
           {
             id: 3,
             name: 'The High Priestess',
@@ -146,6 +147,7 @@ export const tarotCardService = {
               'https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Minor_Major/4.%20The%20Hierophant%20(V).png',
           },
         ];
+        throw error;
       });
   },
 

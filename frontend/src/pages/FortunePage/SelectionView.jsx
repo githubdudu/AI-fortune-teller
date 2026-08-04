@@ -15,6 +15,27 @@ const SelectionView = ({
   handleCardSelect,
   handleReadButton,
 }) => {
+  // Turn an axios error into something readable, keeping the HTTP status
+  // (e.g. 429 rate limiting) visible on the page instead of only in the console.
+  const describeCardsError = (error) => {
+    const status = error?.response?.status;
+    const detail =
+      error?.response?.data?.message ||
+      error?.response?.data?.title ||
+      (typeof error?.response?.data === 'string'
+        ? error.response.data
+        : null) ||
+      error?.message;
+
+    if (status === 429) {
+      return `Too many requests (429) — the server is rate limiting card draws. Please wait a moment and try again. Showing demo cards for now.`;
+    }
+    if (status) {
+      return `Could not fetch cards from server (${status}${detail ? `: ${detail}` : ''}). Using demo cards instead.`;
+    }
+    return `Could not fetch cards from server${detail ? ` (${detail})` : ''}. Using demo cards instead.`;
+  };
+
   // Local click handler without event parameter
   const onReadButtonClick = () => {
     console.log(
@@ -32,8 +53,8 @@ const SelectionView = ({
 
       {taroCardsError && (
         <ErrorMessage
-          message="Could not fetch cards from server. Using demo cards instead."
-          type="warning"
+          message={describeCardsError(taroCardsError)}
+          type={taroCardsError?.response?.status === 429 ? 'error' : 'warning'}
         />
       )}
 

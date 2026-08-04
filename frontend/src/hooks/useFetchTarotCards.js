@@ -16,6 +16,7 @@ const useFetchTarotCards = (limit = 5) => {
    */
   const fetchCards = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
 
     try {
       const cardsData = await tarotCardService.fetchRandomCards(limit);
@@ -27,6 +28,8 @@ const useFetchTarotCards = (limit = 5) => {
     } catch (err) {
       console.error('Error in useFetchTarotCards:', err);
       setError(err);
+      // Still show the demo cards the API layer prepared, if any
+      setCards(err.fallbackCards || []);
       setIsLoading(false);
     }
   }, [limit]);
