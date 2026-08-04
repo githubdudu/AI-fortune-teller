@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import FloatingDescription from './FloatingDescription';
 import useCardTilt from '$/hooks/useCardTilt';
+import useIdleFloat from '$/hooks/useIdleFloat';
 
 // Controls the physical feel of the card's flip
 const FLIP_SPRING = { type: 'spring', stiffness: 120, damping: 16 };
@@ -33,7 +34,7 @@ const TAP_SCALE = HOVER_SCALE + 0.06;
  *
  * It is a container for the card's front and back, with tilt effects, hover and tap animations, and flip animations.
  *
- * The first div is the container. It has the setting of cursor, the size of the card, and perspective.
+ * The first div is the container. It has the setting of cursor, the size of the card, and perspective. it also has the idle drift effect.
  * The second layer is for the tilt effect.
  * The third layer has animation for the flip, lift and hover effect. And shadow.
  * The fourth layer is for the front and back of the card.
@@ -49,6 +50,7 @@ const Card = ({
   isShowFront,
   isSelected,
   cardNumber,
+  index,
 }) => {
   const [isNumberShow, setIsNumberShow] = useState(false);
   const cardRef = useRef(null);
@@ -65,11 +67,22 @@ const Card = ({
 
   const scale = isPressed ? TAP_SCALE : isHovered ? HOVER_SCALE : 1;
 
+  // Eased out while the card is engaged, so the drift never fights the cursor
+  const { y: floatY, rotate: floatRotate } = useIdleFloat({
+    index,
+    enabled: !isHovered && !isPressed,
+  });
+
   return (
     // Set `cursor-pointer` on this untransformed box is more stable.
     // Then there are two layers with motion transforms
     // Then the card's front and back
-    <div className="w-[13rem] h-[19.5rem] perspective-distant cursor-pointer">
+    //
+    // The idle drift rides on this outermost box
+    <motion.div
+      style={{ y: floatY, rotate: floatRotate }}
+      className="w-[13rem] h-[19.5rem] perspective-distant cursor-pointer"
+    >
       <motion.div
         ref={tiltRef}
         {...tiltHandlers}
@@ -158,7 +171,7 @@ const Card = ({
           )}
         </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -171,6 +184,7 @@ Card.propTypes = {
   isShowFront: PropTypes.bool,
   isSelected: PropTypes.bool,
   cardNumber: PropTypes.string,
+  index: PropTypes.number,
 };
 
 Card.defaultProps = {
@@ -179,6 +193,7 @@ Card.defaultProps = {
   backImageSmall: null,
   description: '',
   name: '',
+  index: 0,
 };
 
 export default Card;

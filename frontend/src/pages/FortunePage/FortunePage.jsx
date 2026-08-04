@@ -61,13 +61,14 @@ NewReadingButton.propTypes = {
 const SelectedCardsDisplay = ({ cards }) => {
   return (
     <div className="selected-cards-display">
-      {cards?.map((card) => (
+      {cards?.map((card, index) => (
         <div key={card.id}>
           <Card
             frontImage={card.imageSource || '/defaultFrontCard.png'}
             isShowFront={true}
             name={card.name}
             description={card.description}
+            index={index}
           />
         </div>
       ))}
@@ -106,6 +107,7 @@ const CardsDisplay = ({ cards, onCardSelect, selectionMark }) => {
             name={card.name}
             description={card.description}
             cardNumber={selectionMark.indexOf(true) + 1}
+            index={index}
           />
         </div>
       ))}
