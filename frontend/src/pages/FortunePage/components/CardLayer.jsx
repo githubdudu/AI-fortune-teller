@@ -39,6 +39,7 @@ const CardLayer = ({
   cards,
   isReading: isReveal,
   selectionMark,
+  selectedCardIds,
   onCardSelect,
   className,
 }) => {
@@ -71,10 +72,7 @@ const CardLayer = ({
               isSelected={selectionMark[index]}
               name={card.name}
               description={card.description}
-              cardNumber={selectionMark
-                .slice(0, index + 1)
-                .filter(Boolean)
-                .length.toString()}
+              cardNumber={selectedCardIds.indexOf(card.id) + 1}
               index={index}
             />
           </motion.div>
@@ -95,6 +93,9 @@ CardLayer.propTypes = {
   ).isRequired,
   isReading: PropTypes.bool.isRequired,
   selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  selectedCardIds: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  ),
   onCardSelect: PropTypes.func,
   className: PropTypes.string,
 };

@@ -19,6 +19,8 @@ const useCardSelection = (cards, maxSelection = 3) => {
   const [selectionMark, setSelectionMark] = useState(
     Array(totalCounts).fill(false),
   );
+  // Maitain a array of selected card id, the sequence matters
+  const [selectedCardIds, setSelectedCardIds] = useState([]);
 
   useEffect(() => {
     setSelectionMark(Array(totalCounts).fill(false));
@@ -39,6 +41,8 @@ const useCardSelection = (cards, maxSelection = 3) => {
           prevMark.map((mark, i) => (i === index ? false : mark)),
         );
         setSelectedCounts((prevCounts) => prevCounts - 1);
+        // Maintain the sequence of selected card id. Remove.
+        setSelectedCardIds((prevIds) => prevIds.filter((id) => id !== cardId));
         return true;
       }
 
@@ -47,6 +51,8 @@ const useCardSelection = (cards, maxSelection = 3) => {
           prevMark.map((mark, i) => (i === index ? true : mark)),
         );
         setSelectedCounts((prevCounts) => prevCounts + 1);
+        // Maintain the sequence of selected card id. Push.
+        setSelectedCardIds((prevIds) => [...prevIds, cardId]);
         return true;
       }
 
@@ -58,6 +64,7 @@ const useCardSelection = (cards, maxSelection = 3) => {
   return {
     selectedCounts,
     selectionMark,
+    selectedCardIds,
     handleCardSelect,
   };
 };

@@ -20,10 +20,8 @@ const FortunePage = () => {
     isLoading: isCardsLoading,
     error: taroCardsError,
   } = useFetchTarotCards(5);
-  const { selectionMark, handleCardSelect, selectedCounts } = useCardSelection(
-    cards,
-    3,
-  );
+  const { selectionMark, handleCardSelect, selectedCounts, selectedCardIds } =
+    useCardSelection(cards, 3);
 
   const { pathname } = useLocation();
   const isReading = pathname.endsWith('fortune/reading');
@@ -79,6 +77,7 @@ const FortunePage = () => {
         cards={cards}
         isReading={isReading}
         selectionMark={selectionMark}
+        selectedCardIds={selectedCardIds}
         onCardSelect={handleCardSelect}
         className="order-1"
       />
@@ -94,9 +93,7 @@ const FortunePage = () => {
           element={
             <ReadingView
               // TODO: managed by useCardSelection, and the sequence should managed, same as the number
-              selectedCardIds={cards
-                .filter((card, index) => selectionMark[index])
-                .map((card) => card.id)}
+              selectedCardIds={selectedCardIds}
             />
           }
         />
