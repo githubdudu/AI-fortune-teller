@@ -50,7 +50,7 @@ vi.mock('gestalt-datepicker', () => ({
 }));
 
 // Mock NationalityInputBox component with proper error handling
-vi.mock('$/components/NationalityInputBox', () => ({
+vi.mock('$/pages/UserInfoInputPage/components/NationalityInputBox', () => ({
   default: ({ id, label, selected, setSelected, errorMessage }) => (
     <div>
       <label htmlFor={id}>{label}</label>
@@ -74,7 +74,7 @@ vi.mock('$/components/NationalityInputBox', () => ({
   ),
 }));
 
-vi.mock('../UserDetailsForm/UserDetailsForm', () => {
+vi.mock('$/pages/UserInfoInputPage/components/UserDetailsForm', () => {
   return {
     default: function UserDetailsForm(props) {
       return <div data-testid="mocked-user-details-form" {...props} />;
@@ -82,7 +82,7 @@ vi.mock('../UserDetailsForm/UserDetailsForm', () => {
   };
 });
 
-import UserDetailsForm from '../UserDetailsForm/UserDetailsForm';
+import UserDetailsForm from '$/pages/UserInfoInputPage/components/UserDetailsForm';
 
 // Setup function to render the UserDetailsForm component with mocked context
 function setup(

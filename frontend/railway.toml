@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+# Requires Dockerfile to export ARG VITE_API_BASE_URL as ENV before `npm run build` (not yet fixed)
+[build.args]
+VITE_API_BASE_URL = "$VITE_API_BASE_URL"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"

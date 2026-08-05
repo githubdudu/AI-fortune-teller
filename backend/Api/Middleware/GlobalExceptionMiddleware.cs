@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Api.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace Api.Middleware
@@ -37,7 +38,9 @@ namespace Api.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = exception is RateLimitExceededException
+                ? (int)HttpStatusCode.TooManyRequests
+                : (int)HttpStatusCode.InternalServerError;
 
             var response = _env.IsDevelopment()
                 ? new
@@ -49,7 +52,9 @@ namespace Api.Middleware
                 : new
                 {
                     StatusCode = context.Response.StatusCode,
-                    Message = "An internal server error occurred.",
+                    Message = exception is RateLimitExceededException
+                        ? "Reached rate limit. Please try again later."
+                        : "An internal server error occurred.",
                     Detail = (string?)null,
                 };
 

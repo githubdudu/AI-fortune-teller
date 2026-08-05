@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Api.Data;
 using Api.Infrastructure;
@@ -11,11 +12,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +30,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure Kestrel to allow synchronous I/O operations
-builder.Services.Configure<IISServerOptions>(options => {
-    options.AllowSynchronousIO = true;
-});
 builder.WebHost.ConfigureKestrel(options => {
     options.AllowSynchronousIO = true;
 });
@@ -112,7 +112,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure SQL Server with Entity Framework Core
-if (builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment("Demo"))
 {
     // Local debugging → use the in-memory store
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -234,6 +234,32 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.AddRateLimiter((options) =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
+        httpContext =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey:  httpContext.User.FindFirstValue(ClaimTypes.Email)  ?? "unknown",
+                factory: partition => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 100, // 100 requests per window
+                    Window = TimeSpan.FromHours(1), // Per 1 hour
+                    QueueLimit = 0 // No queuing
+                }
+            )
+    );
+
+    options.AddFixedWindowLimiter("OpenAILimiter", limiter =>
+    {
+        limiter.PermitLimit = 20; // 20 requests per window
+        limiter.Window = TimeSpan.FromHours(1); // Per 1 hour
+        limiter.QueueLimit = 0; // No queuing
+    });
+});
+
+
 var app = builder.Build();
 
 // IMPORTANT: Position CORS middleware at the beginning of the pipeline
@@ -290,6 +316,7 @@ if (!app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseRateLimiter();
 app.MapControllers();
 
 // Ensure database is created and migrations are applied

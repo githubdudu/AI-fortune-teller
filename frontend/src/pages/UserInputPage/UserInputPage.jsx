@@ -1,36 +1,39 @@
-import { Box } from 'gestalt';
-import UserQuestionInput from '../../components/UserQuestionInput';
-import ThemeView from '../../components/ThemeView';
+import UserQuestionInput from './components/UserQuestionInput';
+import ThemeView from './components/ThemeView';
 import { useEffect, useState, useContext, useRef } from 'react';
-import FloatingPrompt from '../../components/FloatingPrompt/FloatingPrompt';
+import { useSessionStorage } from 'react-use';
+import FloatingPrompt from './components/FloatingPrompt';
 import { AppContext } from '$/context/AppContextProvider';
-import DailyFortuneContent from '../../components/DailyFortuneContent/DailyFortuneContent';
-import LoginForm from '$/components/LoginForm';
+import { useModalStore } from '$/stores/modalStore';
+import DailyFortuneContent from './components/DailyFortuneContent';
+import LoginForm from './components/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { API_CONFIG } from '$/constants/config';
 import apiClient from '$/utils/apiClient';
 import { SEO_TITLE } from '$/constants/seo';
-import './UserInputPage.css';
 
 /**
  * This a page where user either selects from themes of fortune telling, or ask his own question.
  * @returns
  */
 function UserInputPage() {
-  const {
-    isModalOpen,
-    setIsModalOpen,
-    toggleModalOpen,
-    isLoggedIn,
-    setUserProfile,
-    logout,
-    profileFetched,
-    setProfileFetched,
-    loginLoading,
-    setLoginLoading,
-  } = useContext(AppContext);
+  const { isLoggedIn, setUserProfile, logout } = useContext(AppContext);
 
-  const [noMotionFlag, setNoMotionFlag] = useState(true);
+  const isModalOpen = useModalStore((state) => state.isModalOpen);
+  const setIsModalOpen = useModalStore((state) => state.setIsModalOpen);
+  const toggleModalOpen = useModalStore((state) => state.toggleModalOpen);
+
+  // Page-local login/profile-fetch progress, persisted across refreshes.
+  // Kept out of AppContext so updates don't re-render all context consumers.
+  const [profileFetched, setProfileFetched] = useSessionStorage(
+    'profileFetched',
+    false,
+  );
+  const [loginLoading, setLoginLoading] = useSessionStorage(
+    'loginLoading',
+    false,
+  );
+
   const [dailyFortune, setDailyFortune] = useState(null);
   /**
    * One loading state for login and another for daily fortune.
@@ -123,8 +126,13 @@ function UserInputPage() {
   ]);
 
   useEffect(() => {
-    setNoMotionFlag(!isLoggedIn);
-  }, [isLoggedIn]);
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+      // Reset so the profile is re-fetched on the next login
+      setProfileFetched(false);
+      setLoginLoading(false);
+    }
+  }, [isLoggedIn, setIsModalOpen, setProfileFetched, setLoginLoading]);
 
   const missingProfileInfo = (userProfile) => {
     // Check if any of the required fields are nullish
@@ -141,7 +149,7 @@ function UserInputPage() {
   return (
     <>
       <title>{SEO_TITLE.HOME}</title>
-      <FloatingPrompt visible={isModalOpen} shouldReduceMotion={noMotionFlag}>
+      <FloatingPrompt visible={isModalOpen}>
         {/* // If the user is not logged in, display the login form */}
         {/* // the fetching of user profile process uses the loginLoading state too. */}
         {!isLoggedIn || !profileFetched ? (
@@ -165,22 +173,20 @@ function UserInputPage() {
           </>
         )}
       </FloatingPrompt>
-      <div className="w-165">
+      <div className="w-160 max-sm:w-full">
         <UserQuestionInput />
       </div>
-      <Box marginBottom={2} />
-      <h2 className="divider-text">- or -</h2>
-      <Box marginBottom={2} />
-      <h2 className="theme-instruction-text">
+      <h2 className="divider-text font-cormorant font-bold text-2xl text-mist-800 mb-2 ">
+        - or -
+      </h2>
+      <h2 className="theme-instruction-text font-cormorant font-extrabold text-4xl text-ink-800 mb-2">
         Select a theme to let fate speak first.
       </h2>
-      <div className="w-250">
+      <div className="w-auto">
         <ThemeView />
       </div>
-      <div
-        className="fixed top-115 left-1/2 -translate-x-1/2 w-1200 h-1200 bg-[#FFF9F7] rounded-full z-[-1] pointer-events-none"
-        style={{ boxShadow: '0px 80px 300px rgba(0, 0, 0, 0.75)' }}
-      />
+      {/* Decorative horizon vignette — geometry is documented on `bg-horizon` in index.css */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-horizon" />
     </>
   );
 }

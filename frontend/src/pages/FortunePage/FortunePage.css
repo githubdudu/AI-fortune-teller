@@ -39,7 +39,6 @@
 
 .selection-title {
   font-size: 2.4rem;
-  color: #261060;
   text-align: center;
   margin-bottom: 20px;
   font-weight: bold;
@@ -55,7 +54,6 @@
   border-radius: 20px;
   margin-bottom: 10px;
   font-weight: 500;
-  color: #261060;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 2;
@@ -138,7 +136,7 @@
 .card-info h3 {
   margin: 0 0 0.5rem;
   font-size: 1.2rem;
-  color: #333;
+  color: var(--color-mist-800);
 }
 .card-description {
   margin: 0.5rem 0;
@@ -184,7 +182,7 @@
   font-size: 2.25rem;
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
-  color: #4b2e83;
+  color: var(--color-ink-800);
   letter-spacing: -0.01em;
   text-align: center;
 }
@@ -194,10 +192,10 @@
   margin-bottom: 60px;
   font-size: 1.25rem;
   font-family: 'Cormorant Garamond', serif;
-  color: #6b46c1;
+  color: var(--color-ink-700);
   text-shadow: 0 1px 3px rgba(106, 90, 205, 0.7);
   line-height: 1.6;
-  background: linear-gradient(to right, #a78bfa, #fbcfe8);
+  background: linear-gradient(to right, var(--color-ink-500), #fbcfe8);
   -webkit-background-clip: text;
   display: inline-block;
 }
@@ -232,14 +230,14 @@
 
 .interpretation-text {
   font-size: 1rem;
-  color: #333;
+  color: var(--color-mist-800);
   line-height: 1.6;
 }
 
 .typing {
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  border-right: 2px solid #333;
+  border-right: 2px solid var(--color-mist-800);
   animation: blink-caret 0.90s step-end infinite;
 }
 
@@ -256,7 +254,7 @@
   }
 
   50% {
-    border-color: #333;
+    border-color: var(--color-mist-800);
   }
 }
 
@@ -283,7 +281,7 @@
 }
 
 .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-  color: #4b2e83;
+  color: var(--color-ink-800);
   font-weight: 600;
 }
 
@@ -302,7 +300,7 @@
 
 .markdown-content strong {
   font-weight: 600;
-  color: #4a5568;
+  color: var(--color-mist-700);
 }
 
 .markdown-content em {
@@ -328,12 +326,12 @@
 }
 
 .markdown-content blockquote {
-  border-left: 3px solid #a78bfa;
+  border-left: 3px solid var(--color-ink-500);
   padding-left: 1rem;
   margin-left: 0;
   margin-right: 0;
   font-style: italic;
-  color: #4a5568;
+  color: var(--color-mist-700);
   margin-bottom: 1rem;
 }
 
@@ -352,7 +350,7 @@
 }
 
 .markdown-content a {
-  color: #6b46c1;
+  color: var(--color-ink-700);
   text-decoration: underline;
   transition: color 0.2s ease;
 }

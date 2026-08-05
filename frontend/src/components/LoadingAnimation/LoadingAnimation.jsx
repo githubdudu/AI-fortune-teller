@@ -1,24 +1,11 @@
 import { motion } from 'framer-motion';
-import './LoadingAnimation.css';
 import PropTypes from 'prop-types';
-
-const loadingText = {
-  initial: { opacity: 0.3 },
-  animate: {
-    opacity: 1,
-    transition: {
-      duration: 1,
-      repeat: Infinity,
-      repeatType: 'reverse',
-    },
-  },
-};
 
 function LoadingAnimation({ text = 'Shuffling your destiny...' }) {
   return (
-    <div className="loading-wrapper">
+    <div className="wrapper flex flex-col gap-8 items-center justify-center">
       <motion.div
-        className="spinner"
+        className="spinner size-12 rounded-full border-4 border-figma-pink border-t-transparent"
         animate={{ rotate: 360 }}
         transition={{
           duration: 1.5,
@@ -28,10 +15,12 @@ function LoadingAnimation({ text = 'Shuffling your destiny...' }) {
       />
 
       <motion.p
-        className="loading-text"
-        variants={loadingText}
-        initial="initial"
-        animate="animate"
+        className="loading-text text-figma-pink font-medium"
+        initial={{ opacity: 0.3 }}
+        animate={{
+          opacity: 1,
+          transition: { duration: 1, repeat: Infinity, repeatType: 'reverse' },
+        }}
       >
         {text}
       </motion.p>

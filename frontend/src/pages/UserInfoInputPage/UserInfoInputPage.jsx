@@ -1,4 +1,4 @@
-import UserDetailsForm from '$/components/UserDetailsForm';
+import UserDetailsForm from './components/UserDetailsForm';
 import FormTitle from '$/components/FormTitle';
 import FormContainer from '$/components/FormContainer';
 import { SEO_TITLE } from '$/constants/seo';

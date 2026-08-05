@@ -88,12 +88,6 @@ jobs:
 
       - name: Build and push Frontend image
         env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
         run: |
           cd frontend
@@ -131,6 +125,7 @@ jobs:
           stringData:
             db-connection-string: "${{ secrets.DB_CONNECTION_STRING }}"
             openai-api-key: "${{ secrets.OPENAI_API_KEY }}"
+            firebase-credentials: ${{ toJson(secrets.FIREBASE_CREDENTIALS) }}
           EOF
 
           # Apply the secrets file

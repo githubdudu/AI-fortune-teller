@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import LoginForm from '../LoginForm/LoginForm';
+import LoginForm from '$/pages/UserInputPage/components/LoginForm';
 import { AppContext } from '$/context/AppContextProvider';
 import { API_CONFIG } from '$/constants/config';
 

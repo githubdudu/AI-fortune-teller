@@ -14,14 +14,14 @@ namespace Api.Services.Implementations
             // Initialize Firebase Admin SDK if it hasn't been already
             if (FirebaseApp.DefaultInstance == null)
             {
-                var credentialsPath =
-                    configuration["Firebase:CredentialsPath"]
+                var credentialsJson =
+                    configuration["Firebase:Credentials"]
                     ?? throw new InvalidOperationException(
-                        "Firebase:CredentialsPath configuration is missing"
+                        "Firebase:Credentials configuration is missing"
                     );
 
                 _firebaseApp = FirebaseApp.Create(
-                    new AppOptions { Credential = GoogleCredential.FromFile(credentialsPath) }
+                    new AppOptions { Credential = GoogleCredential.FromJson(credentialsJson) }
                 );
             }
             else

@@ -1,19 +1,16 @@
-import Card from '../../components/Card/Card';
+import Card from './components/Card';
 import './FortunePage.css';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box } from 'gestalt';
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import LoadingAnimation from '../../components/LoadingAnimation/LoadingAnimation';
-import ErrorMessage from '../../components/ErrorMessage';
+import ErrorMessage from './components/ErrorMessage';
 import { AppContext } from '../../context/AppContextProvider';
 import useCardSelection from '../../hooks/useCardSelection';
 import useFetchTarotCards from '../../hooks/useFetchTarotCards';
+import { useFortuneStream } from '../../hooks/useFortuneStream';
 import { markdownToHtml, createMarkup } from '../../utils/markdownUtils';
-
-// Constants
-const DEFAULT_READING_TEXT =
-  'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
 
 /**
  * Displays reading interpretation with markdown formatting
@@ -107,7 +104,8 @@ const CardsDisplay = ({
           onClick={() => onCardSelect(card.id)}
         >
           <Card
-            backImage="https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/TarotCardBackCard.png"
+            backImage="/cards/back-416.webp"
+            backImageSmall="/cards/back-240.webp"
             frontImage={card.imageSource || '/defaultFrontCard.png'}
             disabled={isCardDisabled(card.id)}
             isShowFront={selectedCardsID.includes(card.id)}
@@ -142,8 +140,8 @@ CardsDisplay.propTypes = {
  */
 const SelectionDisplay = ({
   cards,
-  error,
-  errorMessage,
+  taroCardsError,
+  streamError,
   selectedCardsID,
   handleCardSelect,
   isCardDisabled,
@@ -157,16 +155,18 @@ const SelectionDisplay = ({
 
   return (
     <div className="selection-container">
-      <h1 className="selection-title">Select Three Cards for your Reading</h1>
+      <h1 className="selection-title text-ink-900">
+        Select Three Cards for your Reading
+      </h1>
 
-      {error && (
+      {taroCardsError && (
         <ErrorMessage
           message="Could not fetch cards from server. Using demo cards instead."
           type="warning"
         />
       )}
 
-      {errorMessage && <ErrorMessage message={errorMessage} type="error" />}
+      {streamError && <ErrorMessage message={streamError} type="error" />}
 
       <CardsDisplay
         cards={cards}
@@ -187,7 +187,7 @@ const SelectionDisplay = ({
             disabled={selectedCardsID.length !== 3}
           />
         ) : (
-          <div className="cards-remaining">
+          <div className="cards-remaining text-ink-900">
             <span>{3 - selectedCardsID.length} cards remaining</span>
           </div>
         )}
@@ -205,8 +205,8 @@ SelectionDisplay.propTypes = {
       imageSource: PropTypes.string,
     }),
   ).isRequired,
-  error: PropTypes.object,
-  errorMessage: PropTypes.string,
+  taroCardsError: PropTypes.object,
+  streamError: PropTypes.string,
   selectedCardsID: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ).isRequired,
@@ -222,7 +222,7 @@ const ResultsDisplay = ({
   readingResult,
   userChosenCards,
   onNewReading,
-  isLoading,
+  isStreamLoading,
 }) => {
   return (
     <div className="results-container">
@@ -236,13 +236,13 @@ const ResultsDisplay = ({
 
       <SelectedCardsDisplay cards={userChosenCards} />
 
-      {isLoading && (
+      {isStreamLoading && (
         <div className="loading-wrapper">
           <LoadingAnimation />
         </div>
       )}
 
-      {!isLoading && (
+      {!isStreamLoading && (
         <ReadingInterpretationDisplay readingText={readingResult} />
       )}
 
@@ -262,7 +262,7 @@ ResultsDisplay.propTypes = {
     }),
   ),
   onNewReading: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool,
+  isStreamLoading: PropTypes.bool,
 };
 
 /**
@@ -271,29 +271,32 @@ ResultsDisplay.propTypes = {
 const FortunePage = () => {
   const navigate = useNavigate();
   const [showResults, setShowResults] = useState(false);
-  const [readingResult, setReadingResult] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
   const {
     saveUserChosenCards,
-    saveReadingResult,
     userChosenTheme,
     userPrompt,
-    clearReadingResult,
     clearQuestionAndTheme,
-    readingResult: contextReadingResult,
     userChosenCards,
-    streamingText,
-    isLoading: isStreamLoading,
-    streamError,
-    startFortuneStream,
-    cleanupStream,
   } = useContext(AppContext);
 
+  // Streaming state is local to this page so chunk updates don't re-render the app
+  const {
+    streamingText,
+    streamLoading: isStreamLoading,
+    streamError,
+    startFortuneStream,
+  } = useFortuneStream();
+
   // Use custom hooks for cards and selection
-  const { cards, isLoading, error, fetchCards } = useFetchTarotCards(5);
+  const {
+    cards,
+    isLoading: isCardsLoading,
+    error: taroCardsError,
+    fetchCards,
+  } = useFetchTarotCards(5);
   const { selectedCardsID, handleCardSelect, isCardDisabled, resetSelection } =
     useCardSelection(3);
 
@@ -311,22 +314,6 @@ const FortunePage = () => {
   );
 
   /**
-   * Generate appropriate error message based on error response
-   */
-  const generateErrorMessage = useCallback((error) => {
-    let errorMsg = 'Unable to fetch your reading. Please try again later.';
-    if (error.response && error.response.data) {
-      if (error.response.data.includes('Failed to generate text from OpenAI')) {
-        errorMsg =
-          'The AI service is currently unavailable. Please try again later or contact support if the problem persists.';
-      } else {
-        errorMsg = `Server error: ${error.response.data}`;
-      }
-    }
-    return errorMsg;
-  }, []);
-
-  /**
    * Handle reading button click
    */
   const handleReadButton = useCallback(async () => {
@@ -335,7 +322,6 @@ const FortunePage = () => {
 
     // Set submitting state
     setIsSubmitting(true);
-    setErrorMessage(null);
 
     console.log('Read button clicked - processing reading request');
 
@@ -363,58 +349,35 @@ const FortunePage = () => {
         },
       ];
 
-      setReadingResult(DEFAULT_READING_TEXT);
       saveUserChosenCards(defaultCards);
-      saveReadingResult(DEFAULT_READING_TEXT);
       setShowResults(true);
       setIsSubmitting(false);
       return;
     }
 
-    try {
-      // Save the selected cards to context first (before streaming starts)
-      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
-      saveUserChosenCards(selectedCardDetails);
+    // Save the selected cards to context first (before streaming starts)
+    const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
+    saveUserChosenCards(selectedCardDetails);
 
-      // Switch to results view immediately with loading state
-      setShowResults(true);
+    // Switch to results view immediately with loading state
+    setShowResults(true);
 
-      // Store current selection data for async callback
-      const currentCardIds = [...selectedCardsID];
-      const currentPrompt = userPrompt || '';
-      const currentTheme = userChosenTheme?.id || null;
+    // Store current selection data for async callback
+    const currentCardIds = [...selectedCardsID];
+    const currentPrompt = userPrompt || '';
+    const currentTheme = userChosenTheme?.id || null;
 
-      // Add a small delay to ensure state updates complete before starting stream
-      // This helps prevent the "Component unmounted" issue during navigation
-      setTimeout(() => {
-        // Only start stream if component is still mounted
-        console.log('Component is mounted, starting stream');
-        startFortuneStream({
-          cardIds: currentCardIds,
-          question: currentPrompt,
-          themeId: currentTheme,
-        });
-      }, 150);
-    } catch (error) {
-      // Handle error directly instead of using a hook
-      console.error('Error fetching reading result:', error);
-      setIsSubmitting(false);
-
-      // Generate appropriate error message
-      const errorMsg = generateErrorMessage(error);
-      setErrorMessage(errorMsg);
-
-      // Use fallback with direct function calls instead of a hook
-      setReadingResult(DEFAULT_READING_TEXT);
-
-      // Save fallback data to context
-      const selectedCardDetails = getSelectedCardDetails(selectedCardsID);
-      saveUserChosenCards(selectedCardDetails);
-      saveReadingResult(DEFAULT_READING_TEXT);
-
-      // Switch to results view even with the error
-      setShowResults(true);
-    }
+    // Add a small delay to ensure state updates complete before starting stream
+    // This helps prevent the "Component unmounted" issue during navigation
+    setTimeout(() => {
+      // Only start stream if component is still mounted
+      console.log('Component is mounted, starting stream');
+      startFortuneStream({
+        cardIds: currentCardIds,
+        question: currentPrompt,
+        themeId: currentTheme,
+      });
+    }, 150);
   }, [
     isSubmitting,
     selectedCardsID,
@@ -422,8 +385,6 @@ const FortunePage = () => {
     userChosenTheme,
     getSelectedCardDetails,
     saveUserChosenCards,
-    saveReadingResult,
-    generateErrorMessage,
     startFortuneStream,
   ]);
 
@@ -431,19 +392,13 @@ const FortunePage = () => {
    * Reset all state for a new reading
    */
   const handleNewReading = useCallback(() => {
-    // Cleanup any active streams
-    cleanupStream();
-
     // Reset context
     clearQuestionAndTheme();
-    clearReadingResult();
     saveUserChosenCards(null);
 
     // Reset component state
     resetSelection();
-    setReadingResult(null);
     setShowResults(false);
-    setErrorMessage(null);
 
     // Get new cards
     fetchCards();
@@ -452,23 +407,14 @@ const FortunePage = () => {
     navigate('/');
   }, [
     clearQuestionAndTheme,
-    clearReadingResult,
     saveUserChosenCards,
     resetSelection,
     fetchCards,
     navigate,
-    cleanupStream,
   ]);
 
-  // Clean up any streams on unmount
-  useEffect(() => {
-    return () => {
-      cleanupStream();
-    };
-  }, [cleanupStream]);
-
   // Show loading animation when fetching cards or submitting reading request
-  if (isLoading || (isSubmitting && !showResults)) {
+  if (isCardsLoading || (isSubmitting && !showResults)) {
     return (
       <div className="selection-container">
         <LoadingAnimation />
@@ -480,12 +426,10 @@ const FortunePage = () => {
   if (showResults) {
     return (
       <ResultsDisplay
-        readingResult={
-          streamingText || contextReadingResult || readingResult || ''
-        }
+        readingResult={streamingText || ''}
         userChosenCards={userChosenCards}
         onNewReading={handleNewReading}
-        isLoading={isStreamLoading}
+        isStreamLoading={isStreamLoading}
       />
     );
   }
@@ -494,8 +438,8 @@ const FortunePage = () => {
   return (
     <SelectionDisplay
       cards={cards}
-      error={error}
-      errorMessage={errorMessage || streamError}
+      taroCardsError={taroCardsError}
+      streamError={streamError}
       selectedCardsID={selectedCardsID}
       handleCardSelect={handleCardSelect}
       isCardDisabled={isCardDisabled}

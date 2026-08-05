@@ -10,12 +10,14 @@ using Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Api.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [EnableRateLimiting("OpenAILimiter")]
     public class FortunesController : ControllerBase
     {
         private readonly IFortuneService _fortuneService;

@@ -1,0 +1,607 @@
+<title>五个色彩方向 · ArcanaVerse</title>
+
+<style>
+  :root {
+    --gallery: #141019;
+    --gallery-2: #1D1723;
+    --rule: #2E2635;
+    --paper: #F2EDF3;
+    --paper-dim: #A79DAC;
+    --paper-faint: #6E6474;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--gallery);
+    color: var(--paper);
+    font-family: var(--ui);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .pad { padding-inline: clamp(18px, 6vw, 84px); }
+  .col { max-width: 1240px; margin-inline: auto; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    padding-block: clamp(56px, 11vw, 128px) clamp(40px, 7vw, 80px);
+    display: grid;
+    gap: 26px;
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-faint);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(34px, 7.5vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0;
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+
+  h1 em {
+    font-style: italic;
+    background: linear-gradient(96deg, #FEB7E6, #D4C8FF 42%, #79E4F0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .standfirst {
+    max-width: 60ch;
+    color: var(--paper-dim);
+    font-size: clamp(15px, 1.6vw, 17px);
+  }
+
+  .rules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    padding-top: 6px;
+  }
+
+  .rules span {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.03em;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 5px 13px;
+    color: var(--paper-dim);
+  }
+
+  /* ---------- scheme band ---------- */
+
+  .band {
+    color: var(--ink);
+    padding-block: clamp(38px, 6vw, 72px);
+    background: var(--bg);
+  }
+
+  .band + .band { border-top: 0; }
+
+  .band-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 60px);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .band-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  .idx {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--core);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .band h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(29px, 4.2vw, 46px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+  }
+
+  .band h2 small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--spark);
+    margin-top: 11px;
+    font-weight: 400;
+  }
+
+  .thesis {
+    max-width: 46ch;
+    font-size: 14.5px;
+    margin: 18px 0 0;
+    color: color-mix(in oklab, var(--ink) 78%, transparent);
+  }
+
+  .why {
+    margin: 14px 0 0;
+    max-width: 46ch;
+    font-size: 13px;
+    padding-left: 14px;
+    border-left: 2px solid var(--spark);
+    color: color-mix(in oklab, var(--ink) 66%, transparent);
+  }
+
+  .why b { color: var(--core); font-weight: 600; }
+
+  /* ramp */
+
+  .ramp {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: 26px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .ramp div {
+    aspect-ratio: 1 / 2.15;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 9px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .atmos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .atmos div {
+    height: 46px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 9px;
+  }
+
+  .metrics {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metrics span {
+    border: 1px solid color-mix(in oklab, var(--core) 26%, transparent);
+    border-radius: 999px;
+    padding: 4px 11px;
+    color: color-mix(in oklab, var(--ink) 72%, transparent);
+  }
+
+  .metrics b { color: var(--core); font-weight: 600; }
+
+  details {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+  }
+
+  summary {
+    cursor: pointer;
+    color: var(--core);
+    letter-spacing: 0.05em;
+    padding: 5px 0;
+  }
+
+  summary:focus-visible { outline: 2px solid var(--core); outline-offset: 3px; }
+
+  pre {
+    margin: 8px 0 0;
+    padding: 15px 17px;
+    border-radius: 11px;
+    background: color-mix(in oklab, var(--ink) 7%, transparent);
+    overflow-x: auto;
+    font-size: 11px;
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--ink) 85%, transparent);
+  }
+
+  /* ---------- mock app ---------- */
+
+  .mock {
+    background: color-mix(in oklab, #fff 62%, var(--bg));
+    border-radius: 22px;
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow:
+      0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
+      0 18px 44px -20px color-mix(in oklab, var(--ink) 40%, transparent);
+  }
+
+  .mock-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--core);
+  }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--spark);
+  }
+
+  .mock h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(23px, 2.7vw, 31px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 16px 0 0;
+    text-wrap: balance;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 16px;
+  }
+
+  .chips i {
+    font-style: normal;
+    font-size: 12px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: var(--veil);
+  }
+
+  .chips i.on { background: var(--core); color: #fff; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+    margin-top: 20px;
+  }
+
+  .card {
+    aspect-ratio: 5 / 8;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-size: 25px;
+    color: color-mix(in oklab, var(--ink) 55%, transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in oklab, #fff 55%, transparent);
+  }
+
+  .mock-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .cta {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 26px;
+    background: var(--core);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .mock-note {
+    font-size: 12px;
+    color: color-mix(in oklab, var(--ink) 58%, transparent);
+  }
+
+  /* ---------- closing ---------- */
+
+  .closing {
+    padding-block: clamp(48px, 8vw, 96px);
+    display: grid;
+    gap: 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .closing h2 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(24px, 3.4vw, 34px);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .closing p { max-width: 66ch; color: var(--paper-dim); margin: 0; font-size: 14.5px; }
+
+  .table-scroll { overflow-x: auto; margin-top: 14px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 620px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th, td { text-align: right; padding: 9px 13px; border-bottom: 1px solid var(--rule); }
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+
+  thead th {
+    color: var(--paper-faint);
+    font-weight: 400;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  td .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    margin-right: 7px;
+    vertical-align: -1px;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--paper);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header class="pad col masthead">
+  <div class="kicker">ArcanaVerse · 色彩方向提案 · 5 则</div>
+  <h1>算命这件事，可以是<em>轻快</em>的</h1>
+  <p class="standfirst">
+    塔罗配色的默认答案是深紫、鎏金、星空黑 —— 那是给「神秘」做的，不是给年轻人做的。
+    下面五个方向各自绕开那条路，用不同的机制去够到「轻快」和「少女」。
+    每一套都在自己的底色带里渲染成一屏真实的抽牌界面 —— 浅色板必须放进它自己的光里看，
+    悬在白底上并排比色块是判断不出氛围的。
+  </p>
+  <div class="rules">
+    <span>OKLCH 等亮度构建</span>
+    <span>对比度全部实算</span>
+    <span>白字/按钮 ≥ 4.5:1</span>
+    <span>正文色 ≥ 5.2:1</span>
+    <span>装饰色 ≥ 3:1</span>
+    <span>每套必含粉或紫</span>
+  </div>
+</header>
+
+<main id="schemes"></main>
+
+<section class="pad col closing">
+  <h2>怎么挑</h2>
+  <p>
+    五套的骨架完全相同 —— 六个角色、同样的亮度台阶、同样的对比度门槛。
+    唯一的变量是<strong>色相家族</strong>和<strong>彩度强度</strong>。所以它们可以直接横向比，
+    差别就是气质本身，不是执行质量。
+  </p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>方向</th><th>气质</th><th>主色相</th><th>彩度强度</th><th>白字/按钮</th><th>正文/底</th><th>装饰/底</th></tr>
+      </thead>
+      <tbody id="summary"></tbody>
+    </table>
+  </div>
+  <p style="margin-top:20px">
+    <strong>彩度强度</strong>是这五套真正的分水岭。同样的亮度台阶下，
+    <code>1.00</code> 的霓虹签和 <code>0.52</code> 的月乳是两种人格：前者在喊，后者在低语。
+    「少女」两种都成立 —— 前者是穿荧光色去看展的那种，后者是把塔罗牌收在丝绒袋里的那种。
+    先选人格，再谈色相。
+  </p>
+</section>
+
+<script>
+  const SCHEMES = [
+    {
+      id: 'aura', idx: 'I', cn: '光环', en: 'Aura Reading', vigor: '0.95',
+      bg: '#FFF3FA', veil: '#FFDCF2', bloom: '#F6BDE2', spark: '#C75CA7', core: '#A73189', ink: '#410F34',
+      hue: 340,
+      oklch: ['97.5% 0.017 340', '93% 0.048 340', '86% 0.081 340', '63% 0.162 340', '52% 0.181 340', '27% 0.09 340'],
+      blooms: [['magenta', '#FEB7E6'], ['violet', '#D9C6FF'], ['indigo', '#BBD1FF'], ['cyan', '#79E4F0']],
+      sparks: [['#C75CA7', '340°'], ['#996EDB', '300°'], ['#5883EA', '265°'], ['#009BA8', '205°']],
+      thesis: '灵气摄影里品红和青在白光中互相渗透的样子。年轻人排队去拍的那个东西，本来就是这个配色 —— 它已经是「玄学 × 现代」在视觉上被验证过的答案。',
+      why: '轻快来自<b>几乎纯白的底</b>：高彩度只出现在小面积的光晕和按钮上，大面积永远是 97.5% 亮度的粉白。少女感来自品红打头、青色收尾的冷暖对撞。',
+      m: { white: '6.10', body: '5.65', deco: '3.53', inkBloom: '9.90' },
+      mood: '电子灵光 · 冷暖对撞'
+    },
+    {
+      id: 'sugar', idx: 'II', cn: '糖晶', en: 'Sugar Crystal', vigor: '0.65',
+      bg: '#F9F5FD', veil: '#EFE2F9', bloom: '#DCC8ED', spark: '#9E75BB', core: '#7F529D', ink: '#341646',
+      hue: 310,
+      oklch: ['97.5% 0.012 310', '93% 0.033 310', '86% 0.055 310', '63% 0.111 310', '52% 0.124 310', '27% 0.09 310'],
+      blooms: [['粉晶 rose quartz', '#FABDD3'], ['紫晶 amethyst', '#E0C4F7'], ['天青 celestine', '#B5D3FF'], ['黄晶 citrine', '#E0D199']],
+      sparks: [['#BD6B8C', '355°'], ['#9E75BB', '310°'], ['#5E8ACB', '258°'], ['#9E882E', '95°']],
+      thesis: '紫水晶、粉晶、天青石、黄水晶 —— 占卜桌上真实存在的四块石头，按糖果的亮度重新调了一遍。道具即色板，不用另外编故事。',
+      why: '轻快来自<b>全场彩度压在 0.124 以下</b>，没有一个颜色在喊。少女感来自紫晶主导 + 粉晶点缀这组天然的甜味搭配，黄晶负责不让它腻。',
+      m: { white: '5.84', body: '5.42', deco: '3.41', inkBloom: '10.03' },
+      mood: '矿物甜味 · 温柔克制'
+    },
+    {
+      id: 'dawn', idx: 'III', cn: '晨曦', en: 'Peach Dawn', vigor: '0.72',
+      bg: '#FFF3F5', veil: '#FEDEE4', bloom: '#F5C1CB', spark: '#C6677F', core: '#A6405E', ink: '#470C20',
+      hue: 5,
+      oklch: ['97.5% 0.013 5', '93% 0.036 5', '86% 0.061 5', '63% 0.122 5', '52% 0.137 5', '27% 0.09 5'],
+      blooms: [['peach', '#F8C69A'], ['apricot', '#FFBFB2'], ['rose', '#FFBCCA'], ['lilac', '#E8C1F4']],
+      sparks: [['#BD762F', '62°'], ['#C86B59', '32°'], ['#C6677F', '5°'], ['#A870B9', '318°']],
+      thesis: '占卜问的从来是明天。日出前那十五分钟里，桃、杏、玫瑰、丁香会依次出现在同一片天上 —— 一个天然存在、而且情绪正确的渐变。',
+      why: '轻快来自<b>暖色主导 + 高亮度</b>，读到的情绪是「新的一天」而不是「命中注定」。少女感来自玫瑰粉当主色，丁香紫在末端收住，避免整套滑进婴儿粉。',
+      m: { white: '5.97', body: '5.51', deco: '3.43', inkBloom: '9.97' },
+      mood: '日出暖调 · 乐观外向'
+    },
+    {
+      id: 'neon', idx: 'IV', cn: '霓虹签', en: 'Neon Oracle', vigor: '1.00',
+      bg: '#FFF3F8', veil: '#FFDDEC', bloom: '#FDBBD9', spark: '#D15697', core: '#B22578', ink: '#440E2C',
+      hue: 350,
+      oklch: ['97.5% 0.018 350', '93% 0.05 350', '86% 0.085 350', '63% 0.17 350', '52% 0.19 350', '27% 0.09 350'],
+      blooms: [['hot pink', '#FFB9D9'], ['e-violet', '#D4C8FF'], ['acid lime', '#ACE2A1'], ['marker', '#EECD7E']],
+      sparks: [['#D15697', '350°'], ['#926FE3', '295°'], ['#48A132', '140°'], ['#AA8300', '88°']],
+      thesis: '把塔罗做成一本 riso 印刷的地下刊物。荧光粉、电紫、酸橙 —— 这一套的关键词不是「甜」，是「酷」。同人志摊位而不是水晶店。',
+      why: '轻快来自<b>只用平涂</b>：彩度全部拉满，但没有渐变、没有阴影、没有拟物，颜色靠边界而不是体积说话。少女感是荧光粉那种带攻击性的甜。',
+      m: { white: '6.12', body: '5.67', deco: '3.54', inkBloom: '9.88' },
+      mood: '印刷荧光 · 有攻击性'
+    },
+    {
+      id: 'moon', idx: 'V', cn: '月乳', en: 'Moon Milk', vigor: '0.52',
+      bg: '#F6F6FD', veil: '#E5E6F9', bloom: '#CDCEEE', spark: '#8382BD', core: '#63609F', ink: '#241D50',
+      hue: 285,
+      oklch: ['97.5% 0.009 285', '93% 0.026 285', '86% 0.044 285', '63% 0.088 285', '52% 0.099 285', '27% 0.09 285'],
+      blooms: [['periwinkle', '#CCCCFA'], ['lavender', '#E3C4ED'], ['blush', '#F3C0D7'], ['moon blue', '#A7D9F4']],
+      sparks: [['#8382BD', '285°'], ['#A078AC', '318°'], ['#B27391', '350°'], ['#4C93B5', '232°']],
+      thesis: '月亮是塔罗里最核心的符号。这一套把它拆成雾一样的长春花、薰衣草、腮红和月蓝 —— 唯一保留了「神秘」气息、但一点都不重的方向。',
+      why: '轻快来自<b>亮度极高而彩度极低</b>（最高只有 0.099）。它走的是「淡」不是「艳」。少女感来自长春花紫这个介于蓝和紫之间的暧昧位置，加一点腮红粉。',
+      m: { white: '5.67', body: '5.27', deco: '3.31', inkBloom: '9.99' },
+      mood: '月雾冷调 · 安静内向'
+    },
+  ];
+
+  const ROLE_NAMES = ['bg', 'veil', 'bloom', 'spark', 'core', 'ink'];
+  const ROLE_USE = ['页面底', '浮层/hover', '卡片/插画', '装饰/大字', '按钮/正文/链接', '标题/正文'];
+
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+  document.getElementById('schemes').innerHTML = SCHEMES.map((s) => {
+    const vars = `--bg:${s.bg};--veil:${s.veil};--bloom:${s.bloom};--spark:${s.spark};--core:${s.core};--ink:${s.ink};`;
+    const ramp = [s.bg, s.veil, s.bloom, s.spark, s.core, s.ink].map((c, i) => {
+      const light = i >= 3;
+      return `<div style="background:${c};color:${light ? 'rgba(255,255,255,.92)' : 'color-mix(in oklab, var(--ink) 62%, transparent)'}">${ROLE_NAMES[i]}</div>`;
+    }).join('');
+    const blooms = s.blooms.map(([n, c]) =>
+      `<div style="background:${c};color:color-mix(in oklab, var(--ink) 66%, transparent)">${esc(n)}</div>`).join('');
+    const sparks = s.sparks.map(([c, h]) =>
+      `<div style="background:${c};color:rgba(255,255,255,.9)">${h}</div>`).join('');
+    const theme = ROLE_NAMES.map((r, i) =>
+      `  --color-${s.id}-${r}: oklch(${s.oklch[i]});`).join('\n');
+
+    return `
+<section class="band" style="${vars}">
+  <div class="pad col band-grid">
+    <div>
+      <span class="idx">${s.idx} — ${esc(s.mood)}</span>
+      <h2>${esc(s.cn)}<small>${esc(s.en)} · H ${s.hue}° · 彩度强度 ${s.vigor}</small></h2>
+      <p class="thesis">${esc(s.thesis)}</p>
+      <p class="why">${s.why}</p>
+      <div class="ramp">${ramp}</div>
+      <div class="atmos">${blooms}</div>
+      <div class="atmos">${sparks}</div>
+      <div class="metrics">
+        <span>白字/按钮 <b>${s.m.white}</b></span>
+        <span>正文/底 <b>${s.m.body}</b></span>
+        <span>装饰/底 <b>${s.m.deco}</b></span>
+        <span>ink/卡片 <b>${s.m.inkBloom}</b></span>
+      </div>
+      <details>
+        <summary>@theme 令牌 ▾</summary>
+        <pre>@theme {
+${esc(theme)}
+}</pre>
+      </details>
+    </div>
+
+    <div class="mock">
+      <div class="mock-top"><span>Today&rsquo;s draw</span><span class="avatar"></span></div>
+      <h3>What does love hold for me this week?</h3>
+      <div class="chips">
+        <i class="on">Love</i><i>Career</i><i>Health</i><i>Decisions</i>
+      </div>
+      <div class="cards">
+        <div class="card" style="background:${s.blooms[0][1]}">&#9790;</div>
+        <div class="card" style="background:${s.blooms[1][1]}">&#9733;</div>
+        <div class="card" style="background:${s.blooms[2][1]}">&#9789;</div>
+      </div>
+      <div class="mock-foot">
+        <button class="cta" type="button">Draw three cards</button>
+        <span class="mock-note">Free &middot; one reading a day</span>
+      </div>
+    </div>
+  </div>
+</section>`;
+  }).join('');
+
+  document.getElementById('summary').innerHTML = SCHEMES.map((s) => `
+    <tr>
+      <td><span class="dot" style="background:${s.core}"></span>${esc(s.cn)} ${esc(s.en)}</td>
+      <td>${esc(s.mood)}</td>
+      <td>${s.hue}&deg;</td>
+      <td>${s.vigor}</td>
+      <td>${s.m.white}</td>
+      <td>${s.m.body}</td>
+      <td>${s.m.deco}</td>
+    </tr>`).join('');
+
+  // 角色说明附在第一条 ramp 下方，避免每屏重复
+  const first = document.querySelector('.band .ramp');
+  if (first) {
+    const legend = document.createElement('p');
+    legend.className = 'why';
+    legend.style.marginTop = '12px';
+    legend.style.borderLeft = 'none';
+    legend.style.paddingLeft = '0';
+    legend.style.fontSize = '11.5px';
+    legend.innerHTML = ROLE_NAMES.map((r, i) => `<b>${r}</b> ${ROLE_USE[i]}`).join('　·　');
+    first.after(legend);
+  }
+</script>

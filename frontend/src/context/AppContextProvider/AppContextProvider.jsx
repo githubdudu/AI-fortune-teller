@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { AppContext } from './AppContext.jsx';
 import { useLocalStorage, useSessionStorage } from 'react-use';
 import { useEffect, useCallback } from 'react';
-import { useFortuneStream } from '$/hooks/useFortuneStream';
 import { setLogoutHandler } from '$/utils/apiClient';
 
 import { logout as firebaseLogout } from '$/utils/firebase.js';
@@ -20,58 +19,13 @@ export function AppContextProvider({ children }) {
     null,
   );
 
-  const [readingResult, setReadingResult] = useSessionStorage(
-    'readingResult',
-    null,
-  );
-
-  const [userInfo, setUserInfo] = useSessionStorage('userInfo', null);
   const [userProfile, setUserProfile] = useSessionStorage('userProfile', null);
 
-  const [isModalOpen, setIsModalOpen] = useSessionStorage('isModalOpen', true);
-
   const [isLoggedIn, setIsLoggedIn] = useLocalStorage('isLoggedIn', null);
-
-  const [profileFetched, setProfileFetched] = useSessionStorage(
-    'profileFetched',
-    false,
-  );
-
-  const [loginLoading, setLoginLoading] = useSessionStorage(
-    'loginLoading',
-    false,
-  );
-
-  // Default fallback text when stream fails
-  const fallbackText =
-    'Based on your selected cards, you are at a point of new beginnings with great potential ahead. Trust your intuition and use your resources wisely to manifest your desires.';
-
-  // Use our custom hook for streaming functionality
-  const {
-    streamingText,
-    isStreaming,
-    streamLoading,
-    streamError,
-    startFortuneStream,
-    cleanupStream,
-    clearStreamingText,
-  } = useFortuneStream({
-    onSaveResult: setReadingResult,
-    fallbackText,
-  });
 
   const clearQuestionAndTheme = () => {
     setUserPrompt('');
     setUserChosenTheme(null);
-  };
-
-  const clearReadingResult = () => {
-    setReadingResult(null);
-    clearStreamingText();
-  };
-
-  const toggleModalOpen = () => {
-    setIsModalOpen((prev) => !prev);
   };
 
   const login = (profile) => {
@@ -87,28 +41,15 @@ export function AppContextProvider({ children }) {
 
     // Clear the session storage
     setUserProfile(null);
-    setUserInfo(null);
     setUserChosenCards(null);
     setUserPrompt('');
     setUserChosenTheme(null);
-    setReadingResult(null);
-
-    setProfileFetched(false);
-    setLoginLoading(false);
-
-    // Clear the modal state
-    setIsModalOpen(true);
   }, [
     setIsLoggedIn,
     setUserProfile,
-    setUserInfo,
     setUserChosenCards,
     setUserPrompt,
     setUserChosenTheme,
-    setReadingResult,
-    setProfileFetched,
-    setLoginLoading,
-    setIsModalOpen,
   ]);
 
   // Register logout handler with API client
@@ -131,31 +72,12 @@ export function AppContextProvider({ children }) {
         saveUserPrompt: setUserPrompt,
         userChosenTheme,
         saveUserChosenTheme: setUserChosenTheme,
-        userInfo,
-        saveUserInfo: setUserInfo,
         clearQuestionAndTheme,
         userProfile,
         setUserProfile,
-        readingResult,
-        saveReadingResult: setReadingResult,
-        clearReadingResult,
-        isModalOpen,
-        setIsModalOpen,
-        toggleModalOpen,
         login,
         logout,
         isLoggedIn,
-        profileFetched,
-        setProfileFetched,
-        loginLoading,
-        setLoginLoading,
-        // Streaming API from custom hook
-        streamingText,
-        isStreaming,
-        streamLoading,
-        streamError,
-        startFortuneStream,
-        cleanupStream,
       }}
     >
       {children}

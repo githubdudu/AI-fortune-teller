@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/healthz"
+restartPolicyType = "ON_FAILURE"
+
+[environments.demo.deploy.variables]
+ASPNETCORE_ENVIRONMENT = "Demo"
