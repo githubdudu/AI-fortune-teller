@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useState, useContext, useCallback } from 'react';
 
-import Card from './components/Card';
 import LoadingAnimation from '$/components/LoadingAnimation/LoadingAnimation';
 import ErrorMessage from './components/ErrorMessage';
 
@@ -15,7 +14,7 @@ import './ReadingView.css';
 /**
  * Reading results screen
  */
-const ReadingView = ({ userChosenCards }) => {
+const ReadingView = ({ selectedCardIds }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
@@ -41,8 +40,6 @@ const ReadingView = ({ userChosenCards }) => {
 
     console.log('Read button clicked - processing reading request');
 
-    // Store current selection data for async callback
-    const currentCardIds = userChosenCards.map((card) => card.id);
     const currentPrompt = userPrompt || '';
     const currentTheme = userChosenTheme?.id || null;
 
@@ -52,7 +49,7 @@ const ReadingView = ({ userChosenCards }) => {
       // Only start stream if component is still mounted
       console.log('Component is mounted, starting stream');
       startFortuneStream({
-        cardIds: currentCardIds,
+        cardIds: selectedCardIds,
         question: currentPrompt,
         themeId: currentTheme,
       });
@@ -62,7 +59,7 @@ const ReadingView = ({ userChosenCards }) => {
     userPrompt,
     userChosenTheme,
     startFortuneStream,
-    userChosenCards,
+    selectedCardIds,
   ]);
 
   return (
@@ -77,8 +74,6 @@ const ReadingView = ({ userChosenCards }) => {
           The cards have spoken. Here is your path forward.
         </p>
       </Box>
-
-      <SelectedCardsDisplay cards={userChosenCards} />
 
       {streamError && <ErrorMessage message={streamError} type="error" />}
 
@@ -113,46 +108,9 @@ const ReadingView = ({ userChosenCards }) => {
 };
 
 ReadingView.propTypes = {
-  userChosenCards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ),
-};
-
-/**
- * Displays the cards selected for the reading
- */
-const SelectedCardsDisplay = ({ cards }) => {
-  return (
-    <div className="selected-cards-display flex flex-wrap max-md:flex-col justify-center items-center gap-8 mx-auto w-full">
-      {cards?.map((card, index) => (
-        <div key={card.id}>
-          <Card
-            frontImage={card.imageSource || '/defaultFrontCard.png'}
-            isShowFront={true}
-            name={card.name}
-            description={card.description}
-            index={index}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-SelectedCardsDisplay.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ),
+  selectedCardIds: PropTypes.arrayOf({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  }).isRequired,
 };
 
 /**

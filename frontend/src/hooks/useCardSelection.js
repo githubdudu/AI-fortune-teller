@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from 'react';
  *
  * @param {Card[]} cards - Array of cards available for selection
  * @param {number} maxSelection - Maximum number of cards that can be selected
- * @returns {Object} Card selection state and handlers
+ * @returns {{selectedCounts: number, selectionMark: boolean[], handleCardSelect: (cardId: number, index: number) => boolean}}
  */
 const useCardSelection = (cards, maxSelection = 3) => {
   const totalCounts = cards.length;

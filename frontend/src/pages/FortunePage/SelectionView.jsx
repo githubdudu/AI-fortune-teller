@@ -1,45 +1,16 @@
 import { Button } from 'gestalt';
 import { useNavigate } from 'react-router-dom';
 
-import ErrorMessage from './components/ErrorMessage';
-import Card from './components/Card';
 import PropTypes from 'prop-types';
 
 /**
  * Card selection screen
  * /fortune
  */
-const SelectionView = ({
-  cards,
-  taroCardsError,
-  selectionMark,
-  handleCardSelect,
-}) => {
+const SelectionView = ({ selectedCounts }) => {
   const navigate = useNavigate();
 
-  // Turn an axios error into something readable, keeping the HTTP status
-  // (e.g. 429 rate limiting) visible on the page instead of only in the console.
-  const describeCardsError = (error) => {
-    const status = error?.response?.status;
-    const detail =
-      error?.response?.data?.message ||
-      error?.response?.data?.title ||
-      (typeof error?.response?.data === 'string'
-        ? error.response.data
-        : null) ||
-      error?.message;
-
-    if (status === 429) {
-      return `Too many requests (429) — the server is rate limiting card draws. Please wait a moment and try again. Showing demo cards for now.`;
-    }
-    if (status) {
-      return `Could not fetch cards from server (${status}${detail ? `: ${detail}` : ''}). Using demo cards instead.`;
-    }
-    return `Could not fetch cards from server${detail ? ` (${detail})` : ''}. Using demo cards instead.`;
-  };
-
   const onConfirmButtonClick = () => {
-    console.log('Confirm button clicked with selected cards:', cards);
     navigate('reading');
   };
 
@@ -49,21 +20,8 @@ const SelectionView = ({
         Select Three Cards for your Reading
       </h1>
 
-      {taroCardsError && (
-        <ErrorMessage
-          message={describeCardsError(taroCardsError)}
-          type={taroCardsError?.response?.status === 429 ? 'error' : 'warning'}
-        />
-      )}
-
-      <CardsDisplay
-        cards={cards}
-        onCardSelect={handleCardSelect}
-        selectionMark={selectionMark}
-      />
-
       <div className="action-container">
-        {selectionMark.filter((mark) => mark).length === 3 ? (
+        {selectedCounts === 3 ? (
           <Button
             text="Confirm Card Selection"
             name="edit-button"
@@ -71,13 +29,11 @@ const SelectionView = ({
             onClick={onConfirmButtonClick}
             size="lg"
             accessibilityLabel="Confirm Tarot Card Selection"
-            disabled={selectionMark.filter((mark) => mark).length !== 3}
+            disabled={selectedCounts !== 3}
           />
         ) : (
           <div className="cards-remaining px-5 py-2 mb-2 rounded-full shadow-lg bg-mist-200 font-medium  text-ink-900">
-            <span>
-              {3 - selectionMark.filter((mark) => mark).length} cards remaining
-            </span>
+            <span>{3 - selectedCounts} cards remaining</span>
           </div>
         )}
       </div>
@@ -86,58 +42,7 @@ const SelectionView = ({
 };
 
 SelectionView.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ).isRequired,
-  taroCardsError: PropTypes.object,
-  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
-  handleCardSelect: PropTypes.func.isRequired,
-};
-
-/**
- * Displays the card selection interface
- */
-const CardsDisplay = ({ cards, onCardSelect, selectionMark }) => {
-  return (
-    <div className="card-container relative flex w-full justify-between gap-4 my-10">
-      {cards.map((card, index) => (
-        <div
-          key={card.id}
-          className="min-w-0 shrink flex flex-col items-center"
-          onClick={() => onCardSelect(card.id, index)}
-        >
-          <Card
-            backImage="/cards/back-416.webp"
-            backImageSmall="/cards/back-240.webp"
-            frontImage={card.imageSource || '/defaultFrontCard.png'}
-            isSelected={selectionMark[index]}
-            name={card.name}
-            description={card.description}
-            cardNumber={selectionMark.indexOf(true) + 1}
-            index={index}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-CardsDisplay.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      name: PropTypes.string,
-      description: PropTypes.string,
-      imageSource: PropTypes.string,
-    }),
-  ).isRequired,
-  onCardSelect: PropTypes.func.isRequired,
-  selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
+  selectedCounts: PropTypes.number.isRequired,
 };
 
 export default SelectionView;

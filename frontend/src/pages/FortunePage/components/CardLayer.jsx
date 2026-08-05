@@ -37,6 +37,7 @@ const CardLayer = ({
   isReading: isReveal,
   selectionMark,
   onCardSelect,
+  className,
 }) => {
   const mode = isReveal ? 'reveal' : 'select';
 
@@ -45,7 +46,7 @@ const CardLayer = ({
     .filter(({ index }) => !isReveal || selectionMark[index]);
 
   return (
-    <div className={`card-layer relative ${LAYOUTS[mode]}`}>
+    <div className={`card-layer relative ${LAYOUTS[mode]} ${className}`}>
       <AnimatePresence mode="popLayout">
         {entries.map(({ card, index }) => (
           <motion.div
@@ -91,10 +92,12 @@ CardLayer.propTypes = {
   isReading: PropTypes.bool.isRequired,
   selectionMark: PropTypes.arrayOf(PropTypes.bool).isRequired,
   onCardSelect: PropTypes.func,
+  className: PropTypes.string,
 };
 
 CardLayer.defaultProps = {
   onCardSelect: () => {},
+  className: '',
 };
 
 export default CardLayer;
