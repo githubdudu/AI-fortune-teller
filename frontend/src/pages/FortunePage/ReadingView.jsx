@@ -107,9 +107,9 @@ const ReadingView = ({ selectedCardIds }) => {
 };
 
 ReadingView.propTypes = {
-  selectedCardIds: PropTypes.arrayOf({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-  }).isRequired,
+  selectedCardIds: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  ).isRequired,
 };
 
 /**

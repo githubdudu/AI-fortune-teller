@@ -94,9 +94,9 @@ const FortunePage = () => {
           element={
             <ReadingView
               // TODO: managed by useCardSelection, and the sequence should managed, same as the number
-              userChosenCards={cards
+              selectedCardIds={cards
                 .filter((card, index) => selectionMark[index])
-                .map((card) => ({ id: card.id }))}
+                .map((card) => card.id)}
             />
           }
         />
