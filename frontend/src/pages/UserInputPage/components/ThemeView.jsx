@@ -113,7 +113,14 @@ function ThemeView() {
         setError(null);
       } catch (err) {
         console.error('Error fetching themes:', err);
-        setError('Service is not available. Please try again later.');
+        const status = error?.response?.status;
+        if (status === 429) {
+          setError(
+            'Too many requests. the server is rate limiting access. Please wait a moment and try again.',
+          );
+        } else {
+          setError('Service is not available. Please try again later.');
+        }
         setThemes(hardcodedThemes);
       } finally {
         setLoading(false);

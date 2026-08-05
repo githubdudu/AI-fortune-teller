@@ -15,11 +15,7 @@ import useFetchTarotCards from '../../hooks/useFetchTarotCards';
  */
 const FortunePage = () => {
   // Use custom hooks for cards and selection
-  const {
-    cards,
-    isLoading: isCardsLoading,
-    error: taroCardsError,
-  } = useFetchTarotCards(5);
+  const { cards, error: taroCardsError } = useFetchTarotCards(5);
   const { selectionMark, handleCardSelect, selectedCounts, selectedCardIds } =
     useCardSelection(cards, 3);
 
@@ -45,15 +41,6 @@ const FortunePage = () => {
     }
     return `Could not fetch cards from server${detail ? ` (${detail})` : ''}. Using demo cards instead.`;
   };
-
-  // Show loading animation when fetching cards or submitting reading request
-  if (isCardsLoading) {
-    return (
-      <div className="selection-container">
-        <LoadingAnimation />
-      </div>
-    );
-  }
 
   return (
     // The page shell: it owns the column width and centring for every child

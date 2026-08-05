@@ -8,29 +8,23 @@ import { tarotCardService } from '../utils/apiClient';
  */
 const useFetchTarotCards = (limit = 5) => {
   const [cards, setCards] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   /**
    * Fetch random cards from the API
    */
   const fetchCards = useCallback(async () => {
-    setIsLoading(true);
     setError(null);
 
     try {
       const cardsData = await tarotCardService.fetchRandomCards(limit);
       setCards(cardsData);
       console.log('Cards fetched:', cardsData);
-
-      // Add a delay before showing cards to allow for animation
-      setTimeout(() => setIsLoading(false), 2000);
     } catch (err) {
       console.error('Error in useFetchTarotCards:', err);
       setError(err);
       // Still show the demo cards the API layer prepared, if any
       setCards(err.fallbackCards || []);
-      setIsLoading(false);
     }
   }, [limit]);
 
@@ -41,10 +35,7 @@ const useFetchTarotCards = (limit = 5) => {
 
   return {
     cards,
-    isLoading,
     error,
-    fetchCards,
-    setIsLoading,
   };
 };
 

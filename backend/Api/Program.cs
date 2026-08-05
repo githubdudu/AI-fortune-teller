@@ -244,7 +244,7 @@ builder.Services.AddRateLimiter((options) =>
                 partitionKey:  httpContext.User.FindFirstValue(ClaimTypes.Email)  ?? "unknown",
                 factory: partition => new FixedWindowRateLimiterOptions
                 {
-                    PermitLimit = 100, // 100 requests per window
+                    PermitLimit = builder.Environment.IsDevelopment() ? 500 : 100, // 100 requests per window
                     Window = TimeSpan.FromHours(1), // Per 1 hour
                     QueueLimit = 0 // No queuing
                 }

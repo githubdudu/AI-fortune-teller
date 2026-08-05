@@ -88,7 +88,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   return (
     <FormContainer withBackground={false}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
-      <div className="flex flex-col gap-4 sm:min-w-[500px] w-full">
+      <div className="flex flex-col gap-4 sm:min-w-[500px] w-full select-text">
         {Email()}
         {Password()}
         {ErrorMessage(emailSignInError)}
@@ -106,7 +106,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
       <div>
         <TextField
           id="email"
-          label="Email"
+          label="Email (try demo account: arcanaverse-demo@email.com )"
           placeholder="Please enter your email address"
           name="email"
           type="email"
@@ -126,7 +126,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
       <div>
         <TextField
           id="password"
-          label="Password"
+          label="Password (try demo account: p@ssword-demo)"
           placeholder="Please enter your password"
           name="password"
           size="lg"
