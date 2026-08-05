@@ -6,8 +6,12 @@ import Card from './Card';
 // How the cards sit in each phase. Only the container's layout changes between them
 // The card elements themselves are the same DOM nodes throughout, which
 // is what lets motion tween them from one arrangement to the other.
+//
+// The cards keep one fixed size at every width, so below xl the overlap is produced
+// here, by a negative margin.
 const LAYOUTS = {
-  select: 'flex w-full justify-between gap-4 my-10',
+  select:
+    'flex w-full justify-center my-10 [&>*]:-mx-12 md:[&>*]:-mx-8 lg:[&>*]:-mx-4 xl:[&>*]:mx-4',
   reveal: 'flex flex-wrap max-md:flex-col justify-center gap-8 w-full my-10',
 };
 
@@ -74,7 +78,7 @@ const CardLayer = ({
               layout: LAYOUT_SPRING,
               default: { ...DEAL_SPRING, delay: index * DEAL_STAGGER },
             }}
-            className="min-w-0 shrink flex flex-col items-center"
+            className="w-[13rem] flex flex-col items-center"
             onClick={isReveal ? undefined : () => onCardSelect(card.id, index)}
           >
             <Card
