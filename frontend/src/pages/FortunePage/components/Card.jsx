@@ -7,7 +7,7 @@ import useCardTilt from '$/hooks/useCardTilt';
 import useIdleFloat from '$/hooks/useIdleFloat';
 
 // Controls the physical feel of the card's flip
-const FLIP_SPRING = { type: 'spring', stiffness: 120, damping: 16 };
+const FLIP_SPRING = { type: 'spring', visualDuration: 1, bounce: 0.25 };
 
 // `bounce` (0 = none, 1 = extreme) with `visualDuration` (seconds to visually reach the target)
 // 0.5 gives a clear overshoot-and-settle; push towards 0.7 for more, 0.3 for less.
@@ -62,6 +62,7 @@ const Card = ({
   isSelected,
   cardNumber,
   index,
+  flipDelay,
 }) => {
   const [isNumberShow, setIsNumberShow] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -135,7 +136,9 @@ const Card = ({
             scale,
           }}
           transition={{
-            rotateY: FLIP_SPRING,
+            // Held back by `flipDelay` so the reveal reads as two beats: the
+            // row rearranges first, then the cards turn over.
+            rotateY: { ...FLIP_SPRING, delay: flipDelay },
             y: LIFT_SPRING,
             // Picked per direction: these flags are already the direction of
             // travel at the moment the target changes. Press wins over hover,
@@ -217,6 +220,7 @@ Card.propTypes = {
   isSelected: PropTypes.bool,
   cardNumber: PropTypes.string,
   index: PropTypes.number,
+  flipDelay: PropTypes.number,
 };
 
 Card.defaultProps = {
@@ -226,6 +230,7 @@ Card.defaultProps = {
   description: '',
   name: '',
   index: 0,
+  flipDelay: 0,
 };
 
 export default Card;

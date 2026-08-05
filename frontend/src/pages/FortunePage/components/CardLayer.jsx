@@ -12,11 +12,14 @@ const LAYOUTS = {
 };
 
 // The unselected cards leaving the row when the selection is confirmed
-const EXIT = { opacity: 0, scale: 0.9, transition: { duration: 0.35 } };
+const EXIT = { opacity: 0, scale: 0.9, transition: { duration: 2 } };
 
 // Position changes are driven by layout reflow, so this is the tween for the
 // flight from the selection row into the reading row
-const LAYOUT_SPRING = { type: 'spring', visualDuration: 0.5, bounce: 0.25 };
+const LAYOUT_SPRING = { type: 'spring', visualDuration: 3, bounce: 0.25 };
+
+// Delay the flip animation after the layout reflow
+const FLIP_AFTER_LAYOUT = 3.5;
 
 /**
  * The persistent card layer.
@@ -64,6 +67,7 @@ const CardLayer = ({
               backImageSmall="/cards/back-240.webp"
               frontImage={card.imageSource || '/defaultFrontCard.png'}
               isShowFront={isReveal}
+              flipDelay={isReveal ? FLIP_AFTER_LAYOUT + index * 0.1 : 0}
               isSelected={selectionMark[index]}
               name={card.name}
               description={card.description}
