@@ -63,46 +63,45 @@ const ReadingView = ({ selectedCardIds }) => {
   ]);
 
   return (
-    <div className="results-container max-w-screen-xl mx-auto p-8 relative min-h-screen flex flex-col items-center text-center font-cormorant">
-      <h1 className="reading-title text-4xl font-bold text-ink-800 text-center">
-        {' '}
-        Your ArcanaVerse Reading{' '}
+    <div className="results-container contents">
+      <h1 className="reading-title order-0 text-4xl font-bold font-cormorant text-ink-800">
+        Your ArcanaVerse Reading
       </h1>
 
-      <Box className="reading-subtitle-wrapper">
-        <p className="reading-subtitle-text mt-1 mb-15 text-xl text-ink-700">
-          The cards have spoken. Here is your path forward.
-        </p>
-      </Box>
+      <p className="reading-subtitle-text mt-1 mb-15 font-cormorant text-xl text-ink-700">
+        The cards have spoken. Here is your path forward.
+      </p>
 
-      {streamError && <ErrorMessage message={streamError} type="error" />}
+      <div className="order-2 flex flex-col items-center w-full">
+        {streamError && <ErrorMessage message={streamError} type="error" />}
 
-      <Button
-        text="See Your Reading"
-        name="edit-button"
-        color="blue"
-        onClick={handleReadButton}
-        size="lg"
-        accessibilityLabel="Get your tarot reading"
-      />
+        <Button
+          text="See Your Reading"
+          name="edit-button"
+          color="blue"
+          onClick={handleReadButton}
+          size="lg"
+          accessibilityLabel="Get your tarot reading"
+        />
 
-      {isStreamLoading && <LoadingAnimation />}
+        {isStreamLoading && <LoadingAnimation />}
 
-      {!isStreamLoading && (
-        <ReadingInterpretationDisplay readingText={readingResult} />
-      )}
+        {!isStreamLoading && (
+          <ReadingInterpretationDisplay readingText={readingResult} />
+        )}
 
-      {/* Button to start a new reading */}
-      <NavLink to="/" prefetch="intent">
-        <Box marginTop={2} display="flex" justifyContent="center">
-          <Button
-            text="Reveal Another Reading"
-            name="edit-button"
-            size="lg"
-            color="red"
-          />
-        </Box>
-      </NavLink>
+        {/* Button to start a new reading */}
+        <NavLink to="/" prefetch="intent">
+          <Box marginTop={2} display="flex" justifyContent="center">
+            <Button
+              text="Reveal Another Reading"
+              name="edit-button"
+              size="lg"
+              color="red"
+            />
+          </Box>
+        </NavLink>
+      </div>
     </div>
   );
 };

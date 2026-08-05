@@ -62,7 +62,7 @@ const FortunePage = () => {
     // The page shell: it owns the column width and centring for every child
     // route, so the card layer and the views below it share one measuring
     // stick.
-    <div className="fortune-page flex flex-col items-center p-5 max-w-screen sm:w-xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh]">
+    <div className="fortune-page flex flex-col items-center p-5 max-w-screen sm:w-xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh] text-center">
       {taroCardsError && (
         <ErrorMessage
           message={describeCardsError(taroCardsError)}
@@ -80,6 +80,7 @@ const FortunePage = () => {
         isReading={isReading}
         selectionMark={selectionMark}
         onCardSelect={handleCardSelect}
+        className="order-1"
       />
 
       {/* TODO: migrate to Outlet and useOutletContext when the props are less */}

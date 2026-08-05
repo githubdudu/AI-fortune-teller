@@ -15,12 +15,12 @@ const SelectionView = ({ selectedCounts }) => {
   };
 
   return (
-    <div className="selection-container flex flex-col items-center p-5 max-w-screen sm:w-xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh]">
-      <h1 className="selection-title mb-5 text-3xl md:text-4xl text-center font-bold font-cormorant text-ink-900">
+    <div className="selection-container contents ">
+      <h1 className="selection-title order-0 mb-5 text-3xl md:text-4xl font-bold font-cormorant text-ink-900">
         Select Three Cards for your Reading
       </h1>
 
-      <div className="action-container">
+      <div className="action-container order-2 ">
         {selectedCounts === 3 ? (
           <Button
             text="Confirm Card Selection"
