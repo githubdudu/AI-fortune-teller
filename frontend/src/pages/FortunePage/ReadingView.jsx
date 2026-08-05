@@ -26,6 +26,7 @@ const ReadingView = ({ selectedCardIds }) => {
     streamingText: readingResult = '',
     streamLoading: isStreamLoading,
     streamError,
+    streamModel,
     startFortuneStream,
   } = useFortuneStream();
 
@@ -64,7 +65,12 @@ const ReadingView = ({ selectedCardIds }) => {
     selectedCardIds,
   ]);
 
-  if (!selectedCardIds.length) return <Navigate to="/fortune" replace />;
+  // Keep the page reachable without cards while developing
+  const isDevelopment =
+    import.meta.env.DEV || import.meta.env.VITE_ENVIRONMENT === 'development';
+
+  if (!selectedCardIds.length && !isDevelopment)
+    return <Navigate to="/fortune" replace />;
 
   return (
     <div className="results-container contents">
@@ -91,6 +97,11 @@ const ReadingView = ({ selectedCardIds }) => {
         )}
 
         {isStreamLoading && <LoadingAnimation />}
+        {streamModel && (
+          <p className="interpretation-model mt-4 text-xs text-mist-800/60 text-right">
+            Channelled via {streamModel}
+          </p>
+        )}
 
         {hasRead && (
           <ReadingInterpretationDisplay readingText={readingResult} />

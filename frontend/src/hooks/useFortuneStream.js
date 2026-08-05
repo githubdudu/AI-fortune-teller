@@ -16,6 +16,9 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
   const [streamingText, setStreamingText] = useState(fallbackText);
   const [streamError, setStreamError] = useState(null);
   const [streamLoading, setStreamLoading] = useState(false);
+  // Model OpenRouter actually resolved the request to, sent as a JSON
+  // "model" event before the first text chunk
+  const [streamModel, setStreamModel] = useState(null);
 
   // Refs for stream control
   const abortControllerRef = useRef(null);
@@ -99,6 +102,7 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
       setStreamLoading(true);
       setStreamingText('');
       setStreamError(null);
+      setStreamModel(null);
 
       // Create new abort controller
       const abortController = new AbortController();
@@ -274,6 +278,11 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
                       return;
                     }
 
+                    if (data.type === 'model' && data.model) {
+                      setStreamModel(data.model);
+                      return;
+                    }
+
                     if (data.content) {
                       if (!receivedFirstData) {
                         setStreamLoading(false);
@@ -362,6 +371,7 @@ export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
     streamingText,
     streamLoading,
     streamError,
+    streamModel,
     // Actions
     startFortuneStream,
   };
