@@ -22,6 +22,11 @@ const HOVER_OUT_SPRING = { type: 'spring', visualDuration: 0.1, bounce: 0.4 };
 // How far a selected card rises out of the row, in px
 const LIFT_DISTANCE = -50;
 
+// Reading drops the lift back to 0. A slow tween instead of LIFT_SPRING, so the
+// offset dissolves during the flight into the reading row rather than snapping
+// down the instant the phase changes.
+const LIFT_SETTLE = { duration: 2, ease: 'easeInOut' };
+
 // Pressing punches through the hover scale rather than replacing it, and snaps
 // there faster than hover does so the click feels immediate
 const TAP_SPRING = { type: 'spring', visualDuration: 0.08, bounce: 0.5 };
@@ -132,14 +137,14 @@ const Card = ({
           // motion kept resetting the hover scale and re-running it — the flicker.
           animate={{
             rotateY: isShowFront ? 180 : 0,
-            y: isSelected ? LIFT_DISTANCE : 0,
+            y: isSelected && !isShowFront ? LIFT_DISTANCE : 0,
             scale,
           }}
           transition={{
             // Held back by `flipDelay` so the reveal reads as two beats: the
             // row rearranges first, then the cards turn over.
             rotateY: { ...FLIP_SPRING, delay: flipDelay },
-            y: LIFT_SPRING,
+            y: isShowFront ? LIFT_SETTLE : LIFT_SPRING,
             // Picked per direction: these flags are already the direction of
             // travel at the moment the target changes. Press wins over hover,
             // since releasing onto a still-hovered card should spring back up.
