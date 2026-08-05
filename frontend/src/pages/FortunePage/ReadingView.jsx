@@ -1,6 +1,6 @@
 import { Box, Button } from 'gestalt';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Navigate } from 'react-router-dom';
 import { useState, useContext, useCallback } from 'react';
 
 import LoadingAnimation from '$/components/LoadingAnimation/LoadingAnimation';
@@ -61,6 +61,8 @@ const ReadingView = ({ selectedCardIds }) => {
     startFortuneStream,
     selectedCardIds,
   ]);
+
+  if (!selectedCardIds.length) return <Navigate to="/fortune" replace />;
 
   return (
     <div className="results-container contents">

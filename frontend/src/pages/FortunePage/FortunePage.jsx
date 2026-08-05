@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useMatch } from 'react-router-dom';
 
 import './FortunePage.css';
 import SelectionView from './SelectionView';
@@ -23,8 +23,7 @@ const FortunePage = () => {
   const { selectionMark, handleCardSelect, selectedCounts, selectedCardIds } =
     useCardSelection(cards, 3);
 
-  const { pathname } = useLocation();
-  const isReading = pathname.endsWith('fortune/reading');
+  const isReading = useMatch('fortune/reading');
 
   // Turn an axios error into something readable, keeping the HTTP status
   // (e.g. 429 rate limiting) visible on the page instead of only in the console.

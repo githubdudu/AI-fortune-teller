@@ -11,7 +11,7 @@ const SelectionView = ({ selectedCounts }) => {
   const navigate = useNavigate();
 
   const onConfirmButtonClick = () => {
-    navigate('reading');
+    navigate('reading', { replace: true });
   };
 
   return (
