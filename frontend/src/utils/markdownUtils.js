@@ -1,4 +1,5 @@
 import showdown from 'showdown';
+import DOMPurify from 'dompurify';
 
 /**
  * Converts markdown text to HTML using Showdown library
@@ -29,11 +30,13 @@ export const markdownToHtml = (markdownText, options = {}) => {
 };
 
 /**
- * Safely renders HTML content by sanitizing it
- * This is a simple implementation; consider using DOMPurify for production
+ * Sanitises HTML and wraps it for `dangerouslySetInnerHTML`.
+ *
+ * DOMPurify's defaults are used as-is, which already remove scripts, event handlers and `javascript:` URLs.
+ *
  * @param {string} html - The HTML to sanitize
  * @returns {Object} - Object with __html property for React's dangerouslySetInnerHTML
  */
 export const createMarkup = (html) => {
-  return { __html: html };
+  return { __html: DOMPurify.sanitize(html || '') };
 };
