@@ -16,6 +16,7 @@ import './ReadingView.css';
  */
 const ReadingView = ({ selectedCardIds }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasRead, setHasRead] = useState(false);
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
   const { userChosenTheme, userPrompt } = useContext(AppContext);
@@ -37,6 +38,7 @@ const ReadingView = ({ selectedCardIds }) => {
 
     // Set submitting state
     setIsSubmitting(true);
+    setHasRead(true);
 
     console.log('Read button clicked - processing reading request');
 
@@ -70,39 +72,43 @@ const ReadingView = ({ selectedCardIds }) => {
         Your ArcanaVerse Reading
       </h1>
 
-      <p className="reading-subtitle-text mt-1 mb-15 font-cormorant text-xl text-ink-700">
+      <p className="reading-subtitle-text my-1 font-cormorant text-xl text-ink-700">
         The cards have spoken. Here is your path forward.
       </p>
 
       <div className="order-2 flex flex-col items-center w-full">
         {streamError && <ErrorMessage message={streamError} type="error" />}
 
-        <Button
-          text="See Your Reading"
-          name="edit-button"
-          color="blue"
-          onClick={handleReadButton}
-          size="lg"
-          accessibilityLabel="Get your tarot reading"
-        />
+        {!hasRead && (
+          <Button
+            text="See Your Reading"
+            name="edit-button"
+            color="blue"
+            onClick={handleReadButton}
+            size="lg"
+            accessibilityLabel="Get your tarot reading"
+          />
+        )}
 
         {isStreamLoading && <LoadingAnimation />}
 
-        {!isStreamLoading && (
+        {hasRead && (
           <ReadingInterpretationDisplay readingText={readingResult} />
         )}
 
         {/* Button to start a new reading */}
-        <NavLink to="/" prefetch="intent">
-          <Box marginTop={2} display="flex" justifyContent="center">
-            <Button
-              text="Reveal Another Reading"
-              name="edit-button"
-              size="lg"
-              color="red"
-            />
-          </Box>
-        </NavLink>
+        {hasRead && (
+          <NavLink to="/" prefetch="intent">
+            <Box marginTop={2} display="flex" justifyContent="center">
+              <Button
+                text="Reveal Another Reading"
+                name="edit-button"
+                size="lg"
+                color="red"
+              />
+            </Box>
+          </NavLink>
+        )}
       </div>
     </div>
   );
