@@ -9,7 +9,7 @@ namespace Api.Services.Interfaces
     public interface IFortuneService
     {
         Task<FortuneDto> GenerateFortuneAsync(CreateFortuneRequest request);
-        IAsyncEnumerable<string> GenerateFortuneStreamAsync(
+        IAsyncEnumerable<AiStreamChunk> GenerateFortuneStreamAsync(
             CreateFortuneRequest request,
             CancellationToken cancellationToken = default
         );

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Api.Models.DTOs;
 using Api.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using OpenAI;
@@ -48,12 +49,16 @@ namespace Api.Services.Implementations
             }
         }
 
-        public async Task<string> GenerateTextAsync(string prompt)
+        public async Task<AiTextResult> GenerateTextAsync(string prompt)
         {
             try
             {
                 ChatCompletion completion = await _chatClient.CompleteChatAsync(prompt);
-                return completion.Content[0].Text ?? string.Empty;
+                // completion.Model is the model OpenRouter resolved the alias to
+                return new AiTextResult(
+                    completion.Content[0].Text ?? string.Empty,
+                    string.IsNullOrEmpty(completion.Model) ? null : completion.Model
+                );
             }
             catch (Exception ex)
             {
@@ -63,7 +68,7 @@ namespace Api.Services.Implementations
             }
         }
 
-        public async IAsyncEnumerable<string> GenerateTextStreamAsync(
+        public async IAsyncEnumerable<AiStreamChunk> GenerateTextStreamAsync(
             string prompt,
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
@@ -91,6 +96,10 @@ namespace Api.Services.Implementations
                 throw new Exception("Failed to start streaming completion from OpenAI", ex);
             }
 
+            // OpenRouter resolves aliases like "openrouter/free" to a concrete model and
+            // reports it on every update; report it once, on the first update that has it.
+            string? reportedModel = null;
+
             // The yield statements are outside of any try-catch block
             await foreach (var update in completionUpdates.WithCancellation(cancellationToken))
             {
@@ -99,12 +108,20 @@ namespace Api.Services.Implementations
                     yield break;
                 }
 
-                if (
-                    update.ContentUpdate.Count > 0
-                    && !string.IsNullOrEmpty(update.ContentUpdate[0].Text)
-                )
+                string? model = null;
+                if (reportedModel == null && !string.IsNullOrEmpty(update.Model))
                 {
-                    yield return update.ContentUpdate[0].Text;
+                    reportedModel = update.Model;
+                    model = update.Model;
+                }
+
+                var text =
+                    update.ContentUpdate.Count > 0 ? update.ContentUpdate[0].Text ?? string.Empty
+                    : string.Empty;
+
+                if (text.Length > 0 || model != null)
+                {
+                    yield return new AiStreamChunk(text, model);
                 }
             }
         }

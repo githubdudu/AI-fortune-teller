@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Models.DTOs;
@@ -133,8 +134,24 @@ namespace Api.Controllers.V1
                         break;
                     }
 
+                    // The provider reports which model actually served the request —
+                    // send it as its own JSON event so the client can display it
+                    if (!string.IsNullOrEmpty(chunk.Model))
+                    {
+                        var modelEvent = JsonSerializer.Serialize(
+                            new { type = "model", model = chunk.Model }
+                        );
+                        await writer.WriteAsync($"data: {modelEvent}\n\n");
+                        await writer.FlushAsync();
+                    }
+
+                    if (chunk.Text.Length == 0)
+                    {
+                        continue;
+                    }
+
                     // Format as SSE with proper async methods
-                    await writer.WriteAsync($"data: {chunk}\n\n");
+                    await writer.WriteAsync($"data: {chunk.Text}\n\n");
                     await writer.FlushAsync();
                 }
             }

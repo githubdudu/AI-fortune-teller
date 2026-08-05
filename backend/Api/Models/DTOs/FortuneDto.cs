@@ -10,5 +10,8 @@ namespace Api.Models.DTOs
         public DateTime? UpdatedAt { get; set; }
 
         public string UserEmail { get; set; } = string.Empty;
+
+        /// <summary>Model the AI provider actually used for this reading.</summary>
+        public string? Model { get; set; }
     }
 }
