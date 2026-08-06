@@ -226,7 +226,7 @@ const Card = ({
               </FloatingDescription>
             </div>
             {isNumberShow && cardNumber != undefined && (
-              <div className="card-number">{cardNumber}</div>
+              <div className="card-number text-2xl">{cardNumber}</div>
             )}
           </motion.div>
         </motion.div>
