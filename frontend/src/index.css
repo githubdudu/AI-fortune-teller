@@ -172,24 +172,78 @@ select#gender {
   height: 52px;
 }
 
-/* Theming Gestalt: override its own semantic design tokens, never its class
-   names — those are build-time hashes that change on upgrade. Two mount points
-   because the Dropdown is portalled into a Layer under <body> while the avatar
-   stays in the header; the vars inherit down from each. Phase 5 will lift this
-   block to :root and both hooks disappear.
+/* ── Theming Gestalt ────────────────────────────────────────────────────
+   Two rules that make this block work, both learned the hard way:
 
-   Override only the variable a rule actually reads. Gestalt aliases its tokens
-   at :root (--color-background-box-secondary: var(--color-background-secondary-base)),
-   and an alias is resolved where it is DECLARED — so overriding the base token
-   further down the tree changes nothing. The leaf is the one that works. */
-#user-dropdown,
-.gestalt-sugar {
-  --color-background-popover-primary: var(--color-bg); /* floating sheet is a card face */
-  --color-background-box-secondary: var(--color-veil); /* item hover bed + avatar disc */
-  --color-text-default: var(--color-ink); /* item labels + avatar initial */
+   1. Override Gestalt's design tokens, never its class names. `.V0G`, `.QxL`
+      and friends are build-time hashes that change on upgrade.
+   2. Override the variable a rule actually READS. Gestalt aliases at :root
+      (--color-background-box-secondary: var(--color-background-secondary-base)),
+      and an alias resolves where it is declared — overriding the base token
+      does nothing. Every name below is a leaf, verified against gestalt.css.
+
+   Scoped to :root because TextField and Button appear on every page; the
+   earlier per-component hooks did not scale. This also replaces the old
+   `button[name=...] > div { ... !important }` hacks, which fought the tokens. */
+:root {
+  /* Surfaces and type */
+  --color-background-popover-primary: var(--color-bg);
+  --color-background-box-secondary: var(--color-veil); /* dropdown hover bed, avatar disc */
+  --color-text-default: var(--color-ink);
+  --color-text-inverse: var(--color-bg); /* label on a filled button */
   --color-icon-default: var(--color-ink);
+  --color-text-subtle: color-mix(in oklab, var(--color-ink) 70%, transparent);
   --color-text-disabled: color-mix(in oklab, var(--color-ink) 40%, transparent);
   --color-border-focus: color-mix(in oklab, var(--color-core) 50%, transparent);
+
+  /* Buttons. Gestalt maps its `color` prop onto semantic slots:
+     red -> primary, gray (the default) -> secondary,
+     transparent -> tertiary, blue -> shopping.
+     red and blue deliberately land on the same colour: both are "the page's
+     main call to action" here, and one page saying red while another says
+     blue is exactly the arbitrariness this migration exists to remove. */
+  --color-background-button-primary-default: var(--color-core);
+  --color-background-button-primary-hover: color-mix(in oklab, var(--color-core) 85%, var(--color-ink));
+  --color-background-button-primary-active: var(--color-ink);
+
+  --color-background-button-shopping-default: var(--color-background-button-primary-default);
+  --color-background-button-shopping-hover: var(--color-background-button-primary-hover);
+  --color-background-button-shopping-active: var(--color-background-button-primary-active);
+
+  --color-background-button-secondary-default: var(--color-veil);
+  --color-background-button-secondary-hover: var(--color-bloom);
+  --color-background-button-secondary-active: color-mix(in oklab, var(--color-bloom) 80%, var(--color-ink));
+
+  --color-background-button-tertiary-default: transparent;
+  --color-background-button-tertiary-hover: var(--color-veil);
+  --color-background-button-tertiary-active: var(--color-bloom);
+
+  /* Status surfaces — the leaves behind <Box color="errorBase|warningBase|infoBase"> */
+  --color-background-box-error-base: var(--color-danger);
+  --color-background-box-warning-base: var(--color-warning);
+  --color-background-box-info-base: var(--color-info);
+
+  /* TextField */
+  --color-background-formfield-primary: var(--color-veil);
+  --color-text-formfield-default: var(--color-ink);
+  --color-text-formfield-placeholder: var(--color-spark);
+  --color-border-formfield-error-default: var(--color-danger);
+  --color-text-error: var(--color-danger);
+
+  /* The --sema-* family is REFERENCED by gestalt.css but never DECLARED in it
+     (56 names, zero definitions). An undefined var makes the whole `border`
+     shorthand invalid at computed-value time, so it falls back to `medium none`
+     — which is why the text fields currently have no resting border and no
+     focus ring at all. Declaring them here restores the border as well as
+     colouring it. */
+  --sema-color-border-interactive: var(--color-bloom);
+  --sema-color-hover-border-interactive: var(--color-spark);
+  --sema-color-pressed-border-interactive: var(--color-core);
+  --sema-color-border-focus-inner-default: var(--color-core);
+  --sema-color-border-focus-outer-default: color-mix(in oklab, var(--color-core) 40%, transparent);
+  --sema-color-border-error: var(--color-danger);
+  --sema-color-hover-border-error: var(--color-danger);
+  --sema-color-border-disabled: var(--color-bloom);
 }
 
 /* Hack to DropDown of Gestalt */
@@ -202,26 +256,4 @@ select#gender {
    the page, so it carries the ink hue and a little more weight. */
 div:has(> #user-dropdown) {
   --elevation-floating: 0 0 8px color-mix(in oklab, var(--color-ink) 14%, transparent);
-}
-
-button[name="login-button"]>div {
-  background-color: #FFAE8B !important;
-}
-
-button[name="login-button"]:hover>div {
-  background-color: #FF9E6B !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
-
-button[name="edit-button"]>div {
-  background-color: var(--color-pink-500);
-  transition: background-color 0.3s ease;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-button[name="edit-button"]:hover>div {
-  background-color: var(--color-pink-600);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

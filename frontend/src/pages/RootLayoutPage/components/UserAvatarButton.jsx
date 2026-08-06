@@ -52,7 +52,7 @@ function UserAvatarButton() {
 
   return (
     <Sticky top={0}>
-      <div className="gestalt-sugar flex justify-end">
+      <div className="flex justify-end">
         {isLoggedIn ? (
           <div className="hover:opacity-80 transition-opacity">
             <button
