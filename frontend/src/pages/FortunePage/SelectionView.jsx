@@ -20,7 +20,7 @@ const SelectionView = ({ selectedCounts }) => {
 
   return (
     <div className="selection-container contents ">
-      <h1 className="selection-title order-0 mb-5 text-3xl md:text-4xl font-bold font-cormorant text-ink-900">
+      <h1 className="selection-title order-0 mb-5 text-3xl md:text-4xl font-bold font-cormorant text-ink">
         Select Three Cards for your Reading
       </h1>
 
@@ -36,7 +36,7 @@ const SelectionView = ({ selectedCounts }) => {
             disabled={selectedCounts !== 3}
           />
         ) : (
-          <div className="cards-remaining px-5 py-2 mb-2 rounded-full shadow-lg bg-mist-200 font-medium  text-ink-900">
+          <div className="cards-remaining px-5 py-2 mb-2 rounded-full shadow-lg bg-veil font-medium  text-ink">
             <span>{3 - selectedCounts} cards remaining</span>
           </div>
         )}

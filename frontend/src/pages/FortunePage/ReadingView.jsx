@@ -71,11 +71,11 @@ const ReadingView = ({ selectedCardIds }) => {
 
   return (
     <div className="results-container contents">
-      <h1 className="reading-title order-0 text-4xl font-bold font-cormorant text-ink-800">
+      <h1 className="reading-title order-0 text-4xl font-bold font-cormorant text-ink">
         Your ArcanaVerse Reading
       </h1>
 
-      <p className="reading-subtitle-text my-1 font-cormorant text-xl text-ink-700">
+      <p className="reading-subtitle-text my-1 font-cormorant text-xl text-ink/70">
         The cards have spoken. Here is your path forward.
       </p>
 
@@ -95,7 +95,7 @@ const ReadingView = ({ selectedCardIds }) => {
 
         {isStreamLoading && <LoadingAnimation />}
         {streamModel && (
-          <p className="interpretation-model mt-4 text-xs text-mist-800/60 text-right">
+          <p className="interpretation-model mt-4 text-xs text-ink/55 text-right">
             Channelled via {streamModel}
           </p>
         )}

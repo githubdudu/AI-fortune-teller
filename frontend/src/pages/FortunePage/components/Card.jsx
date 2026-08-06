@@ -203,7 +203,7 @@ const Card = ({
             </div>
             <div
               ref={cardRef}
-              className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''}  rotate-y-180`}
+              className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-core' : ''}  rotate-y-180`}
             >
               <img
                 src={frontImage}
@@ -217,8 +217,8 @@ const Card = ({
               <div className="card-holo" aria-hidden="true" />
               <div className="card-glare" aria-hidden="true" />
               <FloatingDescription anchorRef={cardRef} enabled={!!description}>
-                <div className="tarot-card-description  w-3xs p-3 rounded-lg text-white bg-mist-900/70">
-                  <h3 className="text-base mb-2 text-[#ffd7ec] font-bold">
+                <div className="tarot-card-description  w-3xs p-3 rounded-lg text-bg bg-ink/75">
+                  <h3 className="text-base mb-2 text-quartz font-bold">
                     {name}
                   </h3>
                   <p className="text-sm">{description}</p>
