@@ -7,36 +7,56 @@
 @import 'gestalt-datepicker/dist/gestalt-datepicker.css';
 
 @theme {
-  --color-figma-pink: #F4CAE0;
-  --color-figma-red: #FFAE8B;
-  --color-figma-yellow: #FFE1AD;
-  --color-figma-grass: #EEF8B6;
-  --color-figma-green: #C7F3DD;
+  /* ── Sugar Crystal 糖晶 · H 310deg · chroma vigor 0.65 ───────────────
+     Six semantic roles on an even lightness ladder. Hex in the comment is
+     the sRGB reference; source is docs/palette-directions.html.
+     Rethemeing the app means editing these six lines and nothing else. */
+  --color-bg: oklch(97.5% 0.012 310); /* #F9F5FD page ground */
+  --color-veil: oklch(93% 0.033 310); /* #EFE2F9 overlays, hover, input beds */
+  --color-bloom: oklch(86% 0.055 310); /* #DCC8ED cards, illustration, borders */
+  --color-spark: oklch(63% 0.111 310); /* #9E75BB decoration, display type, placeholders */
+  --color-core: oklch(52% 0.124 310); /* #7F529D buttons, links, emphasis */
+  --color-ink: oklch(27% 0.09 310); /* #341646 headings, body copy */
 
-  /* Foreground / dark ramp — H=318deg, corrected from the original #261060.
-     Carries CONTENT: headings, body copy, links, button labels. */
-  --color-ink-950: #1E0326; /* strongest display headings; only when it must outweigh everything */
-  --color-ink-900: #381243; /* default foreground / primary text — replaces #261060 */
-  --color-ink-800: #4E225A; /* card body copy, secondary headings */
-  --color-ink-700: #693878; /* lightest step still safe on every pastel (4.79:1 on figma-red) */
-  --color-ink-600: #864F97; /* large text only (>=24px, or >=18.66px bold) — 3.26:1 on figma-red */
-  --color-ink-500: #A66BB9; /* never body text; decoration, hover accents, disabled */
+  /* Card face. The doc mock builds this as #fff 62% over bg; hardcoded
+     because color-mix() cannot appear inside a Tailwind utility. */
+  --color-surface: #FDFBFE;
 
-  /* Neutral ramp — same hue, near-zero chroma.
-     Carries STRUCTURE: borders, dividers, surfaces, supporting text. */
-  --color-mist-50: #FBF9FC; /* page background */
-  --color-mist-100: #F5F2F6; /* card and input surfaces */
-  --color-mist-200: #E7E3E8; /* dividers, hr */
-  --color-mist-300: #D4CFD5; /* input borders at rest */
-  --color-mist-400: #A8A2AA; /* placeholder, disabled — never body text (2.50:1) */
-  --color-mist-500: #847D87; /* decorative icons (clears 3:1, not enough for text) */
-  --color-mist-600: #68606A; /* secondary text, timestamps, captions */
-  --color-mist-700: #4C454E; /* neutral body copy */
-  --color-mist-800: #312B33; /* neutral headings */
-  --color-mist-900: #1D191E; /* strongest neutral contrast */
+  /* Atmosphere set — for CATEGORICAL use (card faces, chips, diagrams).
+     The four stones of Sugar Crystal, matched in lightness so any two can
+     swap without disturbing the hierarchy. */
+  --color-quartz: #FABDD3; /* rose quartz */
+  --color-amethyst: #E0C4F7; /* amethyst */
+  --color-celestine: #B5D3FF; /* celestine */
+  --color-citrine: #E0D199; /* citrine */
+  /* Deep counterparts — dark enough to carry white text. */
+  --color-quartz-deep: #BD6B8C;
+  --color-amethyst-deep: #9E75BB;
+  --color-celestine-deep: #5E8ACB;
+  --color-citrine-deep: #9E882E;
+
+  /* Status colors — outside the doc's scope (it covers mood, not toasts or
+     validation). Built on the same lightness step so status sits inside
+     Sugar Crystal rather than on top of it. Only success has to borrow a
+     hue the palette does not contain. */
+  --color-danger: var(--color-quartz-deep);
+  --color-warning: var(--color-citrine-deep);
+  --color-info: var(--color-celestine-deep);
+  --color-success: oklch(52% 0.09 165);
+
+  /* MIGRATION SCAFFOLD — colors whose role could not be inferred point here
+     and render as glaring red, so they are impossible to miss on the page.
+     Delete this line once the migration is done and grep confirms no
+     -todo usages remain in src/. */
+  --color-todo: #FF0000;
 
   --font-cormorant: 'Cormorant Garamond', Georgia, serif;
 }
+
+/* Depth comes from alpha, not from extra shades. There is deliberately no
+   neutral ramp: secondary copy is text-ink/70, captions text-ink/55, hairline
+   borders border-ink/12. Tailwind 4's /<alpha> works on these custom tokens,
+   and it mirrors how the palette doc renders its own mock. */
 
 /* Custom utilities */
 @theme {
@@ -95,18 +115,13 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--color-ink);
+  background-color: var(--color-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --figma-pink: #F4CAE0;
-  --figma-red: #FFAE8B;
-  --figma-yellow: #FFE1AD;
-  --figma-grass: #EEF8B6;
-  --figma-green: #C7F3DD;
 }
 
 /* Global styles that might still be needed */
@@ -117,17 +132,11 @@ body {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
     background-image: url('/assets/Background_Cloud.png');
     background-attachment: fixed;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
   }
 }
 
