@@ -52,21 +52,19 @@ function UserAvatarButton() {
 
   return (
     <Sticky top={0}>
-      <div className="flex justify-end">
+      <div className="gestalt-sugar flex justify-end">
         {isLoggedIn ? (
           <div className="hover:opacity-80 transition-opacity">
             <button
-              className="bg-transparent border-0 p-0 m-0 cursor-pointer"
+              // Gestalt's own `outline` prop hardcodes a white ring with no
+              // token behind it, so the ring is drawn here instead.
+              className="bg-transparent border-0 p-0 m-0 cursor-pointer rounded-full ring-2 ring-surface"
               onClick={handleAvatarButtonClick}
               aria-label="User menu"
               type="button"
               ref={anchorRef}
             >
-              <Avatar
-                name={userProfile?.displayName || 'User'}
-                size="sm"
-                outline
-              />
+              <Avatar name={userProfile?.displayName || 'User'} size="sm" />
             </button>
           </div>
         ) : (

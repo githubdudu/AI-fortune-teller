@@ -154,9 +154,36 @@ select#gender {
   height: 52px;
 }
 
+/* Theming Gestalt: override its own semantic design tokens, never its class
+   names — those are build-time hashes that change on upgrade. Two mount points
+   because the Dropdown is portalled into a Layer under <body> while the avatar
+   stays in the header; the vars inherit down from each. Phase 5 will lift this
+   block to :root and both hooks disappear.
+
+   Override only the variable a rule actually reads. Gestalt aliases its tokens
+   at :root (--color-background-box-secondary: var(--color-background-secondary-base)),
+   and an alias is resolved where it is DECLARED — so overriding the base token
+   further down the tree changes nothing. The leaf is the one that works. */
+#user-dropdown,
+.gestalt-sugar {
+  --color-background-popover-primary: var(--color-bg); /* floating sheet is a card face */
+  --color-background-box-secondary: var(--color-veil); /* item hover bed + avatar disc */
+  --color-text-default: var(--color-ink); /* item labels + avatar initial */
+  --color-icon-default: var(--color-ink);
+  --color-text-disabled: color-mix(in oklab, var(--color-ink) 40%, transparent);
+  --color-border-focus: color-mix(in oklab, var(--color-core) 50%, transparent);
+}
+
 /* Hack to DropDown of Gestalt */
 #user-dropdown {
   min-width: 115px;
+}
+
+/* The floating shadow sits on the dropdown's PARENT, out of inheritance reach.
+   Neutral black smudges the edge now that the sheet is close in lightness to
+   the page, so it carries the ink hue and a little more weight. */
+div:has(> #user-dropdown) {
+  --elevation-floating: 0 0 8px color-mix(in oklab, var(--color-ink) 14%, transparent);
 }
 
 button[name="login-button"]>div {
