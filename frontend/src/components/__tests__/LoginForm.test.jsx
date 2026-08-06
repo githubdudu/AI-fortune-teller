@@ -58,9 +58,11 @@ describe('LoginForm component', () => {
   it('renders login form with all required elements', () => {
     setup();
 
+    // Matched by prefix: the labels carry a trailing demo-account hint that is
+    // copy, not identity, and gets reworded on its own
     // Check for form inputs
-    expect(screen.getByLabelText('Email')).toBeInTheDocument();
-    expect(screen.getByLabelText('Password')).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Email/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Password/)).toBeInTheDocument();
 
     // Check for buttons
     expect(screen.getByText('Sign in')).toBeInTheDocument();
@@ -74,8 +76,8 @@ describe('LoginForm component', () => {
   it('allows user to input email and password', () => {
     setup();
 
-    const emailInput = screen.getByLabelText('Email');
-    const passwordInput = screen.getByLabelText('Password');
+    const emailInput = screen.getByLabelText(/^Email/);
+    const passwordInput = screen.getByLabelText(/^Password/);
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
@@ -98,8 +100,8 @@ describe('LoginForm component', () => {
       user: { id: '123', email: 'test@example.com' },
     });
 
-    const emailInput = screen.getByLabelText('Email');
-    const passwordInput = screen.getByLabelText('Password');
+    const emailInput = screen.getByLabelText(/^Email/);
+    const passwordInput = screen.getByLabelText(/^Password/);
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
@@ -154,8 +156,8 @@ describe('LoginForm component', () => {
     );
 
     // Input credentials and sign in
-    const emailInput = screen.getByLabelText('Email');
-    const passwordInput = screen.getByLabelText('Password');
+    const emailInput = screen.getByLabelText(/^Email/);
+    const passwordInput = screen.getByLabelText(/^Password/);
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
@@ -188,8 +190,8 @@ describe('LoginForm component', () => {
     );
 
     // Input credentials and sign in
-    const emailInput = screen.getByLabelText('Email');
-    const passwordInput = screen.getByLabelText('Password');
+    const emailInput = screen.getByLabelText(/^Email/);
+    const passwordInput = screen.getByLabelText(/^Password/);
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'wrong-password' } });
 
@@ -221,8 +223,8 @@ describe('LoginForm component', () => {
     axiosMock.onPost(AUTH_LOGIN_URL).reply(401, { message: 'Unauthorized' });
 
     // Input credentials and sign in
-    const emailInput = screen.getByLabelText('Email');
-    const passwordInput = screen.getByLabelText('Password');
+    const emailInput = screen.getByLabelText(/^Email/);
+    const passwordInput = screen.getByLabelText(/^Password/);
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 

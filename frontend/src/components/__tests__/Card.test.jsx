@@ -247,7 +247,20 @@ it('animates to the correct target for each state', () => {
   );
   expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 
-  // Selecting lifts the card clear of the row as well
+  // Selecting lifts the card clear of the row, while still face down
+  rerender(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+      isShowFront={false}
+      isSelected={true}
+    />,
+  );
+  expect(targetOf(container)).toEqual({ rotateY: 0, y: -50, scale: 1 });
+
+  // Turning over drops the lift again: the offset dissolves into the flight to
+  // the reading row rather than the card staying raised there
   rerender(
     <Card
       name="The Fool"
@@ -257,7 +270,7 @@ it('animates to the correct target for each state', () => {
       isSelected={true}
     />,
   );
-  expect(targetOf(container)).toEqual({ rotateY: 180, y: -50, scale: 1 });
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 });
 
 /**
