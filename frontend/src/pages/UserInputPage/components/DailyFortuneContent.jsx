@@ -31,10 +31,8 @@ function DailyFortuneContent({ loading, error, dailyFortune, onClick }) {
   return (
     <div className="flex flex-col gap-12 justify-between items-center">
       <div>
-        <p className="text-3xl text-spark font-medium">
-          The future is calling.
-        </p>
-        <p className="text-3xl text-spark font-medium">
+        <p className="text-3xl text-ink font-medium">The future is calling.</p>
+        <p className="text-3xl text-core font-medium">
           Click to start your fortune.
         </p>
       </div>

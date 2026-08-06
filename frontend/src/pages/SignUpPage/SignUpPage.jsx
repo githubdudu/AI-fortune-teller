@@ -130,7 +130,7 @@ const SignUp = () => {
   return (
     <div className="py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
-        <div className="bg-bg/90 backdrop-blur-md border border-ink/12 rounded-2xl shadow-xl p-10 lg:p-16 w-full">
+        <div className="w-full">
           <title>{SEO_TITLE.SIGN_UP}</title>
           <FormContainer>
             <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />

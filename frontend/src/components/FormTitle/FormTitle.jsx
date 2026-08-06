@@ -9,7 +9,7 @@ function FormTitle({ title = 'Title', subtitle = 'Subtitle', className = '' }) {
     <header
       className={`pt-4 pb-2 flex flex-col items-center gap-4 ${className}`}
     >
-      <h1 className="text-4xl pb-2 lg:text-5xl font-bold text-center text-core">
+      <h1 className="text-4xl pb-2 lg:text-5xl font-bold text-center text-ink">
         {title}
       </h1>
       <h2 className="text-lg lg:text-xl text-ink/70 text-center">{subtitle}</h2>

@@ -9,7 +9,7 @@ function UserInfoInputPage() {
   return (
     <div className="py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
-        <div className="bg-bg/90 backdrop-blur-md border border-ink/12 rounded-2xl shadow-xl p-10 lg:p-16 w-full">
+        <div className="p-10 lg:p-16 w-full">
           <title>{SEO_TITLE.PROFILE}</title>
           <FormContainer>
             <FormTitle
