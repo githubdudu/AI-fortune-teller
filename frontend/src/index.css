@@ -18,10 +18,6 @@
   --color-core: oklch(52% 0.124 310); /* #7F529D buttons, links, emphasis */
   --color-ink: oklch(27% 0.09 310); /* #341646 headings, body copy */
 
-  /* Card face. The doc mock builds this as #fff 62% over bg; hardcoded
-     because color-mix() cannot appear inside a Tailwind utility. */
-  --color-surface: #FDFBFE;
-
   /* Atmosphere set — for CATEGORICAL use (card faces, chips, diagrams).
      The four stones of Sugar Crystal, matched in lightness so any two can
      swap without disturbing the hierarchy. */
@@ -56,7 +52,12 @@
 /* Depth comes from alpha, not from extra shades. There is deliberately no
    neutral ramp: secondary copy is text-ink/70, captions text-ink/55, hairline
    borders border-ink/12. Tailwind 4's /<alpha> works on these custom tokens,
-   and it mirrors how the palette doc renders its own mock. */
+   and it mirrors how the palette doc renders its own mock.
+
+   There is deliberately no near-white step either. Surfaces that would
+   conventionally be white — modals, popovers, cards, input beds — take `bg`,
+   `veil` or `bloom`, so the palette is legible at a glance instead of reading
+   as a generic light theme with accents. */
 
 /* Custom utilities */
 @theme {
@@ -68,31 +69,48 @@
   }
 }
 
-/* Decorative halo behind an interactive image (logo, theme card) on hover.
-   Shared so the two hover glows in the app cannot drift apart. */
+/* Decorative halo behind an interactive image on hover. Two radii for two
+   scales — the logo and the much smaller theme cards — sharing one colour so
+   the glows cannot drift apart.
+
+   The transparent drop-shadow at rest is load-bearing, not a no-op. Animating
+   `filter` from `none` makes the browser synthesise a start frame at zero blur
+   in the element's currentColor, which here is `ink` — the hover flashed a hard
+   dark shadow before settling into the purple. Starting from a transparent
+   shadow of the same geometry leaves only the colour to interpolate.
+
+   Hover and transition live inside the utility so a caller cannot reintroduce
+   the flash by reaching for `hover:` and forgetting the rest state. */
 @utility glow-spark {
-  filter: drop-shadow(
-    0 0 2em color-mix(in oklab, var(--color-spark) 67%, transparent)
-  );
+  &:hover {
+    filter: drop-shadow(
+      0 0 1em color-mix(in oklab, var(--color-spark) 67%, transparent)
+    );
+  }
 }
 
-/* Custom metallic gradient */
+/* Metallic sheen for the daily-fortune card, built from the four stones.
+   The stop positions carry the rhythm — two narrow bright bands at 60-72 and
+   240-252 are what read as a highlight sliding across metal — so they are kept
+   exactly; only the colours changed. The 400px period must stay: the scroll
+   animation shifts by 565.685px (= 400 x sqrt 2, the 135deg diagonal). The
+   brightest stop is `bg`, not white, so the sheen stays inside the palette. */
 @utility bg-daily-fortune {
   background-image: repeating-linear-gradient(
     135deg,
-    var(--color-figma-pink) 0px,
-    var(--color-figma-red) 40px,
-    #ffd9b0 60px,
-    #fff8ec 72px,
-    var(--color-figma-yellow) 88px,
-    var(--color-figma-red) 120px,
-    var(--color-figma-pink) 168px,
-    var(--color-figma-green) 216px,
-    #ffe8b6 240px,
-    #fffbf2 252px,
-    var(--color-figma-yellow) 268px,
-    var(--color-figma-red) 312px,
-    var(--color-figma-pink) 400px
+    var(--color-quartz) 0px,
+    var(--color-celestine) 40px,
+    var(--color-citrine) 60px,
+    var(--color-bg) 72px,
+    var(--color-citrine) 88px,
+    var(--color-celestine) 120px,
+    var(--color-quartz) 168px,
+    var(--color-amethyst) 216px,
+    var(--color-citrine) 240px,
+    var(--color-bg) 252px,
+    var(--color-citrine) 268px,
+    var(--color-celestine) 312px,
+    var(--color-quartz) 400px
   );
   background-size: calc(100% + 600px) 100%;
 }
@@ -109,10 +127,10 @@
   background: radial-gradient(
     circle 2400px at 50% 2860px,
     transparent 2400px,
-    rgba(0, 0, 0, 0.22) 2400px,
-    rgba(0, 0, 0, 0.12) 2440px,
-    rgba(0, 0, 0, 0.04) 2470px,
-    rgba(0, 0, 0, 0) 2490px
+    color-mix(in oklab, var(--color-core) 22%, transparent) 2400px,
+    color-mix(in oklab, var(--color-core) 12%, transparent) 2440px,
+    color-mix(in oklab, var(--color-core) 4%, transparent) 2470px,
+    transparent 2490px
   );
 }
 

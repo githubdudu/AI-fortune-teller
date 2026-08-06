@@ -48,14 +48,12 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   };
 
   return (
-    <div
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      className="cursor-pointer w-full flex justify-center pt-2 pb-8"
-    >
+    <div className="`w-full flex justify-center pt-2 pb-8">
       <div
-        className={`relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
-          isLoaded ? '' : 'bg-gray-200'
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        className={`cursor-pointer relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px] shadow-ink/25 hover:ring-spark hover:ring-2 ${
+          isLoaded ? '' : 'bg-bloom'
         }`}
       >
         <img
@@ -75,7 +73,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
         />
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-ring-1 inset-ring-black inset-0 rounded-md"
+          className="pointer-events-none absolute inset-ring-1 inset-ring-citrine inset-0 rounded-md"
         />
       </div>
     </div>

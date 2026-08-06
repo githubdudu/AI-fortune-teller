@@ -58,7 +58,7 @@ function UserAvatarButton() {
             <button
               // Gestalt's own `outline` prop hardcodes a white ring with no
               // token behind it, so the ring is drawn here instead.
-              className="bg-transparent border-0 p-0 m-0 cursor-pointer rounded-full ring-2 ring-surface"
+              className="bg-transparent border-0 p-0 m-0 cursor-pointer rounded-full ring-2 ring-bloom"
               onClick={handleAvatarButtonClick}
               aria-label="User menu"
               type="button"

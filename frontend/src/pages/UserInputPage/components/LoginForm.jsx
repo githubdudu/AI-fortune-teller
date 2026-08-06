@@ -151,8 +151,8 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
     return (
       <div
         className="flex items-center text-center mt-3 
-          before:relative before:inline-block  before:w-1/2 before:h-px before:bg-gray-300 before:right-[0.5em]
-          after:relative after:inline-block  after:w-1/2 after:h-px after:bg-gray-300 after:left-[0.5em]"
+          before:relative before:inline-block  before:w-1/2 before:h-px before:bg-ink/15 before:right-[0.5em]
+          after:relative after:inline-block  after:w-1/2 after:h-px after:bg-ink/15 after:left-[0.5em]"
       >
         Or
       </div>
@@ -163,7 +163,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
     return (
       error &&
       error.message && (
-        <div className="text-red-500 text-center">{error.message}</div>
+        <div className="text-danger text-center">{error.message}</div>
       )
     );
   }

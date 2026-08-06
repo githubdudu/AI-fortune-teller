@@ -46,7 +46,7 @@ function UserQuestionInput() {
     <>
       <div className="w-full max-w-2xl mx-auto">
         {/* TODO: Font to be changed later */}
-        <h2 className="title font-cormorant font-extrabold text-4xl text-ink-800 text-center mb-2">
+        <h2 className="title font-cormorant font-extrabold text-4xl text-ink text-center mb-2">
           What answer do you seek?
         </h2>
         <div className="relative leading-none">
@@ -58,7 +58,7 @@ function UserQuestionInput() {
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-16 text-lg text-ink-900 placeholder-mist-500 max-sm:placeholder:text-base bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
+            className={`w-full border-1 border-bloom rounded-lg py-3 pl-4 pr-16 text-lg text-ink placeholder-spark max-sm:placeholder:text-base bg-veil/60 resize-none focus:outline-none focus:ring-2 focus:ring-core/40 focus:bg-veil overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -70,7 +70,7 @@ function UserQuestionInput() {
             onClick={handleSubmit}
             className={`absolute ${
               textAreaHeight <= 56 ? 'top-1/2 -translate-y-1/2' : 'bottom-2'
-            } right-2 size-9 bg-mist-600 rounded-md border-mist-600 cursor-pointer text-mist-50 hover:bg-mist-500 flex items-center justify-center`}
+            } right-2 size-9 bg-core rounded-md border-core cursor-pointer text-bg hover:bg-spark flex items-center justify-center`}
             type="button"
           >
             <svg
