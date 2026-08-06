@@ -208,10 +208,15 @@ it('does not flip back once flipped to front', () => {
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 });
 
-const targetOf = (container) =>
-  JSON.parse(
-    container.querySelector('.tarot-card-inner').getAttribute('data-animate'),
-  );
+// The flip and the lift/scale animate on separate layers, so that the flip's
+// completion callback isn't tripped by the much shorter scale animation.
+const targetOn = (container, selector) =>
+  JSON.parse(container.querySelector(selector).getAttribute('data-animate'));
+
+const targetOf = (container) => ({
+  ...targetOn(container, '.tarot-card-inner'),
+  ...targetOn(container, '.tarot-card-lift'),
+});
 
 /**
  * Tests that the card animates to the right target for each state: face down

@@ -24,7 +24,9 @@ const NO_RECORDING = { rawChunk() {}, event() {}, dump() {} };
  */
 export function useFortuneStream({ fallbackText = DEFAULT_READING_TEXT } = {}) {
   // State for streaming
-  const [streamingText, setStreamingText] = useState(fallbackText);
+  // Starts empty: the fallback is only for a stream that fails or stalls,
+  // showing it up front would flash placeholder text before the first chunk
+  const [streamingText, setStreamingText] = useState('');
   const [streamError, setStreamError] = useState(null);
   const [streamLoading, setStreamLoading] = useState(false);
   // Model OpenRouter actually resolved the request to, sent as a JSON

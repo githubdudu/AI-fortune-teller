@@ -52,9 +52,10 @@ const DRAG_RETURN_TRANSITION = {
  * It is a container for the card's front and back, with tilt effects, hover and tap animations, and flip animations.
  *
  * The first div is the container. It has the setting of cursor, the size of the card, and perspective. it also has the idle drift effect.
- * The second layer is for the tilt effect.
- * The third layer has animation for the flip, lift and hover effect. And shadow.
- * The fourth layer is for the front and back of the card.
+ * The second layer is for the tilt effect and drag.
+ * The third layer carries the lift and hover scale.
+ * The fourth layer carries the flip, and the shadow.
+ * The fifth layer is for the front and back of the card.
  * The back is simple, just an image.
  * The front contains the image, the holo and glare effect, and the floating description.
  */
@@ -135,23 +136,21 @@ const Card = ({
         onDragEnd={() => setIsDragging(false)}
         className="tarot-card size-full transform-3d relative"
       >
+        {/* Lift and hover scale live one layer above the flip. Sharing an
+            element with `rotateY` made `onAnimationComplete` fire whenever the
+            (much shorter) scale animation settled, which showed the number
+            mid-flip. Split apart, each layer's completion means one thing. */}
         <motion.div
-          // Shadow follows the same hover state as the scale. A CSS `:hover`
-          // here would flicker for the same reason the cursor did.
-          className={`tarot-card-inner relative w-full h-full text-center rounded-lg transform-3d ${isHovered ? 'shadow-xl' : 'shadow-md'}`}
-          // Every animated axis goes through this one object. `scale` used to
-          // live in `whileHover`, but that competes with `animate`: this object
-          // is rebuilt on each render, and re-applying it has no `scale` key, so
-          // motion kept resetting the hover scale and re-running it — the flicker.
+          className="tarot-card-lift size-full relative transform-3d"
+          // `scale` used to live in `whileHover`, but that competes with
+          // `animate`: this object is rebuilt on each render, and re-applying it
+          // has no `scale` key, so motion kept resetting the hover scale and
+          // re-running it — the flicker.
           animate={{
-            rotateY: isShowFront ? 180 : 0,
             y: isSelected && !isShowFront ? LIFT_DISTANCE : 0,
             scale,
           }}
           transition={{
-            // Held back by `flipDelay` so the reveal reads as two beats: the
-            // row rearranges first, then the cards turn over.
-            rotateY: { ...FLIP_SPRING, delay: flipDelay },
             y: isShowFront ? LIFT_SETTLE : LIFT_SPRING,
             // Picked per direction: these flags are already the direction of
             // travel at the moment the target changes. Press wins over hover,
@@ -162,61 +161,74 @@ const Card = ({
                 ? HOVER_IN_SPRING
                 : HOVER_OUT_SPRING,
           }}
-          // Scoped to this element's own animation. The `transitionend` this
-          // replaced bubbled, so the holo layers' opacity fade used to trip it.
-          onAnimationComplete={() => {
-            if (isShowFront) {
-              setIsNumberShow(true);
-            }
-          }}
         >
-          <div
-            className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg rotate-y-0`}
-          >
-            <img
-              src={backImage}
-              srcSet={
-                backImageSmall
-                  ? `${backImageSmall} 240w, ${backImage} 416w`
-                  : undefined
+          <motion.div
+            // Shadow follows the same hover state as the scale. A CSS `:hover`
+            // here would flicker for the same reason the cursor did.
+            className={`tarot-card-inner relative w-full h-full text-center rounded-lg transform-3d ${isHovered ? 'shadow-xl' : 'shadow-md'}`}
+            animate={{ rotateY: isShowFront ? 180 : 0 }}
+            transition={{
+              // Held back by `flipDelay` so the reveal reads as two beats: the
+              // row rearranges first, then the cards turn over.
+              rotateY: { ...FLIP_SPRING, delay: flipDelay },
+            }}
+            // Scoped to this element's own animation, which is now the flip and
+            // nothing else. The `transitionend` this replaced bubbled, so the
+            // holo layers' opacity fade used to trip it.
+            onAnimationComplete={() => {
+              if (isShowFront) {
+                setIsNumberShow(true);
               }
-              sizes="208px"
-              width={208}
-              height={312}
-              decoding="async"
-              fetchPriority="high"
-              // Images's own drag-and-drop conflicts with motion's drag
-              draggable={false}
-              alt="Tarot Card Back"
-            />
-          </div>
-          <div
-            ref={cardRef}
-            className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''}  rotate-y-180`}
+            }}
           >
-            <img
-              src={frontImage}
-              width={208}
-              height={312}
-              decoding="async"
-              draggable={false}
-              alt="Tarot Card Front"
-            />
-            {/* Holographic refraction, layered over the artwork only */}
-            <div className="card-holo" aria-hidden="true" />
-            <div className="card-glare" aria-hidden="true" />
-            <FloatingDescription anchorRef={cardRef} enabled={!!description}>
-              <div className="tarot-card-description  w-3xs p-3 rounded-lg text-white bg-mist-900/70">
-                <h3 className="text-base mb-2 text-[#ffd7ec] font-bold">
-                  {name}
-                </h3>
-                <p className="text-sm">{description}</p>
-              </div>
-            </FloatingDescription>
-          </div>
-          {isNumberShow && cardNumber != undefined && (
-            <div className="card-number">{cardNumber}</div>
-          )}
+            <div
+              className={`tarot-card-back absolute size-full backface-hidden overflow-hidden rounded-lg rotate-y-0`}
+            >
+              <img
+                src={backImage}
+                srcSet={
+                  backImageSmall
+                    ? `${backImageSmall} 240w, ${backImage} 416w`
+                    : undefined
+                }
+                sizes="208px"
+                width={208}
+                height={312}
+                decoding="async"
+                fetchPriority="high"
+                // Images's own drag-and-drop conflicts with motion's drag
+                draggable={false}
+                alt="Tarot Card Back"
+              />
+            </div>
+            <div
+              ref={cardRef}
+              className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-pink-800' : ''}  rotate-y-180`}
+            >
+              <img
+                src={frontImage}
+                width={208}
+                height={312}
+                decoding="async"
+                draggable={false}
+                alt="Tarot Card Front"
+              />
+              {/* Holographic refraction, layered over the artwork only */}
+              <div className="card-holo" aria-hidden="true" />
+              <div className="card-glare" aria-hidden="true" />
+              <FloatingDescription anchorRef={cardRef} enabled={!!description}>
+                <div className="tarot-card-description  w-3xs p-3 rounded-lg text-white bg-mist-900/70">
+                  <h3 className="text-base mb-2 text-[#ffd7ec] font-bold">
+                    {name}
+                  </h3>
+                  <p className="text-sm">{description}</p>
+                </div>
+              </FloatingDescription>
+            </div>
+            {isNumberShow && cardNumber != undefined && (
+              <div className="card-number">{cardNumber}</div>
+            )}
+          </motion.div>
         </motion.div>
       </motion.div>
     </motion.div>

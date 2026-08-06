@@ -46,17 +46,13 @@ const ReadingView = ({ selectedCardIds }) => {
     const currentPrompt = userPrompt || '';
     const currentTheme = userChosenTheme?.id || null;
 
-    // Add a small delay to ensure state updates complete before starting stream
-    // This helps prevent the "Component unmounted" issue during navigation
-    setTimeout(() => {
-      // Only start stream if component is still mounted
-      console.log('Component is mounted, starting stream');
-      startFortuneStream({
-        cardIds: selectedCardIds,
-        question: currentPrompt,
-        themeId: currentTheme,
-      });
-    }, 150);
+    // Started in the same tick as setHasRead so both land in one render —
+    // deferring it let the interpretation box mount and repaint first
+    startFortuneStream({
+      cardIds: selectedCardIds,
+      question: currentPrompt,
+      themeId: currentTheme,
+    });
   }, [
     isSubmitting,
     userPrompt,

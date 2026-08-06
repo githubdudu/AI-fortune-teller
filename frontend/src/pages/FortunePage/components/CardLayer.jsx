@@ -14,7 +14,8 @@ import useSound from '$/hooks/useAudio';
 const LAYOUTS = {
   select:
     'flex w-full justify-center my-10 [&>*]:-mx-12 md:[&>*]:-mx-8 lg:[&>*]:-mx-4 xl:[&>*]:mx-4',
-  reveal: 'flex flex-wrap max-md:flex-col justify-center gap-8 w-full my-10',
+  reveal:
+    'flex flex-wrap items-center max-md:flex-col justify-center gap-8 w-full my-10',
 };
 
 // Cards landing/init animation
