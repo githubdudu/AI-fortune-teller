@@ -16,8 +16,13 @@ import useFetchTarotCards from '../../hooks/useFetchTarotCards';
 const FortunePage = () => {
   // Use custom hooks for cards and selection
   const { cards, error: taroCardsError } = useFetchTarotCards(5);
-  const { selectionMark, handleCardSelect, selectedCounts, selectedCardIds } =
-    useCardSelection(cards, 3);
+  const {
+    selectionMark,
+    handleCardSelect,
+    selectedCounts,
+    selectedCardIds,
+    colorVariants,
+  } = useCardSelection(cards, 3);
 
   const isReading = useMatch('fortune/reading');
 
@@ -66,6 +71,7 @@ const FortunePage = () => {
         selectedCardIds={selectedCardIds}
         onCardSelect={handleCardSelect}
         className="order-1"
+        colorVariants={colorVariants}
       />
 
       {/* TODO: migrate to Outlet and useOutletContext when the props are less */}

@@ -53,7 +53,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
       <div
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
-        className={`cursor-pointer relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px] shadow-ink/25 hover:ring-spark hover:ring-2 ${
+        className={`cursor-pointer relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px] shadow-ink/25 hover:shadow-ink/50 ${
           isLoaded ? '' : 'bg-bloom'
         }`}
       >

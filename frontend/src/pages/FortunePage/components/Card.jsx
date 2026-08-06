@@ -70,6 +70,7 @@ const Card = ({
   cardNumber,
   index,
   flipDelay,
+  ringColor,
 }) => {
   const [isNumberShow, setIsNumberShow] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -200,10 +201,14 @@ const Card = ({
                 draggable={false}
                 alt="Tarot Card Back"
               />
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute ${ringColor} ring-12 inset-2 inset-ring-1 rounded-md`}
+              />
             </div>
             <div
               ref={cardRef}
-              className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-core' : ''}  rotate-y-180`}
+              className={`tarot-card-front absolute size-full backface-hidden overflow-hidden rounded-lg ${isSelected ? 'shadow-md shadow-core' : ''}  rotate-y-180 ring-2 ring-core`}
             >
               <img
                 src={frontImage}
@@ -246,6 +251,7 @@ Card.propTypes = {
   cardNumber: PropTypes.string,
   index: PropTypes.number,
   flipDelay: PropTypes.number,
+  ringColor: PropTypes.string,
 };
 
 Card.defaultProps = {
@@ -256,6 +262,7 @@ Card.defaultProps = {
   name: '',
   index: 0,
   flipDelay: 0,
+  ringColor: '',
 };
 
 export default Card;

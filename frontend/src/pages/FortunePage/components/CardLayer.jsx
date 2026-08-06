@@ -37,6 +37,14 @@ const LAYOUT_SPRING = { type: 'spring', visualDuration: 3, bounce: 0.25 };
 // Delay the flip animation after the layout reflow
 const FLIP_AFTER_LAYOUT = 3.5;
 
+// Cards decoration
+const CARD_DECORATION = [
+  'inset-ring-quartz ring-quartz',
+  'inset-ring-citrine ring-citrine',
+  'inset-ring-celestine ring-celestine',
+  'inset-ring-amethyst ring-amethyst',
+];
+
 /**
  * The persistent card layer.
  *
@@ -58,6 +66,7 @@ const CardLayer = ({
   selectedCardIds,
   onCardSelect,
   className,
+  colorVariants,
 }) => {
   const mode = isReveal ? 'reveal' : 'select';
   const playSound = useSound();
@@ -120,6 +129,9 @@ const CardLayer = ({
               description={card.description}
               cardNumber={selectedCardIds.indexOf(card.id) + 1}
               index={index}
+              ringColor={
+                CARD_DECORATION[colorVariants[index] % CARD_DECORATION.length]
+              }
             />
           </motion.div>
         ))}
@@ -144,6 +156,7 @@ CardLayer.propTypes = {
   ),
   onCardSelect: PropTypes.func,
   className: PropTypes.string,
+  colorVariants: PropTypes.arrayOf(PropTypes.number),
 };
 
 CardLayer.defaultProps = {
