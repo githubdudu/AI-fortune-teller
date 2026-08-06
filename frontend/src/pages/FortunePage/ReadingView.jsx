@@ -135,7 +135,7 @@ const ReadingInterpretationDisplay = ({ readingText }) => {
   const htmlContent = markdownToHtml(readingText);
 
   return (
-    <div className="interpretation-box w-full max-w-3xl min-h-40 mx-auto mb-2 p-6 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm">
+    <div className="interpretation-box w-full max-w-3xl min-h-40 mx-auto mb-2 p-6 rounded-2xl bg-bg/70 backdrop-blur-sm border border-ink/12 shadow-sm">
       <h2 className="interpretation-title text-xl font-bold text-mist-800 mb-3">
         ✦ Interpretation ✦
       </h2>

@@ -156,14 +156,52 @@ body {
   user-select: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    background-image: url('/assets/Background_Cloud.png');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+/* The page ground, in two fixed layers behind everything.
+
+   `::before` is the ground proper: two soft radial pools of bloom and veil
+   over `bg`. It is pure token, so retheming the app really does mean editing
+   the six colour lines and nothing else — this layer can never drift off
+   palette. To tune the mood, move the pools' size/position percentages; to
+   flatten it entirely, drop the two gradients and leave `var(--color-bg)`.
+
+   `::after` is the cloud, plain alpha over that ground. Its colour is already
+   correct — scripts/recolor-background.py throws the source's hues away and
+   remaps its luminance onto the spark..bg ladder — so nothing here needs to
+   police it. Turn `opacity` down for a calmer page, up for more cloud.
+
+   Do NOT reach for `mix-blend-mode: luminosity` here. It keeps the *backdrop's*
+   saturation, and the backdrop is this ground: chroma 0.012-0.055. That clamps
+   the cloud's deepest areas (spark, chroma 0.111) to less than half their
+   colour and the whole layer goes grey — it silently undoes the recolouring
+   the script exists to do.
+
+   Fixed pseudo-elements rather than `background-attachment: fixed` on :root:
+   that property is ignored on iOS Safari, and two elements let the ground and
+   the texture be tuned independently. Deliberately NOT inside a
+   prefers-color-scheme query — `color-scheme: light` above is unconditional,
+   so gating the ground on the OS preference only produced two disagreeing
+   backgrounds. z-index leaves -1 free for the page-level `bg-horizon`
+   vignette, which must sit above the cloud. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+body::before {
+  z-index: -3;
+  background:
+    radial-gradient(120% 80% at 15% 100%, var(--color-bloom), transparent 62%),
+    radial-gradient(90% 70% at 85% 0%, var(--color-veil), transparent 58%),
+    var(--color-bg);
+}
+
+body::after {
+  z-index: -2;
+  background: url('/assets/background-cloud.webp') center / cover no-repeat;
+  opacity: 0.5;
 }
 
 /* Hack to fix height inconsistent of Gestalt input box */
