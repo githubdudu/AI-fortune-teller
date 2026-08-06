@@ -9,6 +9,7 @@ import ErrorMessage from './components/ErrorMessage';
 import { markdownToHtml, createMarkup } from '$/utils/markdownUtils';
 import { AppContext } from '$/context/AppContextProvider';
 import { useFortuneStream } from '$/hooks/useFortuneStream';
+import { stoneClasses } from '$/constants/themeStone';
 import './ReadingView.css';
 
 /**
@@ -134,13 +135,22 @@ const ReadingInterpretationDisplay = ({ readingText }) => {
   // Convert markdown text to HTML
   const htmlContent = markdownToHtml(readingText);
 
+  // Read the theme here rather than take it as a prop: the box is rendered from
+  // two places in this file and the accent should never be one of the two.
+  const { userChosenTheme } = useContext(AppContext);
+
   return (
-    <div className="interpretation-box w-full max-w-3xl min-h-40 mx-auto mb-2 p-6 rounded-2xl bg-bg/70 backdrop-blur-sm border border-ink/12 shadow-sm">
-      <h2 className="interpretation-title text-xl font-bold text-mist-800 mb-3">
+    <div
+      /* The top edge repeats the chosen theme's stone, closing the loop that
+         started on the theme card. `?.name` because a reading can be reached
+         with no theme stored, and stoneClasses falls back to amethyst. */
+      className={`interpretation-box w-full max-w-3xl min-h-40 mx-auto mb-2 p-6 rounded-2xl bg-bg/70 backdrop-blur-sm border border-ink/12 border-t-4 ${stoneClasses(userChosenTheme?.name).edge} shadow-sm`}
+    >
+      <h2 className="interpretation-title text-xl font-bold text-ink mb-3">
         ✦ Interpretation ✦
       </h2>
       <div
-        className="interpretation-text text-base text-mist-800 markdown-content"
+        className="interpretation-text text-base text-ink markdown-content"
         dangerouslySetInnerHTML={createMarkup(htmlContent)}
       />
     </div>

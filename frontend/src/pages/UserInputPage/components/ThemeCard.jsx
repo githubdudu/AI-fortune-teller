@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
 import useSound from '$/hooks/useAudio';
+import { stoneClasses } from '$/constants/themeStone';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
@@ -71,9 +72,12 @@ function ThemeCard({ theme, onHover, disabled = false }) {
           }`}
           alt={`${theme.name} theme card`}
         />
+        {/* The theme's stone, as a hairline frame. Same colour reappears on
+            ThemeDescription and on the reading, so it reads as this theme's
+            identity rather than as decoration. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-ring-1 inset-ring-citrine inset-0 rounded-md"
+          className={`pointer-events-none absolute inset-ring-2 ring-4 ${stoneClasses(theme.name).ring} inset-0 rounded-md`}
         />
       </div>
     </div>
