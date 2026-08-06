@@ -118,11 +118,12 @@ Content
                     return new FortuneDto
                     {
                         Id = Guid.NewGuid(),
-                        Result = fortuneResult,
+                        Result = fortuneResult.Text,
                         ThemeId = request.ThemeId ?? Guid.Empty,
                         CardsIds = request.CardIds,
                         CreatedAt = DateTime.UtcNow,
                         UserEmail = user?.Email ?? string.Empty,
+                        Model = fortuneResult.Model,
                     };
                 }
                 catch (Exception ex)
@@ -140,7 +141,7 @@ Content
             }
         }
 
-        public async IAsyncEnumerable<string> GenerateFortuneStreamAsync(
+        public async IAsyncEnumerable<AiStreamChunk> GenerateFortuneStreamAsync(
             CreateFortuneRequest request,
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )

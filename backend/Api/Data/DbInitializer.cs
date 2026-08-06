@@ -16,52 +16,52 @@ namespace Api.Data
                     new Theme
                     {
                         Name = "general",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20General.jpg",
+                        ImageSource = "/themes/general.webp",
                         Description =
                             "Ask about your overall life direction or what’s coming next.",
                     },
                     new Theme
                     {
                         Name = "love",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20Love.jpg",
+                        ImageSource = "/themes/love.webp",
                         Description =
                             "Understand your love life, romantic interests, and emotional connections.",
                     },
                     new Theme
                     {
                         Name = "finance",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20Finance.jpg",
+                        ImageSource = "/themes/finance.webp",
                         Description = "Gain insight into your financial future and money matters.",
                     },
                     new Theme
                     {
                         Name = "career",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20Career.jpg",
+                        ImageSource = "/themes/career.webp",
                         Description = "Uncover guidance on job prospects, promotions, or studies.",
                     },
                     new Theme
                     {
                         Name = "relationships",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.+Relationship.jpg",
+                        ImageSource = "/themes/relationships.webp",
                         Description = "Understand connections with friends, family, or coworkers.",
                     },
                     new Theme
                     {
                         Name = "health",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20Health.jpg",
+                        ImageSource = "/themes/health.webp",
                         Description = "Reflect on your physical and emotional well-being.",
                     },
                     new Theme
                     {
                         Name = "decisions",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.+Decision.jpg",
+                        ImageSource = "/themes/decisions.webp",
                         Description =
                             "Seek clarity when facing difficult choices or uncertain paths.",
                     },
                     new Theme
                     {
                         Name = "travel",
-                        ImageSource = "https://tarot-card-images-all.s3.ap-southeast-2.amazonaws.com/Theme/5.%20Travel.jpg",
+                        ImageSource = "/themes/travel.webp",
                         Description =
                             "Explore outcomes related to moving, traveling, or new environments.",
                     }

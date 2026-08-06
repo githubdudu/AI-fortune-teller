@@ -2,7 +2,8 @@
 
 Welcome to this fortune telling and tarot card reading application. This repository contains both frontend and backend components of the application.
 
-** live site: not live yet **
+** live site: **
+https://ai-fortune-teller-fe-demo.up.railway.app/home 
 
 ![Homepage](./homepage.png)
 

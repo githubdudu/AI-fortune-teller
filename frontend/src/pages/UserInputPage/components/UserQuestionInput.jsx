@@ -3,19 +3,13 @@ import { toast } from 'sonner';
 import { Toaster } from '$/pages/RootLayoutPage/components/Toaster';
 import { useEffect, useRef, useState, useContext } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
+import { isMeaningfulQuestion } from '$/utils/questionValidation';
 
 function UserQuestionInput() {
   const textAreaRef = useRef(null);
 
   // Context state
-  const {
-    saveUserPrompt,
-    clearQuestionAndTheme,
-    userChosenTheme,
-    userPrompt,
-    userChosenCards,
-    saveUserChosenCards,
-  } = useContext(AppContext);
+  const { saveUserPrompt, saveUserChosenTheme } = useContext(AppContext);
   // internal state
   const [input, setInput] = useState('');
   const [textAreaHeight, setTextAreaHeight] = useState(0);
@@ -33,40 +27,18 @@ function UserQuestionInput() {
   }, [input]);
 
   const handleSubmit = () => {
-    clearQuestionAndTheme();
-    // Clear the user question and theme from context
-    if (!userPrompt) {
-      console.log('userPrompt is empty');
-    } else {
-      console.log('userPrompt:', userPrompt);
-    }
-    if (!userChosenTheme) {
-      console.log('userChosenTheme is empty');
-    } else {
-      console.log('userChosenTheme:', userChosenTheme);
-    }
-
-    // Clear the user chosen cards from context
-    saveUserChosenCards(null);
-    if (!userChosenCards) {
-      console.log('userChosenCards is empty');
-    } else {
-      console.log('userChosenCards:', userChosenCards);
-    }
-
     const trimmedInput = input.trim();
-    const wordCount = trimmedInput.split(/\s+/).length;
 
-    // Validation for empty input submit, or question with less than 4 words
-    // TODO: Come up with a logic for validating non sense words combination...
-    if (trimmedInput.length < 10 || wordCount < 4) {
+    // Validation for empty input submit, or question shorter than ~4 words.
+    // Counts CJK characters too, since they carry no spaces to split on.
+    if (!isMeaningfulQuestion(trimmedInput, 4)) {
       toast.warning('Please enter a more complete and meaningful question.');
       return;
     }
 
-    // TODO: Save the input as user prompt in the context for later use
+    // so drop any theme left over from an earlier reading.
+    saveUserChosenTheme(null);
     saveUserPrompt(trimmedInput);
-    // TODO: change route accordingly
     navigate('/fortune');
   };
 
@@ -77,16 +49,16 @@ function UserQuestionInput() {
         <h2 className="title font-cormorant font-extrabold text-4xl text-ink-800 text-center mb-2">
           What answer do you seek?
         </h2>
-        <div className="relative mb-1">
+        <div className="relative leading-none">
           <textarea
             id="text-area-user-prompt"
-            placeholder="Type a question you'd like to seek from the cards"
+            placeholder="Type a question you'd like to seek"
             value={input}
             onChange={handleChange}
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-32 text-lg text-ink-900 placeholder-mist-500 bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
+            className={`w-full border-1 border-mist-400 rounded-lg py-3 pl-4 pr-16 text-lg text-ink-900 placeholder-mist-500 max-sm:placeholder:text-base bg-mist-500/10 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:bg-mist-100/50 overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -98,14 +70,14 @@ function UserQuestionInput() {
             onClick={handleSubmit}
             className={`absolute ${
               textAreaHeight <= 56 ? 'top-1/2 -translate-y-1/2' : 'bottom-2'
-            } right-3 p-0 mr-2 bg-transparent border-none cursor-pointer text-mist-500 hover:text-ink-900 flex items-center justify-center`}
+            } right-2 size-9 bg-mist-600 rounded-md border-mist-600 cursor-pointer text-mist-50 hover:bg-mist-500 flex items-center justify-center`}
             type="button"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              className="w-4 h-4 mb-1"
+              className="w-5 h-5"
             >
               <path
                 fillRule="evenodd"

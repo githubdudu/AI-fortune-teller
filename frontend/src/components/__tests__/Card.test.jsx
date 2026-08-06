@@ -1,6 +1,67 @@
-import { render, fireEvent } from '@testing-library/react';
+// The motion.div stand-in below is a test double, not a real component
+/* eslint-disable react/prop-types */
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import React from 'react';
 import Card from '$/pages/FortunePage/components/Card';
+
+/**
+ * Springs never settle inside a jsdom test, so `motion.div` is swapped for a
+ * plain div that resolves its animation immediately. The target values are
+ * mirrored onto `data-animate` so tests can assert the state -> animation
+ * mapping that used to live in `flipped` / `no-flip-back` class names.
+ *
+ * `useSpring` and friends are left untouched — Card and FloatingDescription
+ * both rely on the real implementations.
+ */
+vi.mock('motion/react', async () => {
+  const actual = await vi.importActual('motion/react');
+
+  // Props motion consumes itself and that a plain <div> must not receive
+  const MOTION_ONLY_PROPS = [
+    'animate',
+    'initial',
+    'exit',
+    'whileHover',
+    'whileTap',
+    'drag',
+    'dragSnapToOrigin',
+    'dragMomentum',
+    'dragTransition',
+    'onDragStart',
+    'onDragEnd',
+    'transition',
+    'style',
+    'onAnimationComplete',
+  ];
+
+  const MotionDiv = React.forwardRef((props, ref) => {
+    const { animate, onAnimationComplete, children } = props;
+    const domProps = Object.fromEntries(
+      Object.entries(props).filter(
+        ([key]) => !MOTION_ONLY_PROPS.includes(key) && key !== 'children',
+      ),
+    );
+
+    React.useEffect(() => {
+      if (onAnimationComplete) onAnimationComplete(animate);
+    });
+
+    return (
+      <div
+        ref={ref}
+        data-animate={animate && JSON.stringify(animate)}
+        {...domProps}
+      >
+        {children}
+      </div>
+    );
+  });
+  MotionDiv.displayName = 'MotionDiv';
+
+  return { ...actual, motion: { ...actual.motion, div: MotionDiv } };
+});
 
 /**
  * Tests that the card is initially displayed showing the back of the card.
@@ -20,60 +81,61 @@ it('renders correctly with back side showing initially', () => {
 });
 
 /**
- * Tests that clicking the card flips it and shows the front side with description.
+ * Tests that hovering a flipped card shows the description in a floating block.
  */
-it('flips and shows front side with description when clicked', () => {
-  const { getByAltText, getByText, container } = render(
+it('shows the description in a floating block on hover', async () => {
+  const user = userEvent.setup();
+  const { getByAltText, container } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
+      isShowFront={true}
     />,
   );
-
-  // Click the card to flip it
-  const card = container.querySelector('.tarot-card');
-  fireEvent.click(card);
 
   // Should show the front image
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 
-  // Should now show the title and description
-  expect(getByText('The Fool')).toBeInTheDocument();
+  // Hovering the front face should reveal the title and description
+  const cardFront = container.querySelector('.tarot-card-front');
+  await user.hover(cardFront);
+
+  expect(await screen.findByText('The Fool')).toBeInTheDocument();
   expect(
-    getByText('The Fool symbolizes key aspects of the human journey.'),
+    screen.getByText('The Fool symbolizes key aspects of the human journey.'),
   ).toBeInTheDocument();
 });
 
 /**
- * Tests that the card respects the initialFlipped prop.
+ * Tests that the description is not rendered until the card is hovered.
  */
-it('shows front side initially when initialFlipped is true', () => {
-  const { getByAltText, getByText } = render(
+it('does not show the description until hovered', () => {
+  const { getByAltText, queryByText } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
-      initialFlipped={true}
+      isShowFront={true}
     />,
   );
 
   // Should show the front image
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 
-  // Should show the title and description since card is flipped
-  expect(getByText('The Fool')).toBeInTheDocument();
+  // But the description block should not be mounted yet
+  expect(queryByText('The Fool')).not.toBeInTheDocument();
   expect(
-    getByText('The Fool symbolizes key aspects of the human journey.'),
-  ).toBeInTheDocument();
+    queryByText('The Fool symbolizes key aspects of the human journey.'),
+  ).not.toBeInTheDocument();
 });
 
 /**
  * Tests that the card rendering the number with the correct value.
  */
-it('renders the number with correct value when flipped', () => {
+it('renders the number with correct value when flipped', async () => {
   const { getByText, container, rerender } = render(
     <Card
       name="The Fool"
@@ -88,9 +150,8 @@ it('renders the number with correct value when flipped', () => {
   // Initially should not show the card number
   const card = container.querySelector('.card-number');
   expect(card).not.toBeInTheDocument();
-  vi.useFakeTimers();
 
-  // Should show the front image and number
+  // Should show the front image and number once the flip animation completes
   rerender(
     <Card
       name="The Fool"
@@ -101,11 +162,9 @@ it('renders the number with correct value when flipped', () => {
       cardNumber={99}
     />,
   );
-  const cardElement = container.querySelector('.tarot-card');
-  fireEvent.transitionEnd(cardElement);
-  vi.advanceTimersByTime(5000);
-  const flippedCard = container.querySelector('.card-number');
-  expect(flippedCard).toBeInTheDocument();
+  await waitFor(() =>
+    expect(container.querySelector('.card-number')).toBeInTheDocument(),
+  );
   expect(getByText('99')).toBeInTheDocument();
 
   // should not show the card number when flipped without cardNumber
@@ -118,8 +177,6 @@ it('renders the number with correct value when flipped', () => {
       isShowFront={true}
     />,
   );
-  const cardElement2 = container.querySelector('.tarot-card');
-  fireEvent.transitionEnd(cardElement2);
   const flippedCard2 = container.querySelector('.card-number');
   expect(flippedCard2).not.toBeInTheDocument();
 });
@@ -128,7 +185,7 @@ it('renders the number with correct value when flipped', () => {
  * Tests that the card does not flip back once it has been flipped to the front.
  */
 it('does not flip back once flipped to front', () => {
-  const { getByAltText, getByText, container } = render(
+  const { getByAltText, container } = render(
     <Card
       name="The Fool"
       description="The Fool symbolizes key aspects of the human journey."
@@ -143,20 +200,25 @@ it('does not flip back once flipped to front', () => {
 
   // Verify it's showing the front
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
-  expect(getByText('The Fool')).toBeInTheDocument();
 
   // Click the card again to try to flip it back
   fireEvent.click(card);
 
-  // Should still show the front image and text (not flipping back)
+  // Should still show the front image (not flipping back)
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
-  expect(getByText('The Fool')).toBeInTheDocument();
 });
 
+const targetOf = (container) =>
+  JSON.parse(
+    container.querySelector('.tarot-card-inner').getAttribute('data-animate'),
+  );
+
 /**
- * Tests that the card has the appropriate CSS classes based on its state.
+ * Tests that the card animates to the right target for each state: face down
+ * and flat at rest, turned over when showing the front, and additionally
+ * lifted when selected.
  */
-it('applies correct CSS classes based on state', () => {
+it('animates to the correct target for each state', () => {
   const { container, rerender } = render(
     <Card
       name="The Fool"
@@ -166,13 +228,10 @@ it('applies correct CSS classes based on state', () => {
     />,
   );
 
-  // Initially should not have 'flipped' or 'disabled' classes
-  let cardElement = container.querySelector('.tarot-card');
-  expect(cardElement.classList.contains('flipped')).toBe(false);
-  expect(cardElement.classList.contains('disabled')).toBe(false);
-  expect(cardElement.classList.contains('no-flip-back')).toBe(false);
+  // At rest: back facing the viewer, sitting flat
+  expect(targetOf(container)).toEqual({ rotateY: 0, y: 0, scale: 1 });
 
-  // flip
+  // Showing the front turns the card over but does not lift it
   rerender(
     <Card
       name="The Fool"
@@ -181,22 +240,89 @@ it('applies correct CSS classes based on state', () => {
       isShowFront={true}
     />,
   );
-  cardElement = container.querySelector('.tarot-card');
-  // Should now have 'flipped' and 'no-flip-back' classes
-  expect(cardElement.classList.contains('flipped')).toBe(true);
-  expect(cardElement.classList.contains('no-flip-back')).toBe(true);
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 
-  // Rerender with disabled prop
+  // Selecting lifts the card clear of the row as well
   rerender(
     <Card
       name="The Fool"
       frontImage="path/to/front-image.png"
       backImage="path/to/back-image.png"
-      disabled={true}
+      isShowFront={true}
+      isSelected={true}
+    />,
+  );
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: -50, scale: 1 });
+});
+
+/**
+ * Tests that hovering scales the card up and that leaving returns it to rest.
+ * The scale deliberately lives in `animate` alongside the flip and lift rather
+ * than in a `whileHover` prop, which used to fight `animate` and flicker.
+ */
+it('scales up while hovered and returns to rest on leave', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
     />,
   );
 
-  // Should now have the 'disabled' class
-  cardElement = container.querySelector('.tarot-card');
-  expect(cardElement.classList.contains('disabled')).toBe(true);
+  expect(targetOf(container).scale).toBe(1);
+
+  await user.hover(container.querySelector('.tarot-card'));
+  expect(targetOf(container).scale).toBe(1.06);
+
+  await user.unhover(container.querySelector('.tarot-card'));
+  expect(targetOf(container).scale).toBe(1);
+});
+
+/**
+ * Tests that pressing scales past the hover scale, and that releasing drops
+ * back to hover rather than all the way to rest while still hovered.
+ */
+it('scales further while pressed and returns to the hover scale on release', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+    />,
+  );
+  const card = container.querySelector('.tarot-card');
+
+  await user.hover(card);
+  expect(targetOf(container).scale).toBe(1.06);
+
+  fireEvent.pointerDown(card);
+  expect(targetOf(container).scale).toBeCloseTo(1.12);
+
+  fireEvent.pointerUp(card);
+  expect(targetOf(container).scale).toBe(1.06);
+});
+
+/**
+ * Tests that leaving the card mid-press clears the pressed state, so a card
+ * the pointer was dragged off does not stay stuck scaled up.
+ */
+it('clears the pressed state when the pointer leaves mid-press', async () => {
+  const user = userEvent.setup();
+  const { container } = render(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+    />,
+  );
+  const card = container.querySelector('.tarot-card');
+
+  await user.hover(card);
+  fireEvent.pointerDown(card);
+  expect(targetOf(container).scale).toBeCloseTo(1.12);
+
+  await user.unhover(card);
+  expect(targetOf(container).scale).toBe(1);
 });
