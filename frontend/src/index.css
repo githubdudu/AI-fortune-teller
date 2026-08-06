@@ -68,6 +68,14 @@
   }
 }
 
+/* Decorative halo behind an interactive image (logo, theme card) on hover.
+   Shared so the two hover glows in the app cannot drift apart. */
+@utility glow-spark {
+  filter: drop-shadow(
+    0 0 2em color-mix(in oklab, var(--color-spark) 67%, transparent)
+  );
+}
+
 /* Custom metallic gradient */
 @utility bg-daily-fortune {
   background-image: repeating-linear-gradient(

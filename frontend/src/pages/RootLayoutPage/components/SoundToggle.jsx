@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useAudioStore } from '$/stores/audioStore';
 
 const BUTTON_CLASS =
-  'flex items-center justify-center w-9 h-9 rounded-full bg-mist-100/70 text-ink-800 ' +
-  'border border-mist-300 cursor-pointer transition-colors hover:bg-mist-200 ' +
+  'flex items-center justify-center w-9 h-9 rounded-full bg-veil/70 text-ink ' +
+  'border border-bloom cursor-pointer transition-colors hover:bg-bloom ' +
   'disabled:opacity-40 disabled:cursor-not-allowed';
 
 // Small enough to read at 20px; drawn inline so there is no icon dependency
