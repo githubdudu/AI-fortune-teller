@@ -32,19 +32,19 @@
   --color-citrine-deep: #9E882E;
 
   /* Status colors — outside the doc's scope (it covers mood, not toasts or
-     validation). Built on the same lightness step so status sits inside
-     Sugar Crystal rather than on top of it. Only success has to borrow a
-     hue the palette does not contain. */
-  --color-danger: var(--color-quartz-deep);
-  --color-warning: var(--color-citrine-deep);
-  --color-info: var(--color-celestine-deep);
-  --color-success: oklch(52% 0.09 165);
+     validation), so they are built here on `core`'s rung: L 52%, C 0.11.
+     Only success borrows a hue the palette does not contain.
 
-  /* MIGRATION SCAFFOLD — colors whose role could not be inferred point here
-     and render as glaring red, so they are impossible to miss on the page.
-     Delete this line once the migration is done and grep confirms no
-     -todo usages remain in src/. */
-  --color-todo: #FF0000;
+     L 52 is the point where a colour works in BOTH directions, which status
+     colours need and the atmosphere set does not: error copy sits on the page
+     as text (5.1-5.5:1), and <Box color="errorBase"> puts `bg` text on top of
+     it (also 5.1-5.5:1). These used to alias the *-deep stones at L 63, where
+     both directions land near 3.2 and neither is readable. The stones stay at
+     L 63 on purpose — their job is to say WHICH, never to carry text. */
+  --color-danger: oklch(52% 0.11 355);
+  --color-warning: oklch(52% 0.11 95);
+  --color-info: oklch(52% 0.11 258);
+  --color-success: oklch(52% 0.11 165);
 
   --font-cormorant: 'Cormorant Garamond', Georgia, serif;
 }
@@ -264,7 +264,9 @@ select#gender {
   /* TextField */
   --color-background-formfield-primary: var(--color-veil);
   --color-text-formfield-default: var(--color-ink);
-  --color-text-formfield-placeholder: var(--color-spark);
+  /* Not `spark`: it clears 3:1 on the page ground but only reaches 2.96 on the
+     `veil` field bed it actually sits on. */
+  --color-text-formfield-placeholder: color-mix(in oklab, var(--color-ink) 65%, transparent);
   --color-border-formfield-error-default: var(--color-danger);
   --color-text-error: var(--color-danger);
 

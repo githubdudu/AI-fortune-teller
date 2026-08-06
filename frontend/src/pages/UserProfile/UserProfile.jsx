@@ -38,27 +38,27 @@ export default function ProfilePage() {
 
           <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-ink/70 text-lg">
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">First Name</dt>
+              <dt className="font-medium text-ink/65">First Name</dt>
               <dd className="mt-1 text-ink">{user.firstName}</dd>
             </div>
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">Last Name</dt>
+              <dt className="font-medium text-ink/65">Last Name</dt>
               <dd className="mt-1 text-ink">{user.lastName}</dd>
             </div>
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">Date of Birth</dt>
+              <dt className="font-medium text-ink/65">Date of Birth</dt>
               <dd className="mt-1 text-ink">{user.dateOfBirth}</dd>
             </div>
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">Gender</dt>
+              <dt className="font-medium text-ink/65">Gender</dt>
               <dd className="mt-1 text-ink">{user.genderID}</dd>
             </div>
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">Nationality</dt>
+              <dt className="font-medium text-ink/65">Nationality</dt>
               <dd className="mt-1 text-ink">{user.nationalityID}</dd>
             </div>
             <div className="flex flex-col">
-              <dt className="font-medium text-ink/55">Place of Birth</dt>
+              <dt className="font-medium text-ink/65">Place of Birth</dt>
               <dd className="mt-1 text-ink">{user.placeOfBirthID}</dd>
             </div>
           </dl>

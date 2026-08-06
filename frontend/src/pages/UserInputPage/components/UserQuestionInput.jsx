@@ -58,7 +58,7 @@ function UserQuestionInput() {
             rows={1}
             ref={textAreaRef}
             maxLength={280}
-            className={`w-full border-1 border-bloom rounded-lg py-3 pl-4 pr-16 text-lg text-ink placeholder-spark max-sm:placeholder:text-base bg-veil/60 resize-none focus:outline-none focus:ring-2 focus:ring-core/40 focus:bg-veil overflow-hidden`}
+            className={`w-full border-1 border-bloom rounded-lg py-3 pl-4 pr-16 text-lg text-ink placeholder-ink/65 max-sm:placeholder:text-base bg-veil/60 resize-none focus:outline-none focus:ring-2 focus:ring-core/40 focus:bg-veil overflow-hidden`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

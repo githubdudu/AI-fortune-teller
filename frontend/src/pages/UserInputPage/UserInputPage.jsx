@@ -176,7 +176,7 @@ function UserInputPage() {
       <div className="w-160 max-sm:w-full">
         <UserQuestionInput />
       </div>
-      <h2 className="divider-text font-cormorant font-bold text-2xl text-ink/55 mb-2 ">
+      <h2 className="divider-text font-cormorant font-bold text-2xl text-ink/65 mb-2 ">
         - or -
       </h2>
       <div className="w-auto flex flex-col items-center">

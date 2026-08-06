@@ -95,7 +95,7 @@ const ReadingView = ({ selectedCardIds }) => {
 
         {isStreamLoading && <LoadingAnimation />}
         {streamModel && (
-          <p className="interpretation-model mt-4 text-xs text-ink/55 text-right">
+          <p className="interpretation-model mt-4 text-xs text-ink/65 text-right">
             Channelled via {streamModel}
           </p>
         )}

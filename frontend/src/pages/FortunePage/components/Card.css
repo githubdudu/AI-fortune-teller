@@ -78,7 +78,8 @@
   top: -5px;
   width: 35px;
   height: 35px;
-  background-color: var(--color-core);
+  /* Dark disc, gold numeral: citrine on core was only 3.82:1. */
+  background-color: var(--color-ink);
   color: var(--color-citrine);
   border-radius: 50%;
   display: flex;

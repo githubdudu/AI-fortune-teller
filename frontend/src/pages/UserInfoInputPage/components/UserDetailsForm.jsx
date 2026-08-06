@@ -281,7 +281,7 @@ function UserDetailsForm() {
     return (
       <div className="flex flex-col gap-4">
         {message && (
-          <div className="text-red-500 text-sm text-center">{message}</div>
+          <div className="text-danger text-sm text-center">{message}</div>
         )}
       </div>
     );
