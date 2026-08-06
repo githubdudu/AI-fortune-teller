@@ -3,14 +3,18 @@ import { useNavigate } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
+import useSound from '$/hooks/useAudio';
+
 /**
  * Card selection screen
  * /fortune
  */
 const SelectionView = ({ selectedCounts }) => {
   const navigate = useNavigate();
+  const playSound = useSound();
 
   const onConfirmButtonClick = () => {
+    playSound('confirm');
     navigate('reading', { replace: true });
   };
 

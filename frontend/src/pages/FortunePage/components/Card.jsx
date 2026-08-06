@@ -1,10 +1,11 @@
 import './Card.css';
 import PropTypes from 'prop-types';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import FloatingDescription from './FloatingDescription';
 import useCardTilt from '$/hooks/useCardTilt';
 import useIdleFloat from '$/hooks/useIdleFloat';
+import useSound from '$/hooks/useAudio';
 
 // Controls the physical feel of the card's flip
 const FLIP_SPRING = { type: 'spring', visualDuration: 1, bounce: 0.25 };
@@ -87,6 +88,13 @@ const Card = ({
   } = useCardTilt({ enabled: !isDragging });
 
   const scale = isPressed ? TAP_SCALE : isHovered ? HOVER_SCALE : 1;
+
+  // A blip on the way in only. Firing on the way out too would double every
+  // sweep across the row into a stutter.
+  const playSound = useSound();
+  useEffect(() => {
+    if (isHovered) playSound('hover');
+  }, [isHovered, playSound]);
 
   // Eased out while the card is engaged, so the drift never fights the cursor
   const { y: floatY, rotate: floatRotate } = useIdleFloat({

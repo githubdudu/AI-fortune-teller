@@ -3,8 +3,13 @@ import { Box, Flex } from 'gestalt';
 
 import ArcanaVerseLogo from './components/ArcanaVerseLogo';
 import UserAvatarButton from './components/UserAvatarButton';
+import SoundToggle from './components/SoundToggle';
+import { useAudioBootstrap } from '$/hooks/useAudio';
 
 function RootLayoutPage() {
+  // Arms the audio engine on the first gesture anywhere in the app
+  useAudioBootstrap();
+
   return (
     <Flex
       alignItems="center"
@@ -15,7 +20,10 @@ function RootLayoutPage() {
       gap={{ row: 0, column: 5 }}
     >
       <Flex.Item flex="none" alignSelf="stretch">
-        <UserAvatarButton />
+        <div className="flex justify-between pt-4 px-3">
+          <SoundToggle />
+          <UserAvatarButton />
+        </div>
         <ArcanaVerseLogo />
       </Flex.Item>
       <Flex.Item flex="grow">

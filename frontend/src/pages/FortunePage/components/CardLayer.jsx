@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { AnimatePresence, motion } from 'motion/react';
 
 import Card from './Card';
+import useSound from '$/hooks/useAudio';
 
 // How the cards sit in each phase. Only the container's layout changes between them
 // The card elements themselves are the same DOM nodes throughout, which
@@ -57,6 +59,31 @@ const CardLayer = ({
   className,
 }) => {
   const mode = isReveal ? 'reveal' : 'select';
+  const playSound = useSound();
+
+  // The reveal is two beats — the row re-flows, then the cards turn — so the
+  // audio is two beats as well: a swoosh with the flight, chimes timed to land
+  // with the flip that FLIP_AFTER_LAYOUT holds back.
+  useEffect(() => {
+    if (!isReveal) return undefined;
+
+    playSound('flip');
+    const chimeAt = setTimeout(
+      () => playSound('reveal'),
+      FLIP_AFTER_LAYOUT * 1000,
+    );
+    return () => clearTimeout(chimeAt);
+  }, [isReveal, playSound]);
+
+  // Picking and un-picking get their own cue, and both are decided by what the
+  // click actually did: `onCardSelect` returns false for a fourth pick while
+  // three are already held, and a rejected click must stay silent rather than
+  // sound like it worked.
+  const handleCardClick = (card, index) => {
+    const wasSelected = selectionMark[index];
+    const changed = onCardSelect(card.id, index);
+    if (changed !== false) playSound(wasSelected ? 'deselect' : 'select');
+  };
 
   const entries = cards
     .map((card, index) => ({ card, index }))
@@ -79,7 +106,7 @@ const CardLayer = ({
               default: { ...DEAL_SPRING, delay: index * DEAL_STAGGER },
             }}
             className="w-[13rem] flex flex-col items-center"
-            onClick={isReveal ? undefined : () => onCardSelect(card.id, index)}
+            onClick={isReveal ? undefined : () => handleCardClick(card, index)}
           >
             <Card
               backImage="/cards/back-416.webp"

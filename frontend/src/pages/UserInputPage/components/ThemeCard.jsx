@@ -4,6 +4,7 @@ import themeCardPlaceholder from '$/assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
+import useSound from '$/hooks/useAudio';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
@@ -21,6 +22,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   }, []);
 
   const navigate = useNavigate();
+  const playSound = useSound();
 
   const handleClick = () => {
     // If there is a API error at input page, do not allow to click on theme card
@@ -35,6 +37,10 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   };
 
   const handleMouseEnter = () => {
+    // Silent while disabled, matching handleClick: a card that cannot be
+    // picked should not answer the cursor as though it could.
+    if (!disabled) playSound('hover');
+
     // Call the onHover prop function with the current theme
     if (onHover) {
       onHover(theme);
