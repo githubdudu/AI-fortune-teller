@@ -156,6 +156,32 @@ body {
   user-select: none;
 }
 
+/* Scrollbars, in palette. 
+   `spark` for the thumb rather than `core`: the bar is decoration 
+  */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-spark) var(--color-veil);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-veil);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-spark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-core);
+}
+
 /* The page ground, in two fixed layers behind everything.
 
    `::before` is the ground proper: two soft radial pools of bloom and veil
