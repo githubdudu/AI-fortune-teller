@@ -82,12 +82,7 @@ const FortunePage = () => {
         />
         <Route
           path="reading"
-          element={
-            <ReadingView
-              // TODO: managed by useCardSelection, and the sequence should managed, same as the number
-              selectedCardIds={selectedCardIds}
-            />
-          }
+          element={<ReadingView selectedCardIds={selectedCardIds} />}
         />
       </Routes>
     </div>

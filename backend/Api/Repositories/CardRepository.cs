@@ -34,9 +34,13 @@ namespace Api.Repositories
 
         public async Task<IEnumerable<Card>> GetCardsByIdsAsync(IEnumerable<Guid> ids)
         {
-            return await _context.Cards
+            var cards = await _context.Cards
                 .Where(card => ids.Contains(card.Id))
-                .ToListAsync();
+                .ToDictionaryAsync(card => card.Id);
+
+            // WHERE Id IN (...) carries no ORDER BY. 
+            // Restore The caller's order here.
+            return ids.Where(cards.ContainsKey).Select(id => cards[id]).ToList();
         }
     }
 }
