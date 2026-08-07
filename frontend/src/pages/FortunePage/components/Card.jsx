@@ -119,7 +119,8 @@ const Card = ({
         didDragRef.current = false;
         event.stopPropagation();
       }}
-      className={`w-[13rem] h-[19.5rem] perspective-distant select-none ${isDragging ? 'cursor-grabbing z-30' : 'cursor-pointer'}`}
+      // 13rem x 21.75rem is 208x348, the 500x836 aspect of the card artwork
+      className={`w-[13rem] h-[21.75rem] perspective-distant select-none ${isDragging ? 'cursor-grabbing z-30' : 'cursor-pointer'}`}
     >
       <motion.div
         ref={tiltRef}
@@ -194,7 +195,10 @@ const Card = ({
                 }
                 sizes="208px"
                 width={208}
-                height={312}
+                height={348}
+                // The back art is still 2:3, so it fills the taller box by
+                // cropping the sides rather than letterboxing.
+                className="size-full object-cover"
                 decoding="async"
                 fetchPriority="high"
                 // Images's own drag-and-drop conflicts with motion's drag
@@ -213,7 +217,8 @@ const Card = ({
               <img
                 src={frontImage}
                 width={208}
-                height={312}
+                height={348}
+                className="size-full object-cover"
                 decoding="async"
                 draggable={false}
                 alt="Tarot Card Front"
