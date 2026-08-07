@@ -23,6 +23,17 @@
   font-size: 1.2rem;
 }
 
+/* Body copy is justified so the reading reads as a printed page. Applied to the
+   text blocks only — headings keep the centred alignment inherited from
+   .fortune-page, which is what frames each section. */
+.markdown-content p,
+.markdown-content li,
+.markdown-content blockquote {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
 .markdown-content strong {
   font-weight: 600;
   /* Bold used to be *lighter* than the body copy it emphasised; core is where
