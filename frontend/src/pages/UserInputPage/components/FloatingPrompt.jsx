@@ -18,7 +18,7 @@ function FloatingPrompt({ visible, children }) {
   return (
     <AnimatePresence>
       {visible && (
-        <div className="floating-prompt-container fixed z-50 flex items-center-safe justify-center-safe bg-ink/35 inset-0 shadow-2xl overflow-auto p-1">
+        <div className="floating-prompt-container fixed z-5 flex items-center-safe justify-center-safe bg-ink/35 inset-0 shadow-2xl overflow-auto px-1">
           <motion.div
             className="floating-prompt-modal min-h-[550px] min-w-xs w-full sm:w-xl py-8 px-4 sm:px-9 border-2 border-core rounded-2xl bg-bg drop-shadow-2xl/25 text-center"
             initial={{ y: 12, opacity: 0 }}

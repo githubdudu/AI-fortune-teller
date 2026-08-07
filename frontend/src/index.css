@@ -226,6 +226,11 @@ select#gender {
 :root {
   /* Surfaces and type */
   --color-background-popover-primary: var(--color-bg);
+  /* Tooltip's bed. Gestalt hardcodes this leaf to #111 — a neutral black that
+     reads as foreign next to every other surface here. `ink` is the same role
+     (a dark ground for inverse text) in the project's own hue. The text on it
+     is Gestalt's `inverse` slot, already pointed at `bg` below. */
+  --color-background-popover-secondary: var(--color-ink);
   --color-background-box-secondary: var(--color-veil); /* dropdown hover bed, avatar disc */
   --color-text-default: var(--color-ink);
   --color-text-inverse: var(--color-bg); /* label on a filled button */
