@@ -9,6 +9,7 @@ import ErrorMessage from './components/ErrorMessage';
 import { markdownToHtml, createMarkup } from '$/utils/markdownUtils';
 import { AppContext } from '$/context/AppContextProvider';
 import { useFortuneStream } from '$/hooks/useFortuneStream';
+import useStickToBottom from '$/hooks/useStickToBottom';
 import { stoneClasses } from '$/constants/themeStone';
 import './ReadingView.css';
 
@@ -30,6 +31,9 @@ const ReadingView = ({ selectedCardIds }) => {
     streamModel,
     startFortuneStream,
   } = useFortuneStream();
+
+  // Follow the interpretation as it streams in; the page itself is the scroller
+  useStickToBottom(readingResult, { active: hasRead && !streamError });
 
   /**
    * Handle reading button click
