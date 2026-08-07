@@ -1,4 +1,7 @@
 # AI Fortune Teller
+
+[![Tech Stack](https://skillicons.dev/icons?i=react,vite,tailwind,firebase,cs,dotnet,docker,kubernetes,githubactions,aws,figma&perline=11)](https://skillicons.dev)
+
 ![Homepage](./docs/first-screen.png)
 
 AI enabled fortune telling and tarot card reading application.
