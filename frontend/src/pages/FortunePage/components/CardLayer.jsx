@@ -9,11 +9,14 @@ import useSound from '$/hooks/useAudio';
 // The card elements themselves are the same DOM nodes throughout, which
 // is what lets motion tween them from one arrangement to the other.
 //
-// The cards keep one fixed size at every width, so below xl the overlap is produced
-// here, by a negative margin.
+// The cards scale with `--card-w` (see FortunePage.css), so the fan's overlap is
+// stated as a fraction of that width rather than in pixels. The breakpoints stay
+// — the fan really is meant to spread as the page widens — but each step is now
+// a ratio, so the overlap tracks the card instead of being a pixel amount that
+// only happens to look right at 208px.
 const LAYOUTS = {
   select:
-    'flex w-full justify-center my-10 [&>*]:-mx-12 md:[&>*]:-mx-8 lg:[&>*]:-mx-4 xl:[&>*]:mx-4',
+    'flex w-full justify-center my-10 [&>*]:-mx-[calc(var(--card-w)*0.23)] md:[&>*]:-mx-[calc(var(--card-w)*0.15)] lg:[&>*]:-mx-[calc(var(--card-w)*0.08)] xl:[&>*]:mx-4',
   reveal:
     'flex flex-wrap items-center max-md:flex-col justify-center gap-8 w-full my-10',
 };
@@ -115,7 +118,7 @@ const CardLayer = ({
               layout: LAYOUT_SPRING,
               default: { ...DEAL_SPRING, delay: index * DEAL_STAGGER },
             }}
-            className="w-[13rem] flex flex-col items-center"
+            className="w-(--card-w) flex flex-col items-center"
             onClick={isReveal ? undefined : () => handleCardClick(card, index)}
           >
             <Card

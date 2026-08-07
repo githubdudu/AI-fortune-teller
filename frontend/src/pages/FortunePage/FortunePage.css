@@ -1,0 +1,16 @@
+/* The one measuring stick for the card layer.
+
+   Every card dimension on this page derives from `--card-w`: the card box, the
+   artwork's `sizes` hint, and the negative margin that produces the fan's
+   overlap. Changing this line rescales the whole selection row coherently,
+   which a set of per-breakpoint widths could never do.
+
+   The upper bound 13rem (208px) is the artwork's native width — past it we'd be
+   upscaling a raster. The lower bound is set by the selection row: five cards
+   overlapped by 28% of their width each side occupy roughly 3.2x a single card,
+   so a 320px viewport minus the page's 40px padding wants ~87px cards. 6.5rem
+   (104px) stops just short of that, on the grounds that a card smaller than
+   this stops reading as a card; the remaining sliver overflows and scrolls. */
+.fortune-page {
+  --card-w: clamp(6.5rem, 26vw, 13rem);
+}

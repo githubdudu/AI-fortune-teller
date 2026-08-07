@@ -119,8 +119,10 @@ const Card = ({
         didDragRef.current = false;
         event.stopPropagation();
       }}
-      // 13rem x 21.75rem is 208x348, the 500x836 aspect of the card artwork
-      className={`w-[13rem] h-[21.75rem] perspective-distant select-none ${isDragging ? 'cursor-grabbing z-30' : 'cursor-pointer'}`}
+      // Width comes from `--card-w` on `.fortune-page`; the height follows from
+      // the 500x836 aspect of the card artwork rather than being stated, so the
+      // two can never drift apart as the card scales.
+      className={`w-(--card-w) aspect-[500/836] perspective-distant select-none ${isDragging ? 'cursor-grabbing z-30' : 'cursor-pointer'}`}
     >
       <motion.div
         ref={tiltRef}
@@ -193,7 +195,7 @@ const Card = ({
                     ? `${backImageSmall} 240w, ${backImage} 416w`
                     : undefined
                 }
-                sizes="208px"
+                sizes="(max-width: 800px) 26vw, 208px"
                 width={208}
                 height={348}
                 // The back art is still 2:3, so it fills the taller box by
@@ -227,7 +229,7 @@ const Card = ({
               <div className="card-holo" aria-hidden="true" />
               <div className="card-glare" aria-hidden="true" />
               <FloatingDescription anchorRef={cardRef} enabled={!!description}>
-                <div className="tarot-card-description  w-3xs p-3 rounded-lg text-bg bg-ink/75">
+                <div className="tarot-card-description w-[min(16rem,calc(100vw-2rem))] p-3 rounded-lg text-bg bg-ink/75">
                   <h3 className="text-base mb-2 text-quartz font-bold">
                     {name}
                   </h3>
