@@ -130,7 +130,7 @@ const SignUp = () => {
     <div className="w-full mx-auto flex flex-col justify-center">
       <title>{SEO_TITLE.SIGN_UP}</title>
       <div
-        className={`px-9 sm:px-9 py-1 sm:py-5 sm:w-auto my-12 mx-1 sm:mx-auto flex flex-col items-center bg-bg shadow-md ring-4 ring-celestine rounded-xl`}
+        className={`px-9 sm:px-9 py-5 sm:w-auto my-12 mx-1 sm:mx-auto flex flex-col items-center bg-bg shadow-md ring-4 ring-celestine rounded-xl`}
       >
         <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
         <div className="flex flex-col gap-4 w-full min-w-xs sm:min-w-[500px]">
