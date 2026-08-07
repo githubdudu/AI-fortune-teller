@@ -86,7 +86,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   }
 
   return (
-    <FormContainer withBackground={false}>
+    <div className={`flex flex-col items-center rounded-xl`}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
       <div className="flex flex-col gap-4 sm:min-w-[500px] w-full select-text">
         {Email()}
@@ -98,7 +98,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
         {SignInWithGoogleButton()}
         {IDontHaveAnAccountButton()}
       </div>
-    </FormContainer>
+    </div>
   );
 
   function Email() {

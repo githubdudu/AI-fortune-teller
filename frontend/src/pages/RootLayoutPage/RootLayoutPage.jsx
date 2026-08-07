@@ -12,14 +12,13 @@ function RootLayoutPage() {
 
   return (
     <Flex
-      alignItems="center"
       justifyContent="start"
       direction="column"
-      height="100vh"
+      height="100svh"
       width="100%"
-      gap={{ row: 0, column: 5 }}
+      gap={{ row: 0, column: 0 }}
     >
-      <Flex.Item flex="none" alignSelf="stretch">
+      <Flex.Item flex="none">
         <div className="flex justify-between pt-4 px-3">
           <SoundToggle />
           <UserAvatarButton />

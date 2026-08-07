@@ -6,9 +6,7 @@ import { PropTypes } from 'prop-types';
 // and the cards now, so the title only has to be clear.
 function FormTitle({ title = 'Title', subtitle = 'Subtitle', className = '' }) {
   return (
-    <header
-      className={`pt-4 pb-2 flex flex-col items-center gap-4 ${className}`}
-    >
+    <header className={`py-4 mb-4 flex flex-col items-center ${className}`}>
       <h1 className="text-4xl pb-2 lg:text-5xl font-bold text-center text-ink">
         {title}
       </h1>
