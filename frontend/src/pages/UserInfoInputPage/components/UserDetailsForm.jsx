@@ -170,7 +170,7 @@ function UserDetailsForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="min-w-[400px] max-w-[600px] w-[calc(100vw-4.5rem)]"
+      className="flex flex-col gap-4 w-full min-w-xs sm:min-w-[500px]"
     >
       <Fieldset legend="type your details" legendDisplay="hidden">
         <div className="flex flex-col gap-4">
@@ -281,7 +281,7 @@ function UserDetailsForm() {
     return (
       <div className="flex flex-col gap-4">
         {message && (
-          <div className="text-red-500 text-sm text-center">{message}</div>
+          <div className="text-danger text-sm text-center">{message}</div>
         )}
       </div>
     );

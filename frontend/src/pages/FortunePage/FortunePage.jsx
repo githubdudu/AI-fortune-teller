@@ -16,8 +16,13 @@ import useFetchTarotCards from '../../hooks/useFetchTarotCards';
 const FortunePage = () => {
   // Use custom hooks for cards and selection
   const { cards, error: taroCardsError } = useFetchTarotCards(5);
-  const { selectionMark, handleCardSelect, selectedCounts, selectedCardIds } =
-    useCardSelection(cards, 3);
+  const {
+    selectionMark,
+    handleCardSelect,
+    selectedCounts,
+    selectedCardIds,
+    colorVariants,
+  } = useCardSelection(cards, 3);
 
   const isReading = useMatch('fortune/reading');
 
@@ -46,7 +51,7 @@ const FortunePage = () => {
     // The page shell: it owns the column width and centring for every child
     // route, so the card layer and the views below it share one measuring
     // stick.
-    <div className="fortune-page flex flex-col items-center p-5 max-w-screen w-2xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh] text-center">
+    <div className="fortune-page flex flex-col items-center mx-auto p-5 max-w-screen w-2xl md:w-2xl lg:w-4xl xl:w-6xl min-h-[70vh] text-center">
       {taroCardsError && (
         <ErrorMessage
           message={describeCardsError(taroCardsError)}
@@ -66,6 +71,7 @@ const FortunePage = () => {
         selectedCardIds={selectedCardIds}
         onCardSelect={handleCardSelect}
         className="order-1"
+        colorVariants={colorVariants}
       />
 
       {/* TODO: migrate to Outlet and useOutletContext when the props are less */}
@@ -76,12 +82,7 @@ const FortunePage = () => {
         />
         <Route
           path="reading"
-          element={
-            <ReadingView
-              // TODO: managed by useCardSelection, and the sequence should managed, same as the number
-              selectedCardIds={selectedCardIds}
-            />
-          }
+          element={<ReadingView selectedCardIds={selectedCardIds} />}
         />
       </Routes>
     </div>

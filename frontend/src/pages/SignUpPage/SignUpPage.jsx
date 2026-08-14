@@ -20,7 +20,6 @@ import { TextField, Button } from 'gestalt';
 import { registerWithEmailAndPassword } from '$/utils/firebase.js';
 
 import Loading from '$/components/LoadingAnimation';
-import FormContainer from '../../components/FormContainer';
 import FormTitle from '../../components/FormTitle';
 import { AppContext } from '$/context/AppContextProvider';
 import { API_CONFIG } from '$/constants/config';
@@ -128,21 +127,19 @@ const SignUp = () => {
     );
 
   return (
-    <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-green-100 rounded-2xl border-2 border-white py-12 px-6 lg:px-8 font-sans">
-      <div className="w-full max-w-screen-xl mx-auto">
-        <div className="bg-white bg-opacity-90 backdrop-blur-md rounded-2xl shadow-xl p-10 lg:p-16 w-full">
-          <title>{SEO_TITLE.SIGN_UP}</title>
-          <FormContainer>
-            <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
-            <div className="flex flex-col gap-4 min-w-[500px]">
-              {Username()}
-              {Email()}
-              {Password()}
-              {ConfirmPassword()}
-              {SignUpButton()}
-              {IHaveAnAccountButton()}
-            </div>
-          </FormContainer>
+    <div className="w-full mx-auto flex flex-col justify-center">
+      <title>{SEO_TITLE.SIGN_UP}</title>
+      <div
+        className={`px-9 sm:px-9 py-5 sm:w-auto my-12 mx-1 sm:mx-auto flex flex-col items-center bg-bg shadow-md ring-4 ring-celestine rounded-xl`}
+      >
+        <FormTitle title="Sign up" subtitle="Sign up to ArcanaVerse" />
+        <div className="flex flex-col gap-4 w-full min-w-xs sm:min-w-[500px]">
+          {Username()}
+          {Email()}
+          {Password()}
+          {ConfirmPassword()}
+          {SignUpButton()}
+          {IHaveAnAccountButton()}
         </div>
       </div>
     </div>

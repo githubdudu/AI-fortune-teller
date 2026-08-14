@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
+const randInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+
 /**
  * Custom hook for managing tarot card selection
  * @typedef {Object} Card - Tarot card object
@@ -21,10 +23,15 @@ const useCardSelection = (cards, maxSelection = 3) => {
   );
   // Maitain a array of selected card id, the sequence matters
   const [selectedCardIds, setSelectedCardIds] = useState([]);
+  // Maintain the color variant for the card layer, it increases by one in each click
+  const [colorVariants, setColorVariants] = useState(
+    Array(totalCounts).fill(randInt(0, totalCounts)),
+  );
 
   useEffect(() => {
     setSelectionMark(Array(totalCounts).fill(false));
     setSelectedCounts(0);
+    setColorVariants(Array(totalCounts).fill(randInt(0, totalCounts)));
   }, [totalCounts]);
 
   /**
@@ -35,6 +42,12 @@ const useCardSelection = (cards, maxSelection = 3) => {
    */
   const handleCardSelect = useCallback(
     (cardId, index) => {
+      setColorVariants((prevColorVariants) =>
+        prevColorVariants.map((variant, i) =>
+          i === index ? variant + 1 : variant,
+        ),
+      );
+
       // Toggle selected cards
       if (selectionMark[index]) {
         setSelectionMark((prevMark) =>
@@ -66,6 +79,7 @@ const useCardSelection = (cards, maxSelection = 3) => {
     selectionMark,
     selectedCardIds,
     handleCardSelect,
+    colorVariants,
   };
 };
 

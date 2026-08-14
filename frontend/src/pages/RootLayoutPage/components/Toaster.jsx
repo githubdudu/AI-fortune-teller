@@ -4,11 +4,17 @@ import { Toaster as SonnerToaster } from 'sonner';
  * App-wide toast host. Mounted once in RootLayoutPage; fire toasts from
  * anywhere with `import { toast } from 'sonner'`.
  *
- * Colours are wired to the ink/mist ramps in index.css rather than sonner's
- * defaults. `richColors` is required for the per-type vars (--error-*,
- * --success-*, ...) to apply at all — without it every toast falls back to
- * --normal-*. Contrast of each pairing below is >= 8.7:1.
+ * Colours come from the Sugar Crystal tokens in index.css, not sonner's
+ * defaults. All five types share one formula — a wash of the status colour
+ * over the page ground, ink copy, and the status colour itself as the border —
+ * so type reads from hue rather than from an inverted normal toast.
+ *
+ * `richColors` is required for the per-type vars (--error-*, --success-*, ...)
+ * to apply at all; without it every toast falls back to --normal-*.
  */
+const wash = (token) =>
+  `color-mix(in oklab, var(${token}) 18%, var(--color-bg))`;
+
 function Toaster(props) {
   return (
     <SonnerToaster
@@ -16,30 +22,25 @@ function Toaster(props) {
       richColors
       closeButton
       style={{
-        // default toast: brand dark on light text
-        '--normal-bg': 'var(--color-ink-900)',
-        '--normal-text': 'var(--color-mist-50)',
-        '--normal-border': 'var(--color-ink-700)',
+        '--normal-bg': wash('--color-core'),
+        '--normal-text': 'var(--color-ink)',
+        '--normal-border': 'var(--color-core)',
 
-        // success — figma-green, 12.95:1
-        '--success-bg': 'var(--color-figma-green)',
-        '--success-text': 'var(--color-ink-900)',
-        '--success-border': 'var(--color-ink-700)',
+        '--success-bg': wash('--color-success'),
+        '--success-text': 'var(--color-ink)',
+        '--success-border': 'var(--color-success)',
 
-        // error — figma-red, 8.74:1
-        '--error-bg': 'var(--color-figma-red)',
-        '--error-text': 'var(--color-ink-900)',
-        '--error-border': 'var(--color-ink-700)',
+        '--error-bg': wash('--color-danger'),
+        '--error-text': 'var(--color-ink)',
+        '--error-border': 'var(--color-danger)',
 
-        // warning — figma-yellow, 12.45:1
-        '--warning-bg': 'var(--color-figma-yellow)',
-        '--warning-text': 'var(--color-ink-900)',
-        '--warning-border': 'var(--color-ink-700)',
+        '--warning-bg': wash('--color-warning'),
+        '--warning-text': 'var(--color-ink)',
+        '--warning-border': 'var(--color-warning)',
 
-        // info — figma-pink, 10.76:1
-        '--info-bg': 'var(--color-figma-pink)',
-        '--info-text': 'var(--color-ink-900)',
-        '--info-border': 'var(--color-ink-700)',
+        '--info-bg': wash('--color-info'),
+        '--info-text': 'var(--color-ink)',
+        '--info-border': 'var(--color-info)',
 
         '--border-radius': '0.75rem',
       }}

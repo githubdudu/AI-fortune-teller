@@ -8,7 +8,7 @@
 
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button } from 'gestalt';
+import { TextField, Button, IconButton, FixedZIndex } from 'gestalt';
 import PropTypes from 'prop-types';
 
 import {
@@ -86,7 +86,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   }
 
   return (
-    <FormContainer withBackground={false}>
+    <div className={`flex flex-col items-center rounded-xl`}>
       <FormTitle title="Login" subtitle="Please enter your credentials" />
       <div className="flex flex-col gap-4 sm:min-w-[500px] w-full select-text">
         {Email()}
@@ -98,15 +98,22 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
         {SignInWithGoogleButton()}
         {IDontHaveAnAccountButton()}
       </div>
-    </FormContainer>
+    </div>
   );
 
   function Email() {
     return (
       <div>
+        <DemoAccountLabel
+          htmlFor="email"
+          text="Email"
+          demoLabel="demo account: "
+          demoValue="arcanaverse-demo@email.com"
+        />
         <TextField
           id="email"
-          label="Email (try demo account: arcanaverse-demo@email.com )"
+          label="Email"
+          labelDisplay="hidden"
           placeholder="Please enter your email address"
           name="email"
           type="email"
@@ -116,6 +123,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
           onFocus={() => setEmailErrorMsg(null)}
           value={email}
           errorMessage={emailErrorMsg}
+          helperText="Please enter your email address"
         />
       </div>
     );
@@ -124,9 +132,16 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
   function Password() {
     return (
       <div>
+        <DemoAccountLabel
+          htmlFor="password"
+          text="Password"
+          demoLabel="demo account: "
+          demoValue="p@ssword-demo"
+        />
         <TextField
           id="password"
-          label="Password (try demo account: p@ssword-demo)"
+          label="Password"
+          labelDisplay="hidden"
           placeholder="Please enter your password"
           name="password"
           size="lg"
@@ -151,8 +166,8 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
     return (
       <div
         className="flex items-center text-center mt-3 
-          before:relative before:inline-block  before:w-1/2 before:h-px before:bg-gray-300 before:right-[0.5em]
-          after:relative after:inline-block  after:w-1/2 after:h-px after:bg-gray-300 after:left-[0.5em]"
+          before:relative before:inline-block  before:w-1/2 before:h-px before:bg-ink/15 before:right-[0.5em]
+          after:relative after:inline-block  after:w-1/2 after:h-px after:bg-ink/15 after:left-[0.5em]"
       >
         Or
       </div>
@@ -163,7 +178,7 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
     return (
       error &&
       error.message && (
-        <div className="text-red-500 text-center">{error.message}</div>
+        <div className="text-danger text-center">{error.message}</div>
       )
     );
   }
@@ -207,6 +222,64 @@ const Login = ({ loginLoading = false, setLoginLoading }) => {
       />
     );
   }
+};
+
+/**
+ * A visible label for a Gestalt TextField whose built-in label is hidden, so we
+ * can mix in an underlined demo-account hint and a click-to-copy icon button.
+ */
+// LoginForm renders inside FloatingPrompt, whose overlay sits at `z-5`
+const TOOLTIP_ZINDEX = new FixedZIndex(10);
+
+function DemoAccountLabel({ htmlFor, text, demoLabel, demoValue }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(demoValue);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <div className="mb-1 flex max-[360px]:flex-col flex-wrap items-center max-[360px]:items-start gap-x-1 text-sm">
+      <label htmlFor={htmlFor} className="font-medium">
+        {text}
+      </label>
+      <span className="flex max-[360px]:flex-col items-center max-[360px]:items-start gap-x-1 min-w-fit">
+        <span className="decoration-dotted underline-offset-2 opacity-80">
+          {demoLabel}
+        </span>
+        <div className="flex items-center ">
+          <span className="text-core underline decoration-dotted underline-offset-2 ">
+            {demoValue}
+          </span>
+          <IconButton
+            accessibilityLabel={copied ? 'Copied' : `Copy ${demoValue}`}
+            icon="copy-to-clipboard"
+            size="xs"
+            tooltip={{
+              text: copied ? 'Copied!' : 'Copy',
+              idealDirection: 'up',
+              inline: true,
+              zIndex: TOOLTIP_ZINDEX,
+            }}
+            onClick={copy}
+          />
+        </div>
+      </span>
+    </div>
+  );
+}
+
+DemoAccountLabel.propTypes = {
+  htmlFor: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  demoLabel: PropTypes.string.isRequired,
+  demoValue: PropTypes.string.isRequired,
 };
 
 Login.propTypes = {

@@ -1,18 +1,24 @@
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { AnimatePresence, motion } from 'motion/react';
 
 import Card from './Card';
+import useSound from '$/hooks/useAudio';
 
 // How the cards sit in each phase. Only the container's layout changes between them
 // The card elements themselves are the same DOM nodes throughout, which
 // is what lets motion tween them from one arrangement to the other.
 //
-// The cards keep one fixed size at every width, so below xl the overlap is produced
-// here, by a negative margin.
+// The cards scale with `--card-w` (see FortunePage.css), so the fan's overlap is
+// stated as a fraction of that width rather than in pixels. The breakpoints stay
+// — the fan really is meant to spread as the page widens — but each step is now
+// a ratio, so the overlap tracks the card instead of being a pixel amount that
+// only happens to look right at 208px.
 const LAYOUTS = {
   select:
-    'flex w-full justify-center my-10 [&>*]:-mx-12 md:[&>*]:-mx-8 lg:[&>*]:-mx-4 xl:[&>*]:mx-4',
-  reveal: 'flex flex-wrap max-md:flex-col justify-center gap-8 w-full my-10',
+    'flex w-full justify-center my-10 [&>*]:-mx-[calc(var(--card-w)*0.23)] md:[&>*]:-mx-[calc(var(--card-w)*0.15)] lg:[&>*]:-mx-[calc(var(--card-w)*0.08)] xl:[&>*]:mx-4',
+  reveal:
+    'flex flex-wrap items-center max-md:flex-col justify-center gap-8 w-full my-10',
 };
 
 // Cards landing/init animation
@@ -33,6 +39,14 @@ const LAYOUT_SPRING = { type: 'spring', visualDuration: 3, bounce: 0.25 };
 
 // Delay the flip animation after the layout reflow
 const FLIP_AFTER_LAYOUT = 3.5;
+
+// Cards decoration
+const CARD_DECORATION = [
+  'inset-ring-quartz ring-quartz',
+  'inset-ring-citrine ring-citrine',
+  'inset-ring-celestine ring-celestine',
+  'inset-ring-amethyst ring-amethyst',
+];
 
 /**
  * The persistent card layer.
@@ -55,8 +69,34 @@ const CardLayer = ({
   selectedCardIds,
   onCardSelect,
   className,
+  colorVariants,
 }) => {
   const mode = isReveal ? 'reveal' : 'select';
+  const playSound = useSound();
+
+  // The reveal is two beats — the row re-flows, then the cards turn — so the
+  // audio is two beats as well: a swoosh with the flight, chimes timed to land
+  // with the flip that FLIP_AFTER_LAYOUT holds back.
+  useEffect(() => {
+    if (!isReveal) return undefined;
+
+    playSound('flip');
+    const chimeAt = setTimeout(
+      () => playSound('reveal'),
+      FLIP_AFTER_LAYOUT * 1000,
+    );
+    return () => clearTimeout(chimeAt);
+  }, [isReveal, playSound]);
+
+  // Picking and un-picking get their own cue, and both are decided by what the
+  // click actually did: `onCardSelect` returns false for a fourth pick while
+  // three are already held, and a rejected click must stay silent rather than
+  // sound like it worked.
+  const handleCardClick = (card, index) => {
+    const wasSelected = selectionMark[index];
+    const changed = onCardSelect(card.id, index);
+    if (changed !== false) playSound(wasSelected ? 'deselect' : 'select');
+  };
 
   const entries = cards
     .map((card, index) => ({ card, index }))
@@ -78,8 +118,8 @@ const CardLayer = ({
               layout: LAYOUT_SPRING,
               default: { ...DEAL_SPRING, delay: index * DEAL_STAGGER },
             }}
-            className="w-[13rem] flex flex-col items-center"
-            onClick={isReveal ? undefined : () => onCardSelect(card.id, index)}
+            className="w-(--card-w) flex flex-col items-center"
+            onClick={isReveal ? undefined : () => handleCardClick(card, index)}
           >
             <Card
               backImage="/cards/back-416.webp"
@@ -92,6 +132,9 @@ const CardLayer = ({
               description={card.description}
               cardNumber={selectedCardIds.indexOf(card.id) + 1}
               index={index}
+              ringColor={
+                CARD_DECORATION[colorVariants[index] % CARD_DECORATION.length]
+              }
             />
           </motion.div>
         ))}
@@ -116,6 +159,7 @@ CardLayer.propTypes = {
   ),
   onCardSelect: PropTypes.func,
   className: PropTypes.string,
+  colorVariants: PropTypes.arrayOf(PropTypes.number),
 };
 
 CardLayer.defaultProps = {

@@ -208,10 +208,15 @@ it('does not flip back once flipped to front', () => {
   expect(getByAltText('Tarot Card Front')).toBeInTheDocument();
 });
 
-const targetOf = (container) =>
-  JSON.parse(
-    container.querySelector('.tarot-card-inner').getAttribute('data-animate'),
-  );
+// The flip and the lift/scale animate on separate layers, so that the flip's
+// completion callback isn't tripped by the much shorter scale animation.
+const targetOn = (container, selector) =>
+  JSON.parse(container.querySelector(selector).getAttribute('data-animate'));
+
+const targetOf = (container) => ({
+  ...targetOn(container, '.tarot-card-inner'),
+  ...targetOn(container, '.tarot-card-lift'),
+});
 
 /**
  * Tests that the card animates to the right target for each state: face down
@@ -242,7 +247,20 @@ it('animates to the correct target for each state', () => {
   );
   expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 
-  // Selecting lifts the card clear of the row as well
+  // Selecting lifts the card clear of the row, while still face down
+  rerender(
+    <Card
+      name="The Fool"
+      frontImage="path/to/front-image.png"
+      backImage="path/to/back-image.png"
+      isShowFront={false}
+      isSelected={true}
+    />,
+  );
+  expect(targetOf(container)).toEqual({ rotateY: 0, y: -50, scale: 1 });
+
+  // Turning over drops the lift again: the offset dissolves into the flight to
+  // the reading row rather than the card staying raised there
   rerender(
     <Card
       name="The Fool"
@@ -252,7 +270,7 @@ it('animates to the correct target for each state', () => {
       isSelected={true}
     />,
   );
-  expect(targetOf(container)).toEqual({ rotateY: 180, y: -50, scale: 1 });
+  expect(targetOf(container)).toEqual({ rotateY: 180, y: 0, scale: 1 });
 });
 
 /**

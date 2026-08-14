@@ -4,6 +4,8 @@ import themeCardPlaceholder from '$/assets/ThemeCardPlaceholder.png';
 import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from '$/context/AppContextProvider';
+import useSound from '$/hooks/useAudio';
+import { stoneClasses } from '$/constants/themeStone';
 
 const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL ?? '';
 
@@ -21,6 +23,7 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   }, []);
 
   const navigate = useNavigate();
+  const playSound = useSound();
 
   const handleClick = () => {
     // If there is a API error at input page, do not allow to click on theme card
@@ -35,6 +38,10 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   };
 
   const handleMouseEnter = () => {
+    // Silent while disabled, matching handleClick: a card that cannot be
+    // picked should not answer the cursor as though it could.
+    if (!disabled) playSound('hover');
+
     // Call the onHover prop function with the current theme
     if (onHover) {
       onHover(theme);
@@ -42,14 +49,12 @@ function ThemeCard({ theme, onHover, disabled = false }) {
   };
 
   return (
-    <div
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      className="cursor-pointer w-full flex justify-center pt-2 pb-8"
-    >
+    <div className="`w-full flex justify-center pt-2 pb-8">
       <div
-        className={`relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px_rgba(0,0,0,0.25)] transition-[filter] duration-300 hover:[filter:drop-shadow(0_0_0.5em_rgba(100,108,255,0.67))] ${
-          isLoaded ? '' : 'bg-gray-200'
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        className={`cursor-pointer relative h-60 w-[135px] shrink-0 rounded-md shadow-[0_2px_15px] shadow-ink/25 hover:shadow-ink/50 ${
+          isLoaded ? '' : 'bg-bloom'
         }`}
       >
         <img
@@ -67,9 +72,12 @@ function ThemeCard({ theme, onHover, disabled = false }) {
           }`}
           alt={`${theme.name} theme card`}
         />
+        {/* The theme's stone, as a hairline frame. Same colour reappears on
+            ThemeDescription and on the reading, so it reads as this theme's
+            identity rather than as decoration. */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-ring-1 inset-ring-black inset-0 rounded-md"
+          className={`pointer-events-none absolute inset-ring-2 ring-4 ${stoneClasses(theme.name).ring} inset-0 rounded-md`}
         />
       </div>
     </div>

@@ -6,7 +6,7 @@
 }
 
 .markdown-content h1, .markdown-content h2, .markdown-content h3 {
-  color: var(--color-ink-800);
+  color: var(--color-ink);
   font-weight: 600;
 }
 
@@ -23,14 +23,27 @@
   font-size: 1.2rem;
 }
 
+/* Body copy is justified so the reading reads as a printed page. Applied to the
+   text blocks only — headings keep the centred alignment inherited from
+   .fortune-page, which is what frames each section. */
+.markdown-content p,
+.markdown-content li,
+.markdown-content blockquote {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
 .markdown-content strong {
   font-weight: 600;
-  color: var(--color-mist-700);
+  /* Bold used to be *lighter* than the body copy it emphasised; core is where
+     emphasis belongs. */
+  color: var(--color-core);
 }
 
 .markdown-content em {
   font-style: italic;
-  color: #5a6478;
+  color: color-mix(in oklab, var(--color-ink) 70%, transparent);
 }
 
 .markdown-content ul, .markdown-content ol {
@@ -51,17 +64,17 @@
 }
 
 .markdown-content blockquote {
-  border-left: 3px solid var(--color-ink-500);
+  border-left: 3px solid var(--color-spark);
   padding-left: 1rem;
   margin-left: 0;
   margin-right: 0;
   font-style: italic;
-  color: var(--color-mist-700);
+  color: color-mix(in oklab, var(--color-ink) 70%, transparent);
   margin-bottom: 1rem;
 }
 
 .markdown-content code {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--color-bloom);
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
   font-family: monospace;
@@ -70,16 +83,16 @@
 
 .markdown-content hr {
   border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid color-mix(in oklab, var(--color-ink) 12%, transparent);
   margin: 1.5rem 0;
 }
 
 .markdown-content a {
-  color: var(--color-ink-700);
+  color: var(--color-core);
   text-decoration: underline;
   transition: color 0.2s ease;
 }
 
 .markdown-content a:hover {
-  color: #553c9a;
+  color: var(--color-ink);
 }

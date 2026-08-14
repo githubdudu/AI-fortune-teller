@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Text } from 'gestalt';
+
+import useSound from '$/hooks/useAudio';
 
 /**
  * Error message component for displaying API and application errors
@@ -10,6 +12,12 @@ import { Box, Text } from 'gestalt';
  * @param {boolean} props.withIcon - Whether to show an icon
  */
 const ErrorMessage = ({ message, type = 'error', withIcon = true }) => {
+  // Above the early return: hooks cannot sit behind a conditional
+  const playSound = useSound();
+  useEffect(() => {
+    if (message && type === 'error') playSound('error');
+  }, [message, type, playSound]);
+
   if (!message) return null;
 
   const getIconAndColor = () => {

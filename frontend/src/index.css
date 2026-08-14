@@ -7,36 +7,57 @@
 @import 'gestalt-datepicker/dist/gestalt-datepicker.css';
 
 @theme {
-  --color-figma-pink: #F4CAE0;
-  --color-figma-red: #FFAE8B;
-  --color-figma-yellow: #FFE1AD;
-  --color-figma-grass: #EEF8B6;
-  --color-figma-green: #C7F3DD;
+  /* ── Sugar Crystal 糖晶 · H 310deg · chroma vigor 0.65 ───────────────
+     Six semantic roles on an even lightness ladder. Hex in the comment is
+     the sRGB reference; source is docs/palette-directions.html.
+     Rethemeing the app means editing these six lines and nothing else. */
+  --color-bg: oklch(97.5% 0.012 310); /* #F9F5FD page ground */
+  --color-veil: oklch(93% 0.033 310); /* #EFE2F9 overlays, hover, input beds */
+  --color-bloom: oklch(86% 0.055 310); /* #DCC8ED cards, illustration, borders */
+  --color-spark: oklch(63% 0.111 310); /* #9E75BB decoration, display type, placeholders */
+  --color-core: oklch(52% 0.124 310); /* #7F529D buttons, links, emphasis */
+  --color-ink: oklch(27% 0.09 310); /* #341646 headings, body copy */
 
-  /* Foreground / dark ramp — H=318deg, corrected from the original #261060.
-     Carries CONTENT: headings, body copy, links, button labels. */
-  --color-ink-950: #1E0326; /* strongest display headings; only when it must outweigh everything */
-  --color-ink-900: #381243; /* default foreground / primary text — replaces #261060 */
-  --color-ink-800: #4E225A; /* card body copy, secondary headings */
-  --color-ink-700: #693878; /* lightest step still safe on every pastel (4.79:1 on figma-red) */
-  --color-ink-600: #864F97; /* large text only (>=24px, or >=18.66px bold) — 3.26:1 on figma-red */
-  --color-ink-500: #A66BB9; /* never body text; decoration, hover accents, disabled */
+  /* Atmosphere set — for CATEGORICAL use (card faces, chips, diagrams).
+     The four stones of Sugar Crystal, matched in lightness so any two can
+     swap without disturbing the hierarchy. */
+  --color-quartz: #FABDD3; /* rose quartz */
+  --color-amethyst: #E0C4F7; /* amethyst */
+  --color-celestine: #B5D3FF; /* celestine */
+  --color-citrine: #E0D199; /* citrine */
+  /* Deep counterparts — dark enough to carry white text. */
+  --color-quartz-deep: #BD6B8C;
+  --color-amethyst-deep: #9E75BB;
+  --color-celestine-deep: #5E8ACB;
+  --color-citrine-deep: #9E882E;
 
-  /* Neutral ramp — same hue, near-zero chroma.
-     Carries STRUCTURE: borders, dividers, surfaces, supporting text. */
-  --color-mist-50: #FBF9FC; /* page background */
-  --color-mist-100: #F5F2F6; /* card and input surfaces */
-  --color-mist-200: #E7E3E8; /* dividers, hr */
-  --color-mist-300: #D4CFD5; /* input borders at rest */
-  --color-mist-400: #A8A2AA; /* placeholder, disabled — never body text (2.50:1) */
-  --color-mist-500: #847D87; /* decorative icons (clears 3:1, not enough for text) */
-  --color-mist-600: #68606A; /* secondary text, timestamps, captions */
-  --color-mist-700: #4C454E; /* neutral body copy */
-  --color-mist-800: #312B33; /* neutral headings */
-  --color-mist-900: #1D191E; /* strongest neutral contrast */
+  /* Status colors — outside the doc's scope (it covers mood, not toasts or
+     validation), so they are built here on `core`'s rung: L 52%, C 0.11.
+     Only success borrows a hue the palette does not contain.
+
+     L 52 is the point where a colour works in BOTH directions, which status
+     colours need and the atmosphere set does not: error copy sits on the page
+     as text (5.1-5.5:1), and <Box color="errorBase"> puts `bg` text on top of
+     it (also 5.1-5.5:1). These used to alias the *-deep stones at L 63, where
+     both directions land near 3.2 and neither is readable. The stones stay at
+     L 63 on purpose — their job is to say WHICH, never to carry text. */
+  --color-danger: oklch(52% 0.11 355);
+  --color-warning: oklch(52% 0.11 95);
+  --color-info: oklch(52% 0.11 258);
+  --color-success: oklch(52% 0.11 165);
 
   --font-cormorant: 'Cormorant Garamond', Georgia, serif;
 }
+
+/* Depth comes from alpha, not from extra shades. There is deliberately no
+   neutral ramp: secondary copy is text-ink/70, captions text-ink/55, hairline
+   borders border-ink/12. Tailwind 4's /<alpha> works on these custom tokens,
+   and it mirrors how the palette doc renders its own mock.
+
+   There is deliberately no near-white step either. Surfaces that would
+   conventionally be white — modals, popovers, cards, input beds — take `bg`,
+   `veil` or `bloom`, so the palette is legible at a glance instead of reading
+   as a generic light theme with accents. */
 
 /* Custom utilities */
 @theme {
@@ -48,23 +69,48 @@
   }
 }
 
-/* Custom metallic gradient */
+/* Decorative halo behind an interactive image on hover. Two radii for two
+   scales — the logo and the much smaller theme cards — sharing one colour so
+   the glows cannot drift apart.
+
+   The transparent drop-shadow at rest is load-bearing, not a no-op. Animating
+   `filter` from `none` makes the browser synthesise a start frame at zero blur
+   in the element's currentColor, which here is `ink` — the hover flashed a hard
+   dark shadow before settling into the purple. Starting from a transparent
+   shadow of the same geometry leaves only the colour to interpolate.
+
+   Hover and transition live inside the utility so a caller cannot reintroduce
+   the flash by reaching for `hover:` and forgetting the rest state. */
+@utility glow-spark {
+  &:hover {
+    filter: drop-shadow(
+      0 0 1em color-mix(in oklab, var(--color-spark) 67%, transparent)
+    );
+  }
+}
+
+/* Metallic sheen for the daily-fortune card, built from the four stones.
+   The stop positions carry the rhythm — two narrow bright bands at 60-72 and
+   240-252 are what read as a highlight sliding across metal — so they are kept
+   exactly; only the colours changed. The 400px period must stay: the scroll
+   animation shifts by 565.685px (= 400 x sqrt 2, the 135deg diagonal). The
+   brightest stop is `bg`, not white, so the sheen stays inside the palette. */
 @utility bg-daily-fortune {
   background-image: repeating-linear-gradient(
     135deg,
-    var(--color-figma-pink) 0px,
-    var(--color-figma-red) 40px,
-    #ffd9b0 60px,
-    #fff8ec 72px,
-    var(--color-figma-yellow) 88px,
-    var(--color-figma-red) 120px,
-    var(--color-figma-pink) 168px,
-    var(--color-figma-green) 216px,
-    #ffe8b6 240px,
-    #fffbf2 252px,
-    var(--color-figma-yellow) 268px,
-    var(--color-figma-red) 312px,
-    var(--color-figma-pink) 400px
+    var(--color-quartz) 0px,
+    var(--color-celestine) 40px,
+    var(--color-citrine) 60px,
+    var(--color-bg) 72px,
+    var(--color-citrine) 88px,
+    var(--color-celestine) 120px,
+    var(--color-quartz) 168px,
+    var(--color-amethyst) 216px,
+    var(--color-citrine) 240px,
+    var(--color-bg) 252px,
+    var(--color-citrine) 268px,
+    var(--color-celestine) 312px,
+    var(--color-quartz) 400px
   );
   background-size: calc(100% + 600px) 100%;
 }
@@ -81,10 +127,10 @@
   background: radial-gradient(
     circle 2400px at 50% 2860px,
     transparent 2400px,
-    rgba(0, 0, 0, 0.22) 2400px,
-    rgba(0, 0, 0, 0.12) 2440px,
-    rgba(0, 0, 0, 0.04) 2470px,
-    rgba(0, 0, 0, 0) 2490px
+    color-mix(in oklab, var(--color-core) 22%, transparent) 2400px,
+    color-mix(in oklab, var(--color-core) 12%, transparent) 2440px,
+    color-mix(in oklab, var(--color-core) 4%, transparent) 2470px,
+    transparent 2490px
   );
 }
 
@@ -95,18 +141,13 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--color-ink);
+  background-color: var(--color-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --figma-pink: #F4CAE0;
-  --figma-red: #FFAE8B;
-  --figma-yellow: #FFE1AD;
-  --figma-grass: #EEF8B6;
-  --figma-green: #C7F3DD;
 }
 
 /* Global styles that might still be needed */
@@ -115,20 +156,78 @@ body {
   user-select: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-image: url('/assets/Background_Cloud.png');
-    background-attachment: fixed;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #ffffff;
-  }
+/* Scrollbars, in palette. 
+   `spark` for the thumb rather than `core`: the bar is decoration 
+  */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-spark) var(--color-veil);
+}
 
-  a:hover {
-    color: #747bff;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-veil);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-spark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-core);
+}
+
+/* The page ground, in two fixed layers behind everything.
+
+   `::before` is the ground proper: two soft radial pools of bloom and veil
+   over `bg`. It is pure token, so retheming the app really does mean editing
+   the six colour lines and nothing else — this layer can never drift off
+   palette. To tune the mood, move the pools' size/position percentages; to
+   flatten it entirely, drop the two gradients and leave `var(--color-bg)`.
+
+   `::after` is the cloud, plain alpha over that ground. Its colour is already
+   correct — scripts/recolor-background.py throws the source's hues away and
+   remaps its luminance onto the spark..bg ladder — so nothing here needs to
+   police it. Turn `opacity` down for a calmer page, up for more cloud.
+
+   Do NOT reach for `mix-blend-mode: luminosity` here. It keeps the *backdrop's*
+   saturation, and the backdrop is this ground: chroma 0.012-0.055. That clamps
+   the cloud's deepest areas (spark, chroma 0.111) to less than half their
+   colour and the whole layer goes grey — it silently undoes the recolouring
+   the script exists to do.
+
+   Fixed pseudo-elements rather than `background-attachment: fixed` on :root:
+   that property is ignored on iOS Safari, and two elements let the ground and
+   the texture be tuned independently. Deliberately NOT inside a
+   prefers-color-scheme query — `color-scheme: light` above is unconditional,
+   so gating the ground on the OS preference only produced two disagreeing
+   backgrounds. z-index leaves -1 free for the page-level `bg-horizon`
+   vignette, which must sit above the cloud. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+body::before {
+  z-index: -3;
+  background:
+    radial-gradient(120% 80% at 15% 100%, var(--color-bloom), transparent 62%),
+    radial-gradient(90% 70% at 85% 0%, var(--color-veil), transparent 58%),
+    var(--color-bg);
+}
+
+body::after {
+  z-index: -2;
+  background: url('/assets/background-cloud.webp') center / cover no-repeat;
+  opacity: 0.5;
 }
 
 /* Hack to fix height inconsistent of Gestalt input box */
@@ -137,29 +236,95 @@ select#gender {
   height: 52px;
 }
 
+/* ── Theming Gestalt ────────────────────────────────────────────────────
+   Two rules that make this block work, both learned the hard way:
+
+   1. Override Gestalt's design tokens, never its class names. `.V0G`, `.QxL`
+      and friends are build-time hashes that change on upgrade.
+   2. Override the variable a rule actually READS. Gestalt aliases at :root
+      (--color-background-box-secondary: var(--color-background-secondary-base)),
+      and an alias resolves where it is declared — overriding the base token
+      does nothing. Every name below is a leaf, verified against gestalt.css.
+
+   Scoped to :root because TextField and Button appear on every page; the
+   earlier per-component hooks did not scale. This also replaces the old
+   `button[name=...] > div { ... !important }` hacks, which fought the tokens. */
+:root {
+  /* Surfaces and type */
+  --color-background-popover-primary: var(--color-bg);
+  /* Tooltip's bed. Gestalt hardcodes this leaf to #111 — a neutral black that
+     reads as foreign next to every other surface here. `ink` is the same role
+     (a dark ground for inverse text) in the project's own hue. The text on it
+     is Gestalt's `inverse` slot, already pointed at `bg` below. */
+  --color-background-popover-secondary: var(--color-ink);
+  --color-background-box-secondary: var(--color-veil); /* dropdown hover bed, avatar disc */
+  --color-text-default: var(--color-ink);
+  --color-text-inverse: var(--color-bg); /* label on a filled button */
+  --color-icon-default: var(--color-ink);
+  --color-text-subtle: color-mix(in oklab, var(--color-ink) 70%, transparent);
+  --color-text-disabled: color-mix(in oklab, var(--color-ink) 40%, transparent);
+  --color-border-focus: color-mix(in oklab, var(--color-core) 50%, transparent);
+
+  /* Buttons. Gestalt maps its `color` prop onto semantic slots:
+     red -> primary, gray (the default) -> secondary,
+     transparent -> tertiary, blue -> shopping.
+     red and blue deliberately land on the same colour: both are "the page's
+     main call to action" here, and one page saying red while another says
+     blue is exactly the arbitrariness this migration exists to remove. */
+  --color-background-button-primary-default: var(--color-core);
+  --color-background-button-primary-hover: color-mix(in oklab, var(--color-core) 85%, var(--color-ink));
+  --color-background-button-primary-active: var(--color-ink);
+
+  --color-background-button-shopping-default: var(--color-background-button-primary-default);
+  --color-background-button-shopping-hover: var(--color-background-button-primary-hover);
+  --color-background-button-shopping-active: var(--color-background-button-primary-active);
+
+  --color-background-button-secondary-default: var(--color-veil);
+  --color-background-button-secondary-hover: var(--color-bloom);
+  --color-background-button-secondary-active: color-mix(in oklab, var(--color-bloom) 80%, var(--color-ink));
+
+  --color-background-button-tertiary-default: transparent;
+  --color-background-button-tertiary-hover: var(--color-veil);
+  --color-background-button-tertiary-active: var(--color-bloom);
+
+  /* Status surfaces — the leaves behind <Box color="errorBase|warningBase|infoBase"> */
+  --color-background-box-error-base: var(--color-danger);
+  --color-background-box-warning-base: var(--color-warning);
+  --color-background-box-info-base: var(--color-info);
+
+  /* TextField */
+  --color-background-formfield-primary: var(--color-veil);
+  --color-text-formfield-default: var(--color-ink);
+  /* Not `spark`: it clears 3:1 on the page ground but only reaches 2.96 on the
+     `veil` field bed it actually sits on. */
+  --color-text-formfield-placeholder: color-mix(in oklab, var(--color-ink) 65%, transparent);
+  --color-border-formfield-error-default: var(--color-danger);
+  --color-text-error: var(--color-danger);
+
+  /* The --sema-* family is REFERENCED by gestalt.css but never DECLARED in it
+     (56 names, zero definitions). An undefined var makes the whole `border`
+     shorthand invalid at computed-value time, so it falls back to `medium none`
+     — which is why the text fields currently have no resting border and no
+     focus ring at all. Declaring them here restores the border as well as
+     colouring it. */
+  --sema-color-border-interactive: var(--color-bloom);
+  --sema-color-hover-border-interactive: var(--color-spark);
+  --sema-color-pressed-border-interactive: var(--color-core);
+  --sema-color-border-focus-inner-default: var(--color-core);
+  --sema-color-border-focus-outer-default: color-mix(in oklab, var(--color-core) 40%, transparent);
+  --sema-color-border-error: var(--color-danger);
+  --sema-color-hover-border-error: var(--color-danger);
+  --sema-color-border-disabled: var(--color-bloom);
+}
+
 /* Hack to DropDown of Gestalt */
 #user-dropdown {
   min-width: 115px;
 }
 
-button[name="login-button"]>div {
-  background-color: #FFAE8B !important;
-}
-
-button[name="login-button"]:hover>div {
-  background-color: #FF9E6B !important;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
-
-button[name="edit-button"]>div {
-  background-color: var(--color-pink-500);
-  transition: background-color 0.3s ease;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-button[name="edit-button"]:hover>div {
-  background-color: var(--color-pink-600);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+/* The floating shadow sits on the dropdown's PARENT, out of inheritance reach.
+   Neutral black smudges the edge now that the sheet is close in lightness to
+   the page, so it carries the ink hue and a little more weight. */
+div:has(> #user-dropdown) {
+  --elevation-floating: 0 0 8px color-mix(in oklab, var(--color-ink) 14%, transparent);
 }
