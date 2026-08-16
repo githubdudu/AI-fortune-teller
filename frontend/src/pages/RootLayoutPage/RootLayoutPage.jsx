@@ -1,14 +1,17 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Box, Flex } from 'gestalt';
 
 import ArcanaVerseLogo from './components/ArcanaVerseLogo';
 import UserAvatarButton from './components/UserAvatarButton';
 import SoundToggle from './components/SoundToggle';
+import RouteErrorFallback from './components/RouteErrorFallback';
 import { useAudioBootstrap } from '$/hooks/useAudio';
 
 function RootLayoutPage() {
   // Arms the audio engine on the first gesture anywhere in the app
   useAudioBootstrap();
+  const location = useLocation();
 
   return (
     <Flex
@@ -26,7 +29,12 @@ function RootLayoutPage() {
         <ArcanaVerseLogo />
       </Flex.Item>
       <Flex.Item flex="grow">
-        <Outlet />
+        <ErrorBoundary
+          FallbackComponent={RouteErrorFallback}
+          resetKeys={[location.pathname]}
+        >
+          <Outlet />
+        </ErrorBoundary>
       </Flex.Item>
     </Flex>
   );
