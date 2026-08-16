@@ -1,14 +1,14 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import apiClient from '$/utils/apiClient';
 import { AppContext } from '$/context/AppContextProvider';
 import { useModalStore } from '$/stores/modalStore';
 import UserInputPage from '../UserInputPage/UserInputPage';
 
 // Mock axios requests
-const axiosMock = new MockAdapter(axios);
+const axiosMock = new MockAdapter(apiClient);
 
 // Mock child components to simplify testing
 vi.mock('$/pages/UserInputPage/components/UserQuestionInput', () => ({
@@ -189,6 +189,33 @@ describe('UserInputPage component', () => {
     });
 
     consoleSpy.mockRestore();
+  });
+
+  it('handles 401 Unauthorized error when user is logged in but session has expired', async () => {
+    axiosMock.onGet(/\/users\/me$/i).reply(401);
+    axiosMock
+      .onGet('http://localhost:5000/api/v1/DailyFortunes/me')
+      .reply(200, mockDailyFortune);
+
+    const logout = vi.fn();
+    setup({ isLoggedIn: true, profileFetched: false, logout });
+
+    await waitFor(() => {
+      expect(logout).toHaveBeenCalled();
+    });
+    expect(navigateMock).toHaveBeenCalledWith('/');
+  });
+
+  it('handles 404 error when user is logged in but not found', async () => {
+    axiosMock.onGet(/\/users\/me$/i).reply(404);
+
+    const logout = vi.fn();
+    setup({ isLoggedIn: true, profileFetched: false, logout });
+
+    await waitFor(() => {
+      expect(logout).toHaveBeenCalled();
+    });
+    expect(navigateMock).toHaveBeenCalledWith('/');
   });
 
   it('passes correct visibility state to FloatingPrompt', async () => {
