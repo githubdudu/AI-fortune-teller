@@ -1,6 +1,9 @@
+import { SEO_TITLE } from '$/constants/seo';
+
 function NotFoundPage() {
   return (
     <div className="flex flex-col items-center justify-center px-4">
+      <title>{SEO_TITLE.NOT_FOUND}</title>
       <h1 className="text-9xl font-extrabold text-ink">404</h1>
       <p className="text-2xl font-medium text-ink/70 mb-6">Page Not Found</p>
       <p className="text-ink/65 mb-8">

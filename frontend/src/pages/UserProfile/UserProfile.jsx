@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SEO_TITLE } from '$/constants/seo';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function ProfilePage() {
     <div className="py-12 px-6 lg:px-8 font-sans">
       <div className="w-full max-w-screen-xl mx-auto">
         <div className="bg-bg/90 backdrop-blur-md border border-ink/12 rounded-2xl shadow-xl p-10 lg:p-16 w-full">
+          <title>{SEO_TITLE.PROFILE}</title>
           <h1 className="text-4xl lg:text-5xl font-bold text-core mb-8 text-center">
             Profile Information
           </h1>
