@@ -16,8 +16,8 @@ Everything below is taken from the repository itself, not from memory.
 | **Shape** | Monorepo: React 19 SPA + ASP.NET Core 8 REST API |
 | **Origin** | University of Auckland group project (COMPSCI, 2025), continued solo afterwards |
 | **Timeline** | First commit 2025-03-17 → still active 2026-08 |
-| **Commits** | 597 total across 11 contributors |
-| **My share** | 309 of 597 commits (~52%) under `dudu_win10` + `githubdudu` — the largest contributor |
+| **Commits** | 601 total across 7 contributors (16 raw git identities — several people commit under multiple emails) |
+| **My share** | 314 of 601 commits (52%) under `dudu_win10` + `githubdudu` + `hdon694` — the largest contributor |
 | **Size** | ~7.9k lines frontend (JS/JSX/CSS), ~4.7k lines backend (C#) |
 | **Tests** | 78 frontend assertions (Vitest + Testing Library), 24 backend tests (xUnit + Moq) |
 
@@ -152,14 +152,14 @@ user profile, chosen theme and drawn cards; SSE transport to the browser with ca
 cost control via per-user rate limits; model output sanitised before render.
 
 **Full-stack / generalist**
-Owned ~52% of a 597-commit codebase across React, C#, Docker, Kubernetes and CI —
+Owned 52% of a 601-commit codebase across React, C#, Docker, Kubernetes and CI —
 a project taken from a university group assignment to a live, continuously deployed product.
 
 ---
 
 ## 6. Facts to reuse verbatim
 
-- 597 commits, 11 contributors, 309 mine (~52%)
+- 601 commits, 7 contributors (6 students + course supervisor), 314 mine (52%)
 - ~12.6k lines of first-party code (7.9k frontend, 4.7k backend)
 - 102 automated tests across two languages and two frameworks
 - 6 versioned REST controllers, 5 EF entities, 5 repositories, 7 services
