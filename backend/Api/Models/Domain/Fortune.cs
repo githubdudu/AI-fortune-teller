@@ -12,7 +12,6 @@ namespace Api.Models.Domain
         public Guid ThemeId { get; set; }
 
         [Required]
-        [MaxLength(3)]
         public Guid[] CardsIds { get; set; } = [];
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

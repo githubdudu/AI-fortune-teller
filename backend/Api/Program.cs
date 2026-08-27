@@ -27,17 +27,12 @@ Console.WriteLine($"Current environment: {builder.Environment.EnvironmentName}")
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
 // Configure Kestrel to allow synchronous I/O operations
 builder.WebHost.ConfigureKestrel(options => {
     options.AllowSynchronousIO = true;
 });
 
-// Add Authorization services but don't set a fallback policy
-builder.Services.AddAuthorization();
-
-// Configure API Versioning
+// Configure API Versioning for routes
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -50,21 +45,19 @@ builder.Services.AddApiVersioning(options =>
     );
 });
 
+
+// Swagger Docs ----
+// --------------------
 // Configure API Version Explorer
+// Only affect the docs, the swagger.json
 builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";
     options.SubstituteApiVersionInUrl = true;
 });
 
-// Register Swagger configuration options (must be done BEFORE AddSwaggerGen)
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>>(serviceProvider =>
-{
-    var apiVersionDescriptionProvider =
-        serviceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
-
-    return new ConfigureSwaggerOptions(apiVersionDescriptionProvider);
-});
+// DI: Register Swagger configuration options
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
 // Configure Swagger with JWT support and versioning
 builder.Services.AddSwaggerGen(c =>
@@ -110,6 +103,8 @@ builder.Services.AddSwaggerGen(c =>
     // Apply the versioning configuration to Swagger
     c.OperationFilter<SwaggerDefaultValues>();
 });
+// End of Swagger Docs ----
+
 
 // Configure SQL Server with Entity Framework Core
 if (builder.Environment.IsDevelopment() || builder.Environment.IsEnvironment("Demo"))

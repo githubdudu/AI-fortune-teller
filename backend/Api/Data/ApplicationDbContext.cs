@@ -21,7 +21,6 @@ namespace Api.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                // entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).IsRequired();
