@@ -1,0 +1,40 @@
+# Mirrors OpenAIClient.cs — same base URL, key and model, straight over HTTP.
+# Run with: httpyac send OpenRouter.http --all   (or per-request from the editor)
+
+{{
+  const cfg = require('./appsettings.Development.json');
+  exports.apiKey = cfg.ExternalServices.OpenAI.ApiKey;
+  exports.baseUrl = cfg.ExternalServices.OpenAI.BaseUrl ?? 'https://openrouter.ai/api/v1';
+}}
+
+@model = openrouter/free
+@prompt = Give me a one-sentence tarot reading for The Fool.
+
+###
+# @name Completion
+POST {{baseUrl}}/chat/completions
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "{{model}}",
+  "messages": [{ "role": "user", "content": "{{prompt}}" }]
+}
+
+###
+# @name CompletionStreaming
+POST {{baseUrl}}/chat/completions
+Authorization: Bearer {{apiKey}}
+Content-Type: application/json
+
+{
+  "model": "{{model}}",
+  "stream": true,
+  "messages": [{ "role": "user", "content": "{{prompt}}" }]
+}
+
+###
+# @name KeyInfo
+# Sanity check: is the key valid, and what's left of the free quota?
+GET {{baseUrl}}/key
+Authorization: Bearer {{apiKey}}
