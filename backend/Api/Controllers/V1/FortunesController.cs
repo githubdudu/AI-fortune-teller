@@ -155,6 +155,12 @@ namespace Api.Controllers.V1
 
                     if (chunk.Text.Length == 0)
                     {
+                        // A reasoning model can spend a minute emitting empty deltas
+                        // before its first visible token. Ping so the client's idle
+                        // timeout (and any proxy) sees a live connection meanwhile —
+                        // the client ignores envelopes it doesn't recognise.
+                        await writer.WriteAsync("data: {\"type\":\"ping\"}\n\n");
+                        await writer.FlushAsync();
                         continue;
                     }
 

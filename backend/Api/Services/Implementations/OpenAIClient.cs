@@ -31,7 +31,7 @@ namespace Api.Services.Implementations
                     configuration.GetValue<string>("ExternalServices:OpenAI:BaseUrl")
                     ?? "https://openrouter.ai/api/v1";
 
-                _model = "openrouter/free";
+                _model = "dots-studio/dots-3-note-preview:free";
 
                 _chatClient = new(
                     model: _model,
@@ -119,10 +119,10 @@ namespace Api.Services.Implementations
                     update.ContentUpdate.Count > 0 ? update.ContentUpdate[0].Text ?? string.Empty
                     : string.Empty;
 
-                if (text.Length > 0 || model != null)
-                {
-                    yield return new AiStreamChunk(text, model);
-                }
+                // Empty updates are passed on rather than dropped: a reasoning model
+                // sends nothing but those for up to a minute before its first visible
+                // token, and the controller turns them into keepalive pings.
+                yield return new AiStreamChunk(text, model);
             }
         }
     }
