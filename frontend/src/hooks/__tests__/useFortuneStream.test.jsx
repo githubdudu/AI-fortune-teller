@@ -36,6 +36,31 @@ async function runStream(parts) {
   return result;
 }
 
+/**
+ * Feeds the hook a non-stream HTTP failure, the way the middleware or the
+ * proxy answers when the request never becomes a stream.
+ */
+async function runFailedRequest(status, body = '') {
+  globalThis.fetch = vi.fn(() =>
+    Promise.resolve({
+      ok: status < 400,
+      status,
+      headers: { get: () => 'text/plain' },
+      text: () => Promise.resolve(body),
+    }),
+  );
+
+  const { result } = renderHook(() => useFortuneStream());
+
+  await act(async () => {
+    result.current.startFortuneStream({ cardIds: ['a'], question: 'hi' });
+  });
+
+  await waitFor(() => expect(result.current.streamError).toBeTruthy());
+
+  return result;
+}
+
 afterEach(() => {
   vi.restoreAllMocks();
 });
@@ -115,5 +140,17 @@ describe('useFortuneStream', () => {
 
     await waitFor(() => expect(result.current.streamError).toBeTruthy());
     expect(result.current.streamingText).not.toContain('exploded');
+  });
+
+  it('turns an HTTP failure into a message for the reader', async () => {
+    const rateLimited = await runFailedRequest(429);
+    expect(rateLimited.current.streamError).toMatch(/reading limit/i);
+
+    const unavailable = await runFailedRequest(503);
+    expect(unavailable.current.streamError).toMatch(/temporarily unavailable/i);
+
+    // Pre-stream validation comes back as HTTP 200 plain text
+    const loggedOut = await runFailedRequest(200, 'You must be logged in');
+    expect(loggedOut.current.streamError).toMatch(/log in/i);
   });
 });

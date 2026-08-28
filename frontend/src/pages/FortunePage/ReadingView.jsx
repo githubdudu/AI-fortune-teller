@@ -17,7 +17,6 @@ import './ReadingView.css';
  * Reading results screen
  */
 const ReadingView = ({ selectedCardIds }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasRead, setHasRead] = useState(false);
 
   // AppContext provides user theme, prompt, and methods to save/clear reading results
@@ -36,35 +35,22 @@ const ReadingView = ({ selectedCardIds }) => {
   useStickToBottom(readingResult, { active: hasRead && !streamError });
 
   /**
-   * Handle reading button click
+   * Start the reading. Also the retry handler: a transient failure just needs
+   * the same request sent again.
    */
-  const handleReadButton = useCallback(async () => {
-    // Prevent multiple submissions
-    if (isSubmitting) return;
-
-    // Set submitting state
-    setIsSubmitting(true);
+  const handleReadButton = useCallback(() => {
     setHasRead(true);
 
     console.log('Read button clicked - processing reading request');
-
-    const currentPrompt = userPrompt || '';
-    const currentTheme = userChosenTheme?.id || null;
 
     // Started in the same tick as setHasRead so both land in one render —
     // deferring it let the interpretation box mount and repaint first
     startFortuneStream({
       cardIds: selectedCardIds,
-      question: currentPrompt,
-      themeId: currentTheme,
+      question: userPrompt || '',
+      themeId: userChosenTheme?.id || null,
     });
-  }, [
-    isSubmitting,
-    userPrompt,
-    userChosenTheme,
-    startFortuneStream,
-    selectedCardIds,
-  ]);
+  }, [userPrompt, userChosenTheme, startFortuneStream, selectedCardIds]);
 
   // Keep the page reachable without cards while developing
   const isDevelopment =
@@ -108,18 +94,28 @@ const ReadingView = ({ selectedCardIds }) => {
           <ReadingInterpretationDisplay readingText={readingResult} />
         )}
 
-        {/* Button to start a new reading */}
+        {/* Always on offer once a reading was asked for: it can fail, stall,
+            or come back from a model whose output the renderer mangles, and
+            all three want the same request sent again. */}
         {hasRead && (
-          <NavLink to="/" prefetch="intent">
-            <Box marginTop={2} display="flex" justifyContent="center">
+          <Box marginTop={2} display="flex" justifyContent="center" gap={2}>
+            <Button
+              text="Try Again"
+              name="retry-button"
+              color="blue"
+              size="lg"
+              onClick={handleReadButton}
+              accessibilityLabel="Read these cards again"
+            />
+            <NavLink to="/" prefetch="intent">
               <Button
                 text="Reveal Another Reading"
                 name="edit-button"
                 size="lg"
                 color="red"
               />
-            </Box>
-          </NavLink>
+            </NavLink>
+          </Box>
         )}
       </div>
     </div>
