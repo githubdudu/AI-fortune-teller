@@ -86,7 +86,12 @@ const ReadingView = ({ selectedCardIds }) => {
         {isStreamLoading && <LoadingAnimation />}
         {streamModel && (
           <p className="interpretation-model mt-4 text-xs text-ink/65 text-right">
-            Channelled via {streamModel}
+            Channelled via {streamModel}.
+            <div>
+              AI models can fail. You may need retry. Some models are reasoning
+              models and can take more than 60s to get answer. Please be
+              patient.
+            </div>
           </p>
         )}
 

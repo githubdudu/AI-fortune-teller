@@ -31,7 +31,7 @@ namespace Api.Services.Implementations
                     configuration.GetValue<string>("ExternalServices:OpenAI:BaseUrl")
                     ?? "https://openrouter.ai/api/v1";
 
-                _model = "dots-studio/dots-3-note-preview:free";
+                _model = "openrouter/free";
 
                 _chatClient = new(
                     model: _model,
