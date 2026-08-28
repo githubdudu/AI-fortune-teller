@@ -4,6 +4,7 @@ using Api.Models.Requests;
 using Api.Repositories.Interfaces;
 using Api.Services.Implementations;
 using Api.Services.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace Api.Tests.Services
@@ -88,7 +89,8 @@ namespace Api.Tests.Services
                 _openAI.Object,
                 _themes.Object,
                 _cards.Object,
-                _users.Object
+                _users.Object,
+                NullLogger<FortuneService>.Instance
             );
         }
 

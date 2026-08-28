@@ -7,6 +7,7 @@ using Api.Models.DTOs;
 using Api.Models.Requests;
 using Api.Repositories.Interfaces;
 using Api.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Services.Implementations
 {
@@ -16,18 +17,21 @@ namespace Api.Services.Implementations
         private readonly IThemeRepository _themeRepository;
         private readonly ICardRepository _cardRepository;
         private readonly IUserService _userService;
+        private readonly ILogger<FortuneService> _logger;
 
         public FortuneService(
             IOpenAIClient openAIClient,
             IThemeRepository themeRepository,
             ICardRepository cardRepository,
-            IUserService userService
+            IUserService userService,
+            ILogger<FortuneService> logger
         )
         {
             _openAIClient = openAIClient;
             _themeRepository = themeRepository;
             _cardRepository = cardRepository;
             _userService = userService;
+            _logger = logger;
         }
 
         private async Task<string> DescribeUserAsync(string email)
@@ -59,7 +63,11 @@ namespace Api.Services.Implementations
         {
             string prompt = await PreparePromptAsync(request);
             var fortuneResult = await _openAIClient.GenerateTextAsync(prompt);
-            Console.WriteLine($"Fortune result received from OpenAI");
+            _logger.LogDebug(
+                "Fortune result received, model {Model}, {Length} chars",
+                fortuneResult.Model,
+                fortuneResult.Text.Length
+            );
 
             return new FortuneDto
             {
@@ -96,7 +104,7 @@ namespace Api.Services.Implementations
             }
 
             // We've successfully streamed the entire fortune
-            Console.WriteLine("Fortune stream completed");
+            _logger.LogDebug("Fortune stream completed");
         }
 
         // Builds the prompt for both the one-shot and the streaming reading.
@@ -104,13 +112,12 @@ namespace Api.Services.Implementations
         {
             if (!request.IsValid())
             {
-                Console.WriteLine("Error: Either Question or ThemeId must be provided");
+                _logger.LogWarning("Either Question or ThemeId must be provided");
                 throw new ArgumentException("Either Question or ThemeId must be provided");
             }
 
-            Console.WriteLine($"Fetching user details for email: {request.UserEmail}");
             string userDetail = await DescribeUserAsync(request.UserEmail);
-            Console.WriteLine($"User details fetched: {userDetail}");
+            _logger.LogDebug("User details for the reading: {UserDetail}", userDetail);
 
             string chosenTheme = string.Empty;
             if (request.ThemeId.HasValue)
@@ -124,7 +131,10 @@ namespace Api.Services.Implementations
             var cards = await _cardRepository.GetCardsByIdsAsync(request.CardIds);
             if (cards == null || !cards.Any())
             {
-                Console.WriteLine($"Error: No cards found with the provided IDs");
+                _logger.LogWarning(
+                    "No cards found for IDs {CardIds}",
+                    string.Join(", ", request.CardIds)
+                );
                 throw new Exception("No cards found with the provided IDs");
             }
 
@@ -156,7 +166,8 @@ Then, provide a final reflection in this format:
             string prompt =
                 $"You are a gifted tarot oracle with a mystical reputation for delivering specific, personal, and accurate guidance. Your readings are known for translating deep symbolism into real-world clarity. {userDetail}. Focusing {DescribeFocus(request, chosenTheme)}, and using these cards: {cardNames}, provide a tarot reading that is emotionally rich, intuitively deep, and practically helpful. Use the structure below: {promptFormat}";
 
-            Console.WriteLine($"Sending prompt to OpenAI");
+            // The whole prompt, so a bad reading can be traced back to what was asked
+            _logger.LogDebug("Prompt sent to the model.");
             return prompt;
         }
     }
